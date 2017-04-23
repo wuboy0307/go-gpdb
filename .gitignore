@@ -22,3 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+
+# Ignore these files & folders
+.idea
+.idea/vcs.xml
+learn.go
+output.txt
