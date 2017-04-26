@@ -29,3 +29,4 @@ _testmain.go
 .idea/vcs.xml
 learn.go
 output.txt
+.DS_Store
