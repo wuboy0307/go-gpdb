@@ -9,7 +9,7 @@ import (
 	"bufio"
 	"strconv"
 	"fmt"
-	"log"
+	log "../../core/logger"
 	"time"
 )
 
@@ -18,7 +18,7 @@ import (
 	"../objects"
 )
 
-
+// Progress of download
 func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 	var stop bool = false
@@ -31,15 +31,11 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 			// Open the file
 			file, err := os.Open(path)
-			if err != nil {
-				log.Fatal(err)
-			}
+			methods.Fatal_handler(err)
 
 			// Get stats of the file
 			fi, err := file.Stat()
-			if err != nil {
-				log.Fatal(err)
-			}
+			methods.Fatal_handler(err)
 
 			// Size now
 			size := fi.Size()
@@ -56,11 +52,13 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 			fmt.Println("% completed")
 		}
 
+		// Download is completed, time to terminate
 		if stop {
 			log.Println("Downloading completed ....")
 			break
 		}
 
+		// Ask to sleep, before repainting the screen.
 		time.Sleep(time.Second)
 	}
 }
@@ -84,7 +82,7 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {
-		methods.Fatal_handler(errors.New("Upstream ERROR: " + string(resp.StatusCode) + "(" + urlLink + ")"))
+		methods.Fatal_handler(errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")"))
 	}
 
 	// Close the body once its done
@@ -117,10 +115,11 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 	return bodyText, err
 }
 
+// Ask user what is the choice from the list provided.
 func Prompt_choice() int {
 
 	var choice_entered int
-	fmt.Print("\nEnter choose of version that you want to download from the above list (eg.s 1 or 2 etc): ")
+	fmt.Print("\nEnter and choose version that you want to download from the above list (eg.s 1 or 2 etc): ")
 
 	// Start the new scanner to get the user input
 	input := bufio.NewScanner(os.Stdin)
@@ -146,4 +145,3 @@ func Prompt_choice() int {
 
 	return choice_entered
 }
-

@@ -1,7 +1,13 @@
 package main
 
-import "./src/download"
+import (
+	"./src/download"
+	"./src/argParser"
+)
+
 
 func main() {
+
+	argParser.ArgParser()
 	download.Download()
 }

@@ -19,8 +19,17 @@ var DowloadOutputMap = make(map[string]string)
 var DownloadOption []string
 var DownloadURL string
 var ProductFileURL string
+var ChoiceMap VersionObjects
 
 // Product file
 var ProductFileJsonType ProductFilesObjects
 var ProductFileName string
 var ProductFileSize int64
+var ProductOutputMap = make(map[string]string)
+var ProductOptions []string
+var FileNameContains = []string{
+	"Red Hat Enterprise Linux",
+	"RedHat Entrerprise Linux",
+	"RedHat Enterprise Linux",
+	"RHEL"}
+

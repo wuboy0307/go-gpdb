@@ -13,5 +13,4 @@ const ProductName = "pivotal-gpdb"
 const (
 	DBServer = "Database Server"
 	GPCC = "Greenplum Command Center"
-	FileNameContains = "Red Hat Enterprise Linux"
 )
