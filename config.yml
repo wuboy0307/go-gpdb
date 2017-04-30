@@ -1,0 +1,12 @@
+---
+CORE:
+  BASE_DIR: /Users/fali/Downloads/                       #Make sure the directory name ends with "/"
+  APPLICATION_NAME: gpdbinstall
+DOWNLOAD:
+  API_TOKEN: <PivNet API TOKEN>
+  DOWNLOAD_DIR: /download/                                #Make sure the directory name ends with "/"
+INSTALL:
+  ENV_DIR: /env/                                          #Make sure the directory name ends with "/"
+  MASTER_DATA_DIRECTORY: /data/master/                    #Make sure the directory name ends with "/"
+  SEGMENT_DATA_DIRECTORY: /data/primary/                  #Make sure the directory name ends with "/"
+  TOTAL_SEGMENT: 2

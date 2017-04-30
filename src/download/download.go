@@ -217,8 +217,6 @@ func extract_filename_and_size (url string) {
 
 func Download() {
 
-	log.InitLogger()
-
 	// Authentication validations
 	log.Println("Checking if the user is a valid user")
 	library.GetApi(objects.Authentication, false, "", 0)

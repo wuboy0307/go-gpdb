@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"../../../src/logrus"
+	"../../../src/github.com/Sirupsen/logrus"
 )
 
 // Initalize the logger

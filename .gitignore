@@ -30,3 +30,7 @@ _testmain.go
 learn.go
 output.txt
 .DS_Store
+conf
+
+# Ignore Config file
+config.yml

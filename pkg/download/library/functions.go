@@ -15,6 +15,7 @@ import (
 
 import (
 	"../../core/methods"
+	"../../core/arguments"
 	"../objects"
 )
 
@@ -74,7 +75,13 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 	// Add Header to the Http Request
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", os.ExpandEnv("Token ${API_TOKEN}"))
+
+	// Verify there is a token on config file
+	if methods.IsValueEmpty(arguments.EnvYAML.Download.ApiToken) {
+		methods.Fatal_handler(errors.New("Cannot find value for \"API_TOKEN\", check \"config.yml\""))
+	} else {
+		req.Header.Set("Authorization", "Token " + arguments.EnvYAML.Download.ApiToken)
+	}
 
 	// Handle the request
 	resp, err := http.DefaultClient.Do(req)
@@ -93,6 +100,9 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 		// The Size of the file
 		size := filesize
+
+		// Fully qualifies path
+		filename = arguments.DownloadDir + filename
 
 		// Create th file
 		out, err := os.Create(filename)

@@ -80,6 +80,7 @@ func ArgParser() {
 	}
 
 
+	// All the below command line parse will be updated when the function is written
 	if InstallCmd.Parsed() {
 		if *InstallProductFlag == "" {
 			fmt.Println("Please supply the recipient using -recipient option.")
