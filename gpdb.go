@@ -20,7 +20,8 @@ func main() {
 	log.InitLogger()
 
 	// Get all the configs
-	core.Config()
+	err := core.Config()
+	methods.Fatal_handler(err)
 
 	// Extract all the OS command line arguments
 	if !arguments.InstallAfterDownload {
@@ -29,22 +30,31 @@ func main() {
 
 	// Run Program based on what option is specified
 	switch arguments.ArgOption {
-	case "download":                                                // Run Download
-		err := download.Download()
-		methods.Fatal_handler(err)
-		if arguments.InstallAfterDownload {
-			arguments.ArgOption = "install"
-			main()
-		}
-	case "install":                                                 // Run Install
-		err := install.Install()
-		methods.Fatal_handler(err)
-	case "remove":                                                  // Run Remove
-		log.Println("Run Remove")
-	case "env":                                                     // Run env
-		log.Println("Run env")
-	default:                                                        // Error if command is invalid
-		log.Fatal("Command not recognized")
+		case "download":
+			// Run Download
+			err := download.Download()
+			methods.Fatal_handler(err)
+
+			// If user has asked to run the installer after download then
+			// set the argument and rerun the main to pick the right choice.
+			if arguments.InstallAfterDownload {
+				arguments.ArgOption = "install"
+				main()
+			}
+
+		case "install":
+			// Run Install
+			err := install.Install()
+			methods.Fatal_handler(err)
+		case "remove":
+			// Run remove
+			log.Println("Run Remove")
+		case "env":
+			// Run env
+			log.Println("Run env")
+		default:
+			// Error if command is invalid
+			log.Fatal("Command not recognized")
 	}
 
 }

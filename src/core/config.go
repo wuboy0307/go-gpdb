@@ -12,7 +12,7 @@ import (
 	log "../../pkg/core/logger"
 )
 
-func CreateDir() {
+func CreateDir() error {
 
 	log.Println("Checking if the directories needed for the program exists")
 	if methods.IsValueEmpty(arguments.EnvYAML.Core.BaseDir) {
@@ -50,42 +50,47 @@ func CreateDir() {
 	// Download the files to
 	arguments.DownloadDir =  base_dir + arguments.EnvYAML.Download.DownloadDir
 	dl_bool, err := methods.DoesFileOrDirExists(arguments.DownloadDir)
-	methods.Fatal_handler(err)
+	if err != nil {return err}
 	if !dl_bool {
 		log.Warn("Directory \""+ arguments.DownloadDir + "\" does not exists, creating one")
 		err:= os.MkdirAll(arguments.DownloadDir, 0755)
-		methods.Fatal_handler(err)
+		if err != nil {return err}
 	}
 
 	// Environment location
 	arguments.EnvFileDir = base_dir + arguments.EnvYAML.Install.EnvDir
 	env_bool, err := methods.DoesFileOrDirExists(arguments.EnvFileDir)
-	methods.Fatal_handler(err)
+	if err != nil {return err}
 	if !env_bool {
 		log.Warn("Directory \""+ arguments.EnvFileDir + "\" does not exists, creating one")
 		err := os.MkdirAll(arguments.EnvFileDir, 0755)
-		methods.Fatal_handler(err)
+		if err != nil {return err}
 	}
 
 	// Environment location
-	arguments.UnistallDir = base_dir + arguments.EnvYAML.Install.UnistallDir
-	uninstall_bool, err := methods.DoesFileOrDirExists(arguments.UnistallDir)
-	methods.Fatal_handler(err)
+	arguments.UninstallDir = base_dir + arguments.EnvYAML.Install.UnistallDir
+	uninstall_bool, err := methods.DoesFileOrDirExists(arguments.UninstallDir)
+	if err != nil {return err}
 	if !uninstall_bool {
-		log.Warn("Directory \""+ arguments.UnistallDir + "\" does not exists, creating one")
-		err := os.MkdirAll(arguments.UnistallDir, 0755)
-		methods.Fatal_handler(err)
+		log.Warn("Directory \""+ arguments.UninstallDir + "\" does not exists, creating one")
+		err := os.MkdirAll(arguments.UninstallDir, 0755)
+		if err != nil {return err}
 	}
+
+	return nil
 }
 
 
-func Config() {
+func Config() error {
 
 	// Read the config file and store the value on a struct
 	source, err := ioutil.ReadFile("config.yml")
-	methods.Fatal_handler(err)
+	if err != nil {return err}
 	yaml.Unmarshal(source, &arguments.EnvYAML)
 
 	// Creating Directory needed for the program
-	CreateDir()
+	err = CreateDir()
+	if err != nil {return err}
+
+	return nil
 }

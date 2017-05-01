@@ -7,7 +7,7 @@ var ArgOption string
 var EnvYAML EnvObjects
 var DownloadDir string
 var EnvFileDir string
-var UnistallDir string
+var UninstallDir string
 
 // Download
 var AcceptedDownloadProduct = []string{"gpdb", "gpcc", "gpextras"}
