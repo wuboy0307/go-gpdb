@@ -16,19 +16,19 @@ import (
 )
 
 // Extract all the Pivotal Network Product from the Product API page.
-func extract_product() objects.ProductObjects {
+func extract_product() (objects.ProductObjects, error) {
 
 	log.Println("Obtaining the product ID")
 
 	// Get the API from the Pivotal Products URL
 	ProductApiResponse, err := library.GetApi(objects.Products, false, "", 0)
-	methods.Fatal_handler(err)
+	if err != nil {return objects.ProductObjects{}, err}
 
 	// Store all the JSON on the Product struct
 	json.Unmarshal(ProductApiResponse, &objects.ProductJsonType)
 
 	// Return the struct
-	return objects.ProductJsonType
+	return objects.ProductJsonType, nil
 }
 
 
@@ -50,7 +50,7 @@ func extract_release(productJson objects.ProductObjects) (objects.ReleaseObjects
 
 		// Extract all the releases
 		ReleaseApiResponse, err := library.GetApi(objects.ReleaseURL, false, "", 0)
-		methods.Fatal_handler(err)
+		if err != nil {return objects.ReleaseObjects{}, err}
 
 		// Store all the releases on the release struct
 		json.Unmarshal(ReleaseApiResponse, &objects.ReleaseJsonType)
@@ -128,7 +128,7 @@ func extract_downloadURL(ver string, url string) (objects.VersionObjects, error)
 
 // Ask user what file in that version are they interested in downloading
 // Default is to download GPDB, GPCC and other with a option from parser
-func which_product(versionJson objects.VersionObjects) {
+func which_product(versionJson objects.VersionObjects) error {
 
 	// Clearing up the buffer to ensure we are using a clean array and MAP
 	objects.ProductOutputMap = make(map[string]string)
@@ -193,17 +193,17 @@ func which_product(versionJson objects.VersionObjects) {
 		objects.ProductFileURL = version_selected_url
 		objects.DownloadURL = version_selected_url + "/download"
 	}
-
+	return nil
 }
 
 // extract the filename and the size of the product that the user has choosen
-func extract_filename_and_size (url string) {
+func extract_filename_and_size (url string) error {
 
 	log.Println("Extracting the filename and the size of the product file.")
 
 	// Obtain the JSON response of the product file API
 	ProductFileApiResponse, err := library.GetApi(url, false , "" , 0)
-	methods.Fatal_handler(err)
+	if err != nil {return err}
 
 	// Store it on JSON
 	json.Unmarshal(ProductFileApiResponse, &objects.ProductFileJsonType)
@@ -213,46 +213,57 @@ func extract_filename_and_size (url string) {
 	objects.ProductFileName = filename[len(filename)-1]
 	objects.ProductFileSize = objects.ProductFileJsonType.Product_file.Size
 
+	return err
+
 }
 
-func Download() {
+func Download() error {
 
 	// Authentication validations
 	log.Println("Checking if the user is a valid user")
-	library.GetApi(objects.Authentication, false, "", 0)
+	_, err := library.GetApi(objects.Authentication, false, "", 0)
+	if err != nil {return err}
 
 	// Product list
-	productJson := extract_product()
+	productJson, err := extract_product()
+	if err != nil {return err}
 
 	// Release list
 	releaseJson, err := extract_release(productJson)
-	methods.Fatal_handler(err)
+	if err != nil {return err}
 
 	// What is user's choice
 	choice, choice_url, err := show_available_version(releaseJson)
-	methods.Error_handler(err)
+	if err != nil {return err}
 
 	// Get all the files under that version
-	versionFileJson, _ := extract_downloadURL(choice, choice_url)
+	versionFileJson, err := extract_downloadURL(choice, choice_url)
+	if err != nil {return err}
 
 	// The users choice to what to download from that version
-	which_product(versionFileJson)
+	err = which_product(versionFileJson)
+	if err != nil {return err}
 
 	// If we didn't find the database File, then fall back to interactive mode.
 	if (arguments.RequestedDownloadProduct == "gpdb" || arguments.RequestedDownloadProduct == "gpcc") && objects.ProductFileURL == "" {
 		log.Warn("Couldn't find binaries for GPDB version \"" + choice + "\", failing back to interactive mode...")
 		arguments.RequestedDownloadProduct = "gpextras"
 		which_product(versionFileJson)
-	} else { // Extract the filename and the size of the file
-		extract_filename_and_size(objects.ProductFileURL)
 	}
+
+	// Extract the filename and the size of the file
+	err = extract_filename_and_size(objects.ProductFileURL)
+	if err != nil {return err}
 
 	// Download the version
 	log.Println("Starting downloading of file: " + objects.ProductFileName)
 	if objects.DownloadURL != "" {
-		library.GetApi(objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
+		fmt.Println(objects.DownloadURL)
+		_, err := library.GetApi(objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
+		if err != nil {return err}
 	} else {
-		log.Fatal("Download URL is blank, cannot download the product.")
+		return errors.New("Download URL is blank, cannot download the product.")
 	}
 
+	return nil
 }

@@ -11,33 +11,33 @@ import (
 
 import (
 	"../../core/arguments"
-	"../../core/methods"
+	"errors"
 )
 
 // Provides all the files in the directory
-func ListFilesInDir(dest string) []string {
+func ListFilesInDir(dest string) ([]string, error) {
 	log.Println("Listing all the files in the download directory: " + dest)
 	files, err := filepath.Glob(dest + "*")
-	methods.Fatal_handler(err)
-	return files
+	if err != nil { return files, err }
+	return files, nil
 }
 
 
 // Find the file that matches the search string
-func GetBinaryOfMatchingVersion(files []string) string {
+func GetBinaryOfMatchingVersion(files []string, version string) (string, error) {
 
 	// Loop through all the files and see if we can find a binaries that matches with the version
 	log.Println("Checking if there is binaries that matches the version to install: " + arguments.RequestedInstallVersion)
 	for _, f := range files {
-		pattern := "greenplum.*" + arguments.RequestedInstallVersion
+		pattern := "greenplum.*" + version
 		matched, _ := regexp.MatchString(pattern, f)
 
 		// If we find a match then return the file name
 		if matched {
-			return f
+			return f, nil
 		}
 	}
-	return ""
+	return "", errors.New("Unable to find any file that matches the version: " + version )
 }
 
 // Unzip the provided file.

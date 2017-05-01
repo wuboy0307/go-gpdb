@@ -79,18 +79,18 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 	// Verify there is a token on config file
 	if methods.IsValueEmpty(arguments.EnvYAML.Download.ApiToken) {
-		methods.Fatal_handler(errors.New("Cannot find value for \"API_TOKEN\", check \"config.yml\""))
+		return []byte(""), errors.New("Cannot find value for \"API_TOKEN\", check \"config.yml\"")
 	} else {
 		req.Header.Set("Authorization", "Token " + arguments.EnvYAML.Download.ApiToken)
 	}
 
 	// Handle the request
 	resp, err := http.DefaultClient.Do(req)
-	methods.Fatal_handler(err)
+	if err != nil {return []byte(""), err}
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {
-		methods.Fatal_handler(errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")"))
+		if err != nil {return []byte(""), errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")")}
 	}
 
 	// Close the body once its done
@@ -107,23 +107,23 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 		// Create th file
 		out, err := os.Create(filename)
+		if err != nil {return []byte(""), err}
 
 		// Initalize progress bar
 		done := make(chan int64)
 		go PrintDownloadPercent(done, filename, int64(size))
-		methods.Fatal_handler(err)
 		defer out.Close()
 
 		// Start Downloading
 		n, err := io.Copy(out, resp.Body)
-		methods.Fatal_handler(err)
+		if err != nil {return []byte(""), err}
 		done <- n
 	}
 
 	// Read the json
 	bodyText, err := ioutil.ReadAll(resp.Body)
-	methods.Fatal_handler(err)
-	return bodyText, err
+	if err != nil {return []byte(""), err}
+	return bodyText, nil
 }
 
 // Ask user what is the choice from the list provided.

@@ -7,7 +7,7 @@ import (
 )
 
 
-func Install() {
+func Install() error {
 
 	// If the install is called from download command the set default values
 	if !methods.IsValueEmpty(arguments.RequestedDownloadVersion) {
@@ -15,6 +15,9 @@ func Install() {
 	}
 
 	// Unzip the binaries, if its file is zipped
-	UnzipBinary()
+	err := UnzipBinary()
+	if err != nil { return err }
+
+	return nil
 
 }

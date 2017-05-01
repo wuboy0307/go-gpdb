@@ -11,6 +11,7 @@ import (
 
 import (
 	"./pkg/core/arguments"
+	"./pkg/core/methods"
 )
 
 func main() {
@@ -29,13 +30,15 @@ func main() {
 	// Run Program based on what option is specified
 	switch arguments.ArgOption {
 	case "download":                                                // Run Download
-		download.Download()
+		err := download.Download()
+		methods.Fatal_handler(err)
 		if arguments.InstallAfterDownload {
 			arguments.ArgOption = "install"
 			main()
 		}
 	case "install":                                                 // Run Install
-		install.Install()
+		err := install.Install()
+		methods.Fatal_handler(err)
 	case "remove":                                                  // Run Remove
 		log.Println("Run Remove")
 	case "env":                                                     // Run env
