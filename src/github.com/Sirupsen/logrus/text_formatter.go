@@ -132,11 +132,11 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []strin
 	levelText := strings.ToUpper(entry.Level.String())
 
 	if f.DisableTimestamp {
-		fmt.Fprintf(b, "\x1b[0m:-\x1b[%dm%s\x1b\x1b[0m:-%-44s ", levelColor, levelText, entry.Message)
+		fmt.Fprintf(b, "\x1b[0m:-\x1b[%dm%s\x1b[0m:-%-44s ", levelColor, levelText, entry.Message)
 	} else if !f.FullTimestamp {
-		fmt.Fprintf(b, "\x1b[0m%04d:-\x1b[%dm%s\x1b\x1b[0m:-%-44s ", int(entry.Time.Sub(baseTimestamp)/time.Second), levelColor, levelText, entry.Message)
+		fmt.Fprintf(b, "\x1b[0m%04d:-\x1b[%dm%s\x1b[0m:-%-44s ", int(entry.Time.Sub(baseTimestamp)/time.Second), levelColor, levelText, entry.Message)
 	} else {
-		fmt.Fprintf(b, "\x1b[0m%s:-\x1b[%dm%s\x1b\x1b[0m:-%-44s ", entry.Time.Format(timestampFormat), levelColor, levelText,  entry.Message)
+		fmt.Fprintf(b, "\x1b[0m%s:-\x1b[%dm%s\x1b[0m:-%-44s ", entry.Time.Format(timestampFormat), levelColor, levelText,  entry.Message)
 	}
 	for _, k := range keys {
 		v := entry.Data[k]

@@ -38,23 +38,43 @@ func CreateDir() {
 		arguments.EnvYAML.Install.EnvDir = "/env/"
 	}
 
+	// Uninstall Directory
+	if methods.IsValueEmpty(arguments.EnvYAML.Install.UnistallDir) {
+		log.Warn("UNINTSALL_DIR parameter missing in the config file, setting to default")
+		arguments.EnvYAML.Install.UnistallDir = "/uninstall/"
+	}
+
 	// Check if the directory exists, else create one.
 	base_dir := arguments.EnvYAML.Core.BaseDir + arguments.EnvYAML.Core.AppName
 
 	// Download the files to
 	arguments.DownloadDir =  base_dir + arguments.EnvYAML.Download.DownloadDir
-	dl_bool, _ := methods.DoesDirexists(arguments.DownloadDir)
+	dl_bool, err := methods.DoesFileOrDirExists(arguments.DownloadDir)
+	methods.Fatal_handler(err)
 	if !dl_bool {
 		log.Warn("Directory \""+ arguments.DownloadDir + "\" does not exists, creating one")
-		os.MkdirAll(arguments.DownloadDir, 0777)
+		err:= os.MkdirAll(arguments.DownloadDir, 0755)
+		methods.Fatal_handler(err)
 	}
 
 	// Environment location
 	arguments.EnvFileDir = base_dir + arguments.EnvYAML.Install.EnvDir
-	env_bool, _ := methods.DoesDirexists(arguments.EnvFileDir)
+	env_bool, err := methods.DoesFileOrDirExists(arguments.EnvFileDir)
+	methods.Fatal_handler(err)
 	if !env_bool {
 		log.Warn("Directory \""+ arguments.EnvFileDir + "\" does not exists, creating one")
-		os.MkdirAll(arguments.EnvFileDir, 0777)
+		err := os.MkdirAll(arguments.EnvFileDir, 0755)
+		methods.Fatal_handler(err)
+	}
+
+	// Environment location
+	arguments.UnistallDir = base_dir + arguments.EnvYAML.Install.UnistallDir
+	uninstall_bool, err := methods.DoesFileOrDirExists(arguments.UnistallDir)
+	methods.Fatal_handler(err)
+	if !uninstall_bool {
+		log.Warn("Directory \""+ arguments.UnistallDir + "\" does not exists, creating one")
+		err := os.MkdirAll(arguments.UnistallDir, 0755)
+		methods.Fatal_handler(err)
 	}
 }
 
@@ -66,7 +86,6 @@ func Config() {
 	methods.Fatal_handler(err)
 	yaml.Unmarshal(source, &arguments.EnvYAML)
 
-	// Creating Directory
+	// Creating Directory needed for the program
 	CreateDir()
-
 }

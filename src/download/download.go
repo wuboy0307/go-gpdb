@@ -248,7 +248,7 @@ func Download() {
 	}
 
 	// Download the version
-	log.Println("Starting download of file: " + objects.ProductFileName)
+	log.Println("Starting downloading of file: " + objects.ProductFileName)
 	if objects.DownloadURL != "" {
 		library.GetApi(objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
 	} else {

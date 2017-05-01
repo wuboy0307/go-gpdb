@@ -56,6 +56,7 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 		// Download is completed, time to terminate
 		if stop {
 			log.Println("Downloading completed ....")
+			log.Println("Downloaded file available at: " + path)
 			break
 		}
 

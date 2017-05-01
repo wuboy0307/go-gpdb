@@ -18,6 +18,7 @@ type downloadType struct {
 
 type installType struct {
 	EnvDir string `yaml:"ENV_DIR"`
+	UnistallDir string `yaml:"UNINTSALL_DIR"`
 	MasterDataDirectory string `yaml:"MASTER_DATA_DIRECTORY"`
 	SegmentDataDirectory string `yaml:"SEGMENT_DATA_DIRECTORY"`
 	TotalSegments int32 `yaml:"TOTAL_SEGMENT"`
