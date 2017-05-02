@@ -7,11 +7,11 @@ import (
 	log "../../core/logger"
 	"regexp"
 	"archive/zip"
+	"errors"
 )
 
 import (
 	"../../core/arguments"
-	"errors"
 )
 
 // Provides all the files in the directory

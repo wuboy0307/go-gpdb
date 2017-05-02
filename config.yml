@@ -1,9 +1,10 @@
 ---
 CORE:
   BASE_DIR: /home/gpadmin/                                #Make sure the directory name ends with "/"
+  TEMP_DIR: /temp/                                        #Make sure the directory name ends with "/"
   APPLICATION_NAME: gpdbinstall
 DOWNLOAD:
-  API_TOKEN: <API TOKEN>
+  API_TOKEN: <API Token>
   DOWNLOAD_DIR: /download/                                #Make sure the directory name ends with "/"
 INSTALL:
   ENV_DIR: /env/                                          #Make sure the directory name ends with "/"

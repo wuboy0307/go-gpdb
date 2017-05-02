@@ -258,7 +258,6 @@ func Download() error {
 	// Download the version
 	log.Println("Starting downloading of file: " + objects.ProductFileName)
 	if objects.DownloadURL != "" {
-		fmt.Println(objects.DownloadURL)
 		_, err := library.GetApi(objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
 		if err != nil {return err}
 	} else {

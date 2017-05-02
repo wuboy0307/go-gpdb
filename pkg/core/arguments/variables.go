@@ -5,6 +5,7 @@ var ArgOption string
 
 // Enironment
 var EnvYAML EnvObjects
+var TempDir string
 var DownloadDir string
 var EnvFileDir string
 var UninstallDir string

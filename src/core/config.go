@@ -26,6 +26,12 @@ func CreateDir() error {
 		arguments.EnvYAML.Core.AppName = "gpdbinstall"
 	}
 
+	// Temp Directory
+	if methods.IsValueEmpty(arguments.EnvYAML.Core.TempDir) {
+		log.Warn("TEMP_DIR parameter missing in the config file, setting to default")
+		arguments.EnvYAML.Core.TempDir = "/temp/"
+	}
+
 	// Download Directory
 	if methods.IsValueEmpty(arguments.EnvYAML.Download.DownloadDir) {
 		log.Warn("DOWNLOAD_DIR parameter missing in the config file, setting to default")
@@ -46,6 +52,16 @@ func CreateDir() error {
 
 	// Check if the directory exists, else create one.
 	base_dir := arguments.EnvYAML.Core.BaseDir + arguments.EnvYAML.Core.AppName
+
+	// Temp the files to
+	arguments.TempDir =  base_dir + arguments.EnvYAML.Core.TempDir
+	tmp_bool, err := methods.DoesFileOrDirExists(arguments.TempDir)
+	if err != nil {return err}
+	if !tmp_bool {
+		log.Warn("Directory \""+ arguments.TempDir + "\" does not exists, creating one")
+		err:= os.MkdirAll(arguments.TempDir, 0755)
+		if err != nil {return err}
+	}
 
 	// Download the files to
 	arguments.DownloadDir =  base_dir + arguments.EnvYAML.Download.DownloadDir

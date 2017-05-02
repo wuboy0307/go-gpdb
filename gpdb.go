@@ -44,7 +44,7 @@ func main() {
 
 		case "install":
 			// Run Install
-			err := install.Install()
+			err := install.InstallSingleNodeGPDB()
 			methods.Fatal_handler(err)
 		case "remove":
 			// Run remove

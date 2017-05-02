@@ -8,6 +8,7 @@ type EnvObjects struct {
 
 type coreType struct {
 	BaseDir string `yaml:"BASE_DIR"`
+	TempDir string `yaml:"TEMP_DIR"`
 	AppName string `yaml:"APPLICATION_NAME"`
 }
 
