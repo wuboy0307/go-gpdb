@@ -12,6 +12,7 @@ import (
 )
 
 
+// Build executable shell script
 func BuildExecutableBashScript (filename string, executable_filename string, args []string) error {
 
 	log.Println("Starting program to build executable script to install the binaries")
@@ -39,6 +40,8 @@ func BuildExecutableBashScript (filename string, executable_filename string, arg
 	return nil
 }
 
+
+// Execute shell script when called
 func ExecuteBinaries(binary_file string, bashfilename string, script_options []string) error {
 
 	// Build a quick shell script to install binaries
@@ -53,7 +56,7 @@ func ExecuteBinaries(binary_file string, bashfilename string, script_options []s
 	if err != nil { return err }
 
 	// Execute the installer script
-	log.Println("Executing the bash script : "+ filename )
+	log.Println("Executing the bash script: "+ filename )
 	_, err = exec.Command("/bin/sh", filename).Output()
 	if err != nil { return err}
 
@@ -65,6 +68,7 @@ func ExecuteBinaries(binary_file string, bashfilename string, script_options []s
 }
 
 
+// Cleanup the temp files once done
 func CleanupTempFile (filename string) error {
 
 	// Remove any tempfile

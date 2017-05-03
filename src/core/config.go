@@ -50,6 +50,12 @@ func CreateDir() error {
 		arguments.EnvYAML.Install.UnistallDir = "/uninstall/"
 	}
 
+	// Future Reference Directory
+	if methods.IsValueEmpty(arguments.EnvYAML.Install.FutureRef) {
+		log.Warn("UNINTSALL_DIR parameter missing in the config file, setting to default")
+		arguments.EnvYAML.Install.FutureRef = "/future_reference/"
+	}
+
 	// Check if the directory exists, else create one.
 	base_dir := arguments.EnvYAML.Core.BaseDir + arguments.EnvYAML.Core.AppName
 
@@ -83,13 +89,23 @@ func CreateDir() error {
 		if err != nil {return err}
 	}
 
-	// Environment location
+	// Uninstall location
 	arguments.UninstallDir = base_dir + arguments.EnvYAML.Install.UnistallDir
 	uninstall_bool, err := methods.DoesFileOrDirExists(arguments.UninstallDir)
 	if err != nil {return err}
 	if !uninstall_bool {
 		log.Warn("Directory \""+ arguments.UninstallDir + "\" does not exists, creating one")
 		err := os.MkdirAll(arguments.UninstallDir, 0755)
+		if err != nil {return err}
+	}
+
+	// Future Reference location
+	arguments.FutureRefDir = base_dir + arguments.EnvYAML.Install.FutureRef
+	futureref_bool, err := methods.DoesFileOrDirExists(arguments.FutureRefDir)
+	if err != nil {return err}
+	if !futureref_bool {
+		log.Warn("Directory \""+ arguments.FutureRefDir + "\" does not exists, creating one")
+		err := os.MkdirAll(arguments.FutureRefDir, 0755)
 		if err != nil {return err}
 	}
 

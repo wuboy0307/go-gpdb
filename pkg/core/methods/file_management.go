@@ -3,7 +3,6 @@ package methods
 import (
 	"os"
 	"io"
-	"fmt"
 )
 
 func CreateFile(path string) error {
@@ -20,7 +19,7 @@ func CreateFile(path string) error {
 	return nil
 }
 
-func WriteFile(path string, args []string) error {
+func  WriteFile(path string, args []string) error {
 	// open file using READ & WRITE permission
 	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
 	if err != nil { return err}
@@ -40,10 +39,10 @@ func WriteFile(path string, args []string) error {
 	return nil
 }
 
-func ReadFile(path string) error {
+func ReadFile(path string) ([]byte, error) {
 	// re-open file
 	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
-	if err != nil { return err}
+	if err != nil { return []byte(""), err}
 	defer file.Close()
 
 	// read file
@@ -51,16 +50,15 @@ func ReadFile(path string) error {
 	for {
 		n, err := file.Read(text)
 		if err != io.EOF {
-			if err != nil { return err}
+			if err != nil { return []byte(""), err}
 		}
 		if n == 0 {
 			break
 		}
 	}
-	fmt.Println(string(text))
-	if err != nil { return err}
+	if err != nil { return []byte(""), err }
 
-	return nil
+	return text, nil
 }
 
 func DeleteFile(path string) error {

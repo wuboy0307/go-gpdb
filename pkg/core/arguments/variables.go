@@ -9,6 +9,7 @@ var TempDir string
 var DownloadDir string
 var EnvFileDir string
 var UninstallDir string
+var FutureRefDir string
 
 // Download
 var AcceptedDownloadProduct = []string{"gpdb", "gpcc", "gpextras"}

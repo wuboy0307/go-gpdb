@@ -20,7 +20,11 @@ type downloadType struct {
 type installType struct {
 	EnvDir string `yaml:"ENV_DIR"`
 	UnistallDir string `yaml:"UNINTSALL_DIR"`
+	FutureRef string `yaml:"FUTUREREF_DIR"`
+	MasterHost string `yaml:"MASTER_HOST"`
+	MasterUser string `yaml:"MASTER_USER"`
+	MasterPass string `yaml:"MASTER_PASS"`
 	MasterDataDirectory string `yaml:"MASTER_DATA_DIRECTORY"`
 	SegmentDataDirectory string `yaml:"SEGMENT_DATA_DIRECTORY"`
-	TotalSegments int32 `yaml:"TOTAL_SEGMENT"`
+	TotalSegments int `yaml:"TOTAL_SEGMENT"`
 }
