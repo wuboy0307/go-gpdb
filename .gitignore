@@ -33,4 +33,4 @@ output.txt
 conf
 
 # Ignore Config file
-./config.yml
+config.yml

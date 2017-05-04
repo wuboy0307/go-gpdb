@@ -236,6 +236,9 @@ func Download() error {
 	choice, choice_url, err := show_available_version(releaseJson)
 	if err != nil {return err}
 
+	// Set the of Install if the user has asked to install after download and not version information is available
+	if arguments.InstallAfterDownload { arguments.RequestedInstallVersion = choice }
+
 	// Get all the files under that version
 	versionFileJson, err := extract_downloadURL(choice, choice_url)
 	if err != nil {return err}
