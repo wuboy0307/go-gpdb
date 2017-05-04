@@ -9,7 +9,7 @@ DOWNLOAD:
 INSTALL:
   ENV_DIR: /env/                                          # Make sure the directory name ends with "/"
   UNINTSALL_DIR: /uninstall/                              # Make sure the directory name ends with "/"
-  FUTUREREF_DIR: /future_reference/                       # Make sure the directory name ends with "/"
+  FUTUREREF_DIR: /future_reference/                              # Make sure the directory name ends with "/"
   MASTER_HOST: gpdbsne                                    # Hostname of Master
   MASTER_USER: gpadmin                                    # User that will install GPDB s/w usually "gpadmin"
   MASTER_PASS: changeme                                   # Password of MASTER_USER user

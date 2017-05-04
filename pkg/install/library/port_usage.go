@@ -76,16 +76,18 @@ func StoreLastUsedPort() error {
 
 	// Fully qualified filename
 	FurtureRefFile := arguments.FutureRefDir + objects.PortBaseFileName
-	log.Println("Storing the last used ports for this installation at:" + FurtureRefFile)
+	log.Println("Storing the last used ports for this installation at: " + FurtureRefFile)
 
 	// Delete the file if already exists
 	err := methods.DeleteFile(FurtureRefFile)
 	if err != nil {return nil}
+	err = methods.CreateFile(FurtureRefFile)
+	if err != nil {return nil}
 
 	// Contents to write to the file
 	var FutureContents []string
-	FutureContents = append(FutureContents, "PORT_BASE: " + strconv.Itoa(objects.GpInitSystemConfig.PortBase))
-	FutureContents = append(FutureContents, "MASTER_PORT: " + strconv.Itoa(objects.GpInitSystemConfig.MasterPort))
+	FutureContents = append(FutureContents, "PORT_BASE: " + strconv.Itoa(objects.GpInitSystemConfig.PortBase + arguments.EnvYAML.Install.TotalSegments))
+	FutureContents = append(FutureContents, "MASTER_PORT: " + strconv.Itoa(objects.GpInitSystemConfig.MasterPort + 1))
 
 	// Write to the file
 	err = methods.WriteFile(FurtureRefFile, FutureContents)

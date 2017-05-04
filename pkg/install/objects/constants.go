@@ -11,5 +11,5 @@ const PORT_BASE = 30000
 const MASTER_PORT = 3000
 
 // gpinitsystem temp file
-const GpInitSystemConfigFile = "gpinitsystemconfig.txt"
+const GpInitSystemConfigFile = "gpinitsystemconfig"
 const MachineFileList = "hostfile"

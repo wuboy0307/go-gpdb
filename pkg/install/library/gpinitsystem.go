@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"os/exec"
 	"os"
+	"strings"
 )
 
 
@@ -19,7 +20,8 @@ func BuildGpInitSystemConfig(t string) error {
 	objects.GpInitSystemConfig.ArrayName = "gp_" + arguments.RequestedInstallVersion + "_" + t
 	objects.GpInitSystemConfig.SegPrefix = "gp_" + arguments.RequestedInstallVersion + "_" + t
 	objects.GpInitSystemConfig.DBName = objects.DBName
-	objects.GpInitSystemConfig.MasterDir = arguments.EnvYAML.Install.MasterDataDirectory
+	objects.GpInitSystemConfig.MasterDir = strings.TrimSuffix(arguments.EnvYAML.Install.MasterDataDirectory, "/")
+	arguments.EnvYAML.Install.SegmentDataDirectory = strings.TrimSuffix(arguments.EnvYAML.Install.SegmentDataDirectory, "/")
 
 	// Store the hostname of the hostfile
 	objects.MasterHostFileList = arguments.TempDir + objects.MachineFileList
@@ -68,10 +70,10 @@ func BuildGpInitSystemConfig(t string) error {
 	objects.GpInitSystemConfig.MasterPort = mp
 
 	// Build gpinitsystem config file
-	gpInitSystemConfigDir := arguments.TempDir + objects.GpInitSystemConfigFile
-	log.Println("Creating the gpinitsystem config file at: " + gpInitSystemConfigDir)
-	_ = methods.DeleteFile(gpInitSystemConfigDir)
-	err = methods.CreateFile(gpInitSystemConfigDir)
+	objects.GpInitSystemConfigDir = arguments.TempDir + objects.GpInitSystemConfigFile + "_" + arguments.RequestedInstallVersion + "_" + t
+	log.Println("Creating the gpinitsystem config file at: " + objects.GpInitSystemConfigDir)
+	_ = methods.DeleteFile(objects.GpInitSystemConfigDir)
+	err = methods.CreateFile(objects.GpInitSystemConfigDir)
 	if err != nil { return err }
 
 	// Write the below content to config file
@@ -89,7 +91,7 @@ func BuildGpInitSystemConfig(t string) error {
 		primaryDir = primaryDir + " "+ arguments.EnvYAML.Install.SegmentDataDirectory
 	}
 	ToWrite = append(ToWrite,"declare -a DATA_DIRECTORY=(" + primaryDir + " )")
-	err = methods.WriteFile(gpInitSystemConfigDir, ToWrite)
+	err = methods.WriteFile(objects.GpInitSystemConfigDir, ToWrite)
 	if err != nil { return err }
 
 	return nil
@@ -101,8 +103,7 @@ func ExecuteGpInitSystem() error {
 	log.Println("Executing gpinitsystem to install GPDB software")
 
 	// Initalize the command
-	gpInitSystemConfigDir := arguments.TempDir + objects.GpInitSystemConfigFile
-	cmdOut := exec.Command("gpinitsystem", "-c", gpInitSystemConfigDir, "-h", objects.MasterHostFileList, "-a")
+	cmdOut := exec.Command("gpinitsystem", "-c", objects.GpInitSystemConfigDir , "-h", objects.MasterHostFileList, "-a")
 
 	// Attach the os output from the screen
 	cmdOut.Stdout = os.Stdout

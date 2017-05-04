@@ -48,7 +48,7 @@ func DirValidator(master string, segment string) error {
 }
 
 // Check if the provided hostnames are valid
-func CheckHostnameIsValid(binary_loc string) error {
+func CheckHostnameIsValid() error {
 
 	// Check Master host parameter is set
 	if methods.IsValueEmpty(arguments.EnvYAML.Install.MasterHost) {
@@ -65,7 +65,7 @@ func CheckHostnameIsValid(binary_loc string) error {
 	if err != nil { return err }
 
 	// Enable passwordless login
-	err = ExecuteGpsshExkey(binary_loc)
+	err = ExecuteGpsshExkey()
 	if err != nil { return err }
 
 	return nil
@@ -73,7 +73,11 @@ func CheckHostnameIsValid(binary_loc string) error {
 
 
 // Run keyless access to the server
-func ExecuteGpsshExkey(binary_loc string) error {
+func ExecuteGpsshExkey() error {
+
+	// Source GPDB PATH
+	err := SourceGPDBPath()
+	if err != nil { return err }
 
 	// Checking if the username and password parameters are passed
 	if methods.IsValueEmpty(arguments.EnvYAML.Install.MasterUser) {
@@ -85,24 +89,31 @@ func ExecuteGpsshExkey(binary_loc string) error {
 
 	// Execute gpssh script to enable keyless access
 	log.Println("Running gpssh-exkeys to enable keyless access on this server")
-	cmd := exec.Command("gpssh-exkeys", "-h", objects.GpInitSystemConfig.MasterHostName)
-	err := cmd.Run()
+	cmd := exec.Command(os.Getenv("GPHOME") + "/bin/gpssh-exkeys", "-h", objects.GpInitSystemConfig.MasterHostName)
+	err = cmd.Start()
+	if err != nil { return err }
+	err = cmd.Wait()
 	if err != nil { return err }
 
 	return nil
 }
 
 // Source greenplum path
-func SourceGPDBPath(gphome_loc string) error {
+func SourceGPDBPath() error {
 
-	gphome_loc = gphome_loc + "/greenplum_path.sh"
-	log.Println("Sourcing the greenplum path: " + gphome_loc)
-
-	// Source the file
-	cmdOut := exec.Command("cat", gphome_loc)
-	err :=  cmdOut.Run()
-	cmdOut.Wait()
-	if err != nil { return err }
+	// Setting up greenplum path
+	err := os.Setenv("GPHOME", objects.BinaryInstallLocation)
+	if err != nil {return err}
+	err = os.Setenv("PYTHONPATH", os.Getenv("GPHOME") + "/lib/python")
+	if err != nil {return err}
+	err = os.Setenv("PYTHONHOME", os.Getenv("GPHOME") + "/ext/python")
+	if err != nil {return err}
+	err = os.Setenv("PATH", os.Getenv("GPHOME") + "/bin:" + os.Getenv("PYTHONHOME") + "/bin:" +  os.Getenv("PATH"))
+	if err != nil {return err}
+	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME") + "/lib:" + os.Getenv("PYTHONHOME") + "/lib:" + os.Getenv("LD_LIBRARY_PATH"))
+	if err != nil {return err}
+	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME") + "/etc/openssl.cnf")
+	if err != nil {return err}
 
 	return  nil
 }
