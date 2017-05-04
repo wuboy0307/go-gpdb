@@ -22,7 +22,7 @@ func CreateEnvFile(t string) error {
 	// Build arguments to write
 	var EnvFileContents []string
 	EnvFileContents = append(EnvFileContents, "source " + objects.BinaryInstallLocation + "/greenplum_path.sh")
-	EnvFileContents = append(EnvFileContents, "export MASTER_DATA_DIRECTORY=" + objects.GpInitSystemConfig.MasterDir + objects.GpInitSystemConfig.ArrayName + "-1")
+	EnvFileContents = append(EnvFileContents, "export MASTER_DATA_DIRECTORY=" + objects.GpInitSystemConfig.MasterDir + "/" + objects.GpInitSystemConfig.ArrayName + "-1")
 	EnvFileContents = append(EnvFileContents, "export PGPORT=" + strconv.Itoa(objects.GpInitSystemConfig.MasterPort))
 	EnvFileContents = append(EnvFileContents, "export PGDATABASE=" + objects.GpInitSystemConfig.DBName)
 
