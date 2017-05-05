@@ -20,12 +20,13 @@ func InstallSingleNodeGPDB() error {
 	err := library.DirValidator(arguments.EnvYAML.Install.MasterDataDirectory, arguments.EnvYAML.Install.SegmentDataDirectory)
 	if err != nil { return err }
 
+	// Check if there is already a previous version of the same version
+	err = library.PrevEnvFile()
+	if err != nil { return err }
+
 	// Unzip the binaries, if its file is zipped
 	binary_file, err := UnzipBinary()
 	if err != nil { return err }
-
-	// Check if there is already a previous version of the same version
-
 
 	// execute the binaries.
 	objects.BinaryInstallLocation = "/usr/local/greenplum-db-" + arguments.RequestedInstallVersion
@@ -75,6 +76,8 @@ func InstallSingleNodeGPDB() error {
 	if err != nil { return err }
 
 	// Request the source the environment file to start using the environment
+	err = library.SetVersionEnv(objects.EnvFileName)
+	if err != nil { return err }
 
 	log.Println("Installation of GPDB software is completed successfully")
 

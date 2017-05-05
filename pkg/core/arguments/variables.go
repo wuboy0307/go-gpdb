@@ -21,3 +21,6 @@ var InstallAfterDownload bool
 var AcceptedInstallProduct = []string{"gpdb", "gpcc"}
 var RequestedInstallProduct string
 var RequestedInstallVersion string
+
+// Core
+var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }

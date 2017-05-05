@@ -34,3 +34,5 @@ conf
 
 # Ignore Config file
 config.yml
+bin/
+pkg/darwin_amd64/
