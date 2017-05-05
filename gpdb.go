@@ -43,9 +43,14 @@ func main() {
 			}
 
 		case "install":
-			// Run Install
-			err := install.InstallSingleNodeGPDB()
-			methods.Fatal_handler(err)
+			// If the product to install is GPDB then call the GPDB installation program
+			if arguments.RequestedInstallProduct == "gpdb" { // Run Install GPDB
+				err := install.InstallSingleNodeGPDB()
+				methods.Fatal_handler(err)
+			} else if arguments.RequestedInstallProduct == "gpcc" { // else GPCC installer
+				err := install.InstalSingleNodeGPCC()
+				methods.Fatal_handler(err)
+			}
 		case "remove":
 			// Run remove
 			log.Println("Run Remove")

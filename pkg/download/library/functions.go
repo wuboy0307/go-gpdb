@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"errors"
-	"bufio"
 	"strconv"
 	"fmt"
 	log "../../core/logger"
@@ -16,7 +15,6 @@ import (
 import (
 	"../../core/methods"
 	"../../core/arguments"
-	"../objects"
 )
 
 // Progress of download
@@ -126,33 +124,3 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 	return bodyText, nil
 }
 
-// Ask user what is the choice from the list provided.
-func Prompt_choice() int {
-
-	var choice_entered int
-	fmt.Print("\nEnter and choose version that you want to download from the above list (eg.s 1 or 2 etc): ")
-
-	// Start the new scanner to get the user input
-	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
-
-		// The choice entered
-		choice_entered, err := strconv.Atoi(input.Text())
-
-		// If user enters a string instead of a integer then ask to re-enter
-		if err != nil {
-			fmt.Println("Incorrect value: Please choose a integer (eg.s 1 or 2 etc) from the above list")
-			return Prompt_choice()
-		}
-
-		// If its a valid value move on
-		if choice_entered > 0 && choice_entered <= objects.TotalOptions {
-			return choice_entered
-		} else { // Else ask for re-entering the selection
-			fmt.Println("Invalid Choice: The choice you entered is not on the list above, try again.")
-			return Prompt_choice()
-		}
-	}
-
-	return choice_entered
-}

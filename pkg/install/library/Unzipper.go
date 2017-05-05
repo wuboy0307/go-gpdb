@@ -10,10 +10,6 @@ import (
 	"errors"
 )
 
-import (
-	"../../core/arguments"
-)
-
 // Provides all the files in the directory
 func ListFilesInDir(dest string) ([]string, error) {
 	log.Println("Listing all the files in the download directory: " + dest)
@@ -27,7 +23,7 @@ func ListFilesInDir(dest string) ([]string, error) {
 func GetBinaryOfMatchingVersion(files []string, version string) (string, error) {
 
 	// Loop through all the files and see if we can find a binaries that matches with the version
-	log.Println("Checking if there is binaries that matches the version to install: " + arguments.RequestedInstallVersion)
+	log.Println("Checking if there is binaries that matches the version to install: " + version)
 	for _, f := range files {
 		pattern := "greenplum.*" + version
 		matched, _ := regexp.MatchString(pattern, f)

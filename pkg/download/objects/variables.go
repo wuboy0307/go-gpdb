@@ -1,8 +1,5 @@
 package objects
 
-// Core
-var TotalOptions int
-
 // Products
 var ProductJsonType ProductObjects
 

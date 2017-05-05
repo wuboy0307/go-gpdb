@@ -9,6 +9,7 @@ import (
 	log "../../pkg/core/logger"
 )
 
+// GPDB Single Node Installer
 func InstallSingleNodeGPDB() error {
 
 	// If the install is called from download command the set default values
@@ -21,11 +22,11 @@ func InstallSingleNodeGPDB() error {
 	if err != nil { return err }
 
 	// Check if there is already a previous version of the same version
-	err = library.PrevEnvFile()
+	_, err = library.PrevEnvFile("confirm")
 	if err != nil { return err }
 
 	// Unzip the binaries, if its file is zipped
-	binary_file, err := UnzipBinary()
+	binary_file, err := UnzipBinary(arguments.RequestedInstallVersion)
 	if err != nil { return err }
 
 	// execute the binaries.
@@ -79,7 +80,7 @@ func InstallSingleNodeGPDB() error {
 	err = library.SetVersionEnv(objects.EnvFileName)
 	if err != nil { return err }
 
-	log.Println("Installation of GPDB software is completed successfully")
+	log.Println("Installation of GPDB software has been completed successfully")
 
 	return nil
 

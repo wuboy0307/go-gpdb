@@ -9,6 +9,7 @@ import (
 import (
 	"../../pkg/core/arguments"
 	"../../pkg/core/methods"
+	"strings"
 )
 
 // OS Argument Parser
@@ -24,6 +25,7 @@ func ArgParser() {
 	InstallCmd := flag.NewFlagSet("install", flag.ExitOnError)
 	InstallProductFlag := InstallCmd.String("p", "gpdb", "What product do you want to Install [OPTIONS: gpdb, gpcc]?")
 	InstallVersionFlag := InstallCmd.String("v", "", "Which version do you want to Install ?")
+	InstallCCVersionFlag := InstallCmd.String("c", "", "What is the version of GPCC that you can to install (for only -p gpcc) ?")
 
 	// Remove Command Parser
 	RemoveCmd := flag.NewFlagSet("remove", flag.ExitOnError)
@@ -71,7 +73,7 @@ func ArgParser() {
 
 			// If its valid then we are going to store it
 			if methods.Contains(arguments.AcceptedDownloadProduct, *DownloadProductFlag) {
-				arguments.RequestedDownloadProduct = *DownloadProductFlag
+				arguments.RequestedDownloadProduct = strings.ToLower(*DownloadProductFlag)
 			} else { // Else print error to choose the right value
 				fmt.Println("ERROR: Invalid options provided to the argument -p")
 				fmt.Print("Usage of download: \n")
@@ -102,7 +104,7 @@ func ArgParser() {
 		if *InstallProductFlag != "" {
 			// If its valid then we are going to store it
 			if methods.Contains(arguments.AcceptedInstallProduct, *InstallProductFlag) {
-				arguments.RequestedInstallProduct = *InstallProductFlag
+				arguments.RequestedInstallProduct = strings.ToLower(*InstallProductFlag)
 			} else { // Else print error to choose the right value
 				fmt.Println("ERROR: Invalid options provided to the argument -p")
 				fmt.Print("Usage of install: \n")
@@ -115,10 +117,20 @@ func ArgParser() {
 		if *InstallVersionFlag != "" {
 			arguments.RequestedInstallVersion = *InstallVersionFlag
 		} else { // On install this is a required parameter, if not provided then terminate and ask to enter the version
-			fmt.Println("ERROR: Please provide the version of the product that needs to be installed")
+			fmt.Println("ERROR: GPDB Version missing, Please provide the version that needs to be used")
 			fmt.Print("Usage of install: \n")
 			InstallCmd.PrintDefaults()
 			os.Exit(2)
+		}
+
+		// If the request to install is GPCC then check if the cc version is provided
+		if arguments.RequestedInstallProduct == "gpcc" &&  *InstallCCVersionFlag == "" {
+			fmt.Println("ERROR: GPCC Version missing, Please provide the version that need to be installed")
+			fmt.Print("Usage of install: \n")
+			InstallCmd.PrintDefaults()
+			os.Exit(2)
+		} else {
+			arguments.RequestedCCInstallVersion = *InstallCCVersionFlag
 		}
 	}
 

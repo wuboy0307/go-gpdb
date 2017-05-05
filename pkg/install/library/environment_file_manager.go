@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"strings"
 	"fmt"
-	"bufio"
 	"os"
 	"os/exec"
 )
@@ -40,12 +39,12 @@ func CreateEnvFile(t string) error {
 }
 
 // Check if there is any previous installation of the same version
-func PrevEnvFile() error {
+func PrevEnvFile(product string) (string, error) {
 
 	log.Println("Checking if there is previous installation for the version: " + arguments.RequestedInstallVersion)
 	var MatchingFilesInDir []string
 	allfiles, err := ioutil.ReadDir(arguments.EnvFileDir)
-	if err != nil { return err }
+	if err != nil { return "", err }
 	for _, file := range allfiles {
 
 		if strings.Contains(file.Name(), arguments.RequestedInstallVersion) {
@@ -60,48 +59,82 @@ func PrevEnvFile() error {
 		// Show all the environment files
 		log.Warn("Found matching environment file for the version: " + arguments.RequestedInstallVersion)
 		log.Println("Below are the list of environment file of the version: " + arguments.RequestedInstallVersion + "\n")
-		for _, k := range MatchingFilesInDir {
-			fmt.Printf("%v \n", k)
-		}
-		fmt.Println()
 
-		// Ask for confirmation
-		confirm := YesOrNoConfirmation()
+		// Temp files
+		temp_env_file := arguments.TempDir + "temp_env.sh"
+		temp_env_out_file := arguments.TempDir + "temp_env.out"
 
-		// What was the confirmation
-		if confirm == "y" {  // yes
-			log.Println("Continuing with the installtion of version: " + arguments.RequestedInstallVersion)
-		} else { // no
-			log.Println("Cancelling the installation...")
-			os.Exit(0)
+		// Create those files
+		_ = methods.DeleteFile(temp_env_file)
+		err := methods.CreateFile(temp_env_file)
+		if err != nil { return "", err }
+
+		// Bash script
+		var cmd []string
+		bashCmd :=      "incrementor=1" +
+				";echo -e \"ID\t\t\tEnvironment File\t\t\tMaster Port\t\t\tStatus\"   > " + temp_env_out_file +
+				";echo \"------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
+				";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
+				";do    " +
+				"       source "+arguments.EnvFileDir+"/$line" +
+				"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
+				"       ;retcode=$?" +
+				"       ;if [ \"$retcode\" == \"0\" ]; then" +
+				"               echo -e \"$incrementor\t\t\t$line\t\t\t$PGPORT\t\t\tRUNNING\" >> " + temp_env_out_file +
+				"       ;else" +
+				"               echo -e \"$incrementor\t\t\t$line\t\t\t$PGPORT\t\t\tUNKNOWN/STOPPED/FAILED\"  >> " + temp_env_out_file +
+				"       ;fi" +
+				"       ;incrementor=$((incrementor+1))" +
+				";done"
+		cmd = append(cmd, bashCmd)
+
+		// Copy it to the file
+		_ = methods.WriteFile(temp_env_file, cmd)
+
+		// Execute the script
+		_, err = exec.Command("/bin/sh", temp_env_file).Output()
+		if err != nil { return "", err }
+
+		// Display the output
+		out, _ := ioutil.ReadFile(temp_env_out_file)
+		fmt.Println(string(out))
+
+		// Cleanup the temp files
+		_ = methods.DeleteFile(temp_env_file)
+		_ = methods.DeleteFile(temp_env_out_file)
+
+		// Create a list of the options
+		var envStore []string
+		for _, e := range MatchingFilesInDir {
+			envStore = append(envStore, e)
 		}
+
+		// Now choose the confirmation
+		if product == "confirm" { // if request is to confirm
+			// Ask for confirmation
+			confirm := methods.YesOrNoConfirmation()
+
+			// What was the confirmation
+			if confirm == "y" {  // yes
+				log.Println("Continuing with the installtion of version: " + arguments.RequestedInstallVersion)
+			} else { // no
+				log.Println("Cancelling the installation...")
+				os.Exit(0)
+			}
+		} else { // else choose
+
+			// What is users choice
+			choice := methods.Prompt_choice(len(envStore))
+
+			// return the enviornment file to the main function
+			choosenEnv := envStore[choice-1]
+			return choosenEnv, nil
+
+		}
+
 	}
-	return nil
-}
 
-// Prompt for confirmation
-func YesOrNoConfirmation() string {
-
-	// Start the new scanner to get the user input
-	fmt.Print("You can use \"gpdb env -v <version>\" to set the env, do you wish to continue (Yy/Nn)?: ")
-	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
-
-		// The choice entered
-		choice_entered := input.Text()
-
-		// If its a valid value move on
-		if arguments.YesOrNo[strings.ToLower(choice_entered)] == "y" {  // Is it Yes
-			return choice_entered
-		} else if arguments.YesOrNo[strings.ToLower(choice_entered)] == "n" { // Is it No
-			return choice_entered
-		} else { // Invalid choice, ask to re-enter
-			fmt.Println("Invalid Choice: Please enter Yy/Nn, try again.")
-			return YesOrNoConfirmation()
-		}
-	}
-
-	return ""
+	return "", err
 }
 
 // Set Environment of the shell

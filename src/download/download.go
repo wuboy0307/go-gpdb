@@ -97,10 +97,10 @@ func show_available_version(ReleaseJson objects.ReleaseObjects) (string, string,
 		}
 
 		// Total accepted values that user can enter
-		objects.TotalOptions = len(objects.ReleaseVersion)
+		TotalOptions := len(objects.ReleaseVersion)
 
 		// Ask user for choice
-		users_choice := library.Prompt_choice()
+		users_choice := methods.Prompt_choice(TotalOptions)
 
 		// Selected by the user
 		version_selected = objects.ReleaseOutputMap[objects.ReleaseVersion[users_choice-1]]
@@ -187,8 +187,8 @@ func which_product(versionJson objects.VersionObjects) error {
 		for index, product := range objects.ProductOptions {
 			fmt.Printf("%d: %s\n", index+1, product)
 		}
-		objects.TotalOptions = len(objects.ProductOptions)
-		users_choice := library.Prompt_choice()
+		TotalOptions := len(objects.ProductOptions)
+		users_choice := methods.Prompt_choice(TotalOptions)
 		version_selected_url := objects.ProductOutputMap[objects.ProductOptions[users_choice-1]]
 		objects.ProductFileURL = version_selected_url
 		objects.DownloadURL = version_selected_url + "/download"

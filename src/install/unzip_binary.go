@@ -12,19 +12,19 @@ import (
 	"../../pkg/install/library"
 )
 
-func UnzipBinary() (string, error) {
+func UnzipBinary(version string) (string, error) {
 
 	// List all the files in the download directory
 	all_files, err := library.ListFilesInDir(arguments.DownloadDir)
 	if err != nil { return "", err }
 
 	// Check if any of the file matches to requested version to install
-	binary_file, err := library.GetBinaryOfMatchingVersion(all_files, arguments.RequestedInstallVersion)
+	binary_file, err := library.GetBinaryOfMatchingVersion(all_files, version)
 	if err != nil { return "", err }
 
 	// If we cannot find a match then error out
 	if methods.IsValueEmpty(binary_file) {
-		return "", errors.New("Cannot find any binaries that matches the version: " + arguments.RequestedInstallVersion)
+		return "", errors.New("Cannot find any binaries that matches the version: " + version)
 	}
 
 	// Check if the file is a zip file found or Unzip and do work accordingly
