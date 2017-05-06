@@ -39,6 +39,7 @@ func main() {
 			// set the argument and rerun the main to pick the right choice.
 			if arguments.InstallAfterDownload {
 				arguments.ArgOption = "install"
+				arguments.RequestedInstallProduct = arguments.RequestedDownloadProduct
 				main()
 			}
 

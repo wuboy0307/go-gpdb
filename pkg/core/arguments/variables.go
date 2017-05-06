@@ -15,7 +15,7 @@ var FutureRefDir string
 var AcceptedDownloadProduct = []string{"gpdb", "gpcc", "gpextras"}
 var RequestedDownloadProduct string
 var RequestedDownloadVersion string
-var InstallAfterDownload bool
+var InstallAfterDownload bool = false
 
 // Install
 var AcceptedInstallProduct = []string{"gpdb", "gpcc"}
