@@ -8,5 +8,10 @@ var GpInitSystemConfig GpInitSystemConfigObject
 var MasterHostFileList string
 var BinaryInstallLocation string
 var GpInitSystemConfigDir string
+
+
+// Core
 var EnvFileName string
+var ThisDBMasterPort int
+
 

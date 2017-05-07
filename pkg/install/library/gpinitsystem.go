@@ -107,6 +107,7 @@ func ExecuteGpInitSystem() error {
 
 	// Attach the os output from the screen
 	cmdOut.Stdout = os.Stdout
+	cmdOut.Stderr = os.Stderr
 
 	// Start the program
 	err := cmdOut.Start()

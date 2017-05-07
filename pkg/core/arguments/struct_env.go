@@ -24,6 +24,7 @@ type installType struct {
 	MasterHost string `yaml:"MASTER_HOST"`
 	MasterUser string `yaml:"MASTER_USER"`
 	MasterPass string `yaml:"MASTER_PASS"`
+	GpMonPass string `yaml:"GPMON_PASS"`
 	MasterDataDirectory string `yaml:"MASTER_DATA_DIRECTORY"`
 	SegmentDataDirectory string `yaml:"SEGMENT_DATA_DIRECTORY"`
 	TotalSegments int `yaml:"TOTAL_SEGMENT"`

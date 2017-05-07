@@ -2,7 +2,7 @@ package objects
 
 
 // Install GPDB
-const InstallGPDBBashFileName = "install_gpdb_software.sh"
+const InstallGPDBBashFileName = "install_software.sh"
 const DBName = "YoHabeebi"
 
 // Port Base store house

@@ -44,8 +44,11 @@ func InstallSingleNodeGPDB() error {
 	err = library.BuildGpInitSystemConfig(t)
 	if err != nil { return err }
 
+	// Store the Master Port to the variable
+	objects.ThisDBMasterPort = objects.GpInitSystemConfig.MasterPort
+
 	// Stop any database if any
-	err = library.StopDB()
+	err = library.StopAllDB()
 	if err != nil { return err }
 
 	// Execute gpinitsystem ( For some reason the gpinitsystem produces exit code

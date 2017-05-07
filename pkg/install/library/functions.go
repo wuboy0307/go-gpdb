@@ -117,3 +117,33 @@ func SourceGPDBPath() error {
 
 	return  nil
 }
+
+
+// Execute Bash Script
+func ExecuteBash(filename string, BashScript []string) error {
+
+	// Delete the file if exists, and then create the file
+	_ = methods.DeleteFile(filename)
+	err := methods.CreateFile(filename)
+	if err != nil { return err }
+
+	// Write the script to the file
+	err = methods.WriteFile(filename, BashScript)
+	if err != nil { return err }
+
+	// Execute the script
+	cmd := exec.Command("/bin/sh", filename)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Start()
+	if err != nil { return err }
+	err = cmd.Wait()
+	if err != nil { return err }
+
+	// Cleanup temp files.
+	err = methods.DeleteFile(filename)
+	if err != nil { return err }
+
+	return nil
+
+}

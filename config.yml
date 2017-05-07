@@ -13,6 +13,7 @@ INSTALL:
   MASTER_HOST: gpdbsne                                    # Hostname of Master
   MASTER_USER: gpadmin                                    # User that will install GPDB s/w usually "gpadmin"
   MASTER_PASS: changeme                                   # Password of MASTER_USER user
+  GPMON_PASS: changeme                                    # Password for GPMON
   MASTER_DATA_DIRECTORY: /data/master/                    # Make sure the directory name ends with "/"
   SEGMENT_DATA_DIRECTORY: /data/primary/                  # Make sure the directory name ends with "/"
   TOTAL_SEGMENT: 2                                        # Total Segments to be created

@@ -18,7 +18,6 @@ func BuildExecutableBashScript (filename string, executable_filename string, arg
 	log.Println("Starting program to build executable script to install the binaries")
 
 	// Create the file
-	log.Println("Creating temp bash executable file: "+ filename)
 	err := methods.CreateFile(filename)
 	if err != nil { return err }
 
@@ -33,7 +32,6 @@ func BuildExecutableBashScript (filename string, executable_filename string, arg
 	passArgs = append(passArgs, "EOF")
 
 	// Write to the file
-	log.Println("Building the bash script file: "+ filename)
 	err = methods.WriteFile(filename, passArgs)
 	if err != nil { return err }
 
@@ -61,6 +59,7 @@ func ExecuteBinaries(binary_file string, bashfilename string, script_options []s
 	if err != nil { return err}
 
 	// Cleanup the tempFile
+	log.Println("Cleaning up the file \""+ filename + "\", if found")
 	err = CleanupTempFile(filename)
 	if err != nil { return err}
 
@@ -72,7 +71,6 @@ func ExecuteBinaries(binary_file string, bashfilename string, script_options []s
 func CleanupTempFile (filename string) error {
 
 	// Remove any tempfile
-	log.Println("Cleaning up the file \""+ filename + "\", if found")
 	err := methods.DeleteFile(filename)
 	if err != nil { return err }
 

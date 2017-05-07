@@ -33,7 +33,7 @@ func UnzipBinary(version string) (string, error) {
 		binary_file = strings.Replace(binary_file, ".zip", ".bin", 1)
 		return binary_file, err
 	} else {
-		log.Println("Using GPDB binaries found in the download directory: " + binary_file)
+		log.Println("Using binaries found in the download directory: " + binary_file)
 		return binary_file, nil
 	}
 

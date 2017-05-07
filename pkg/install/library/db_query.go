@@ -17,7 +17,7 @@ func execute_db_query(query_string string, to_write bool, file_name string) ([]b
 	if err != nil { return []byte(""), err}
 
 	// Execute command
-	master_port := strconv.Itoa(objects.GpInitSystemConfig.MasterPort)
+	master_port := strconv.Itoa(objects.ThisDBMasterPort)
 	cmd := exec.Command("psql", "-p", master_port , "-d", "template1", "-Atc", query_string)
 
 	// If request to file, then write to o/p file

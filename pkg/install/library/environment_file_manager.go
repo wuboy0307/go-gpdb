@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+	"errors"
 )
 
 // Create environment file of this installation
@@ -26,7 +28,12 @@ func CreateEnvFile(t string) error {
 
 	// Build arguments to write
 	var EnvFileContents []string
-	EnvFileContents = append(EnvFileContents, "source " + objects.BinaryInstallLocation + "/greenplum_path.sh")
+	EnvFileContents = append(EnvFileContents, "export GPHOME=" + objects.BinaryInstallLocation)
+	EnvFileContents = append(EnvFileContents, "export PYTHONPATH=$GPHOME/lib/python")
+	EnvFileContents = append(EnvFileContents, "export PYTHONHOME=$GPHOME/ext/python")
+	EnvFileContents = append(EnvFileContents, "export PATH=$GPHOME/bin:$PYTHONHOME/bin:$PATH")
+	EnvFileContents = append(EnvFileContents, "export LD_LIBRARY_PATH=$GPHOME/lib:$PYTHONHOME/lib:$LD_LIBRARY_PATH")
+	EnvFileContents = append(EnvFileContents, "export OPENSSL_CONF=$GPHOME/etc/openssl.cnf")
 	EnvFileContents = append(EnvFileContents, "export MASTER_DATA_DIRECTORY=" + objects.GpInitSystemConfig.MasterDir + "/" + objects.GpInitSystemConfig.ArrayName + "-1")
 	EnvFileContents = append(EnvFileContents, "export PGPORT=" + strconv.Itoa(objects.GpInitSystemConfig.MasterPort))
 	EnvFileContents = append(EnvFileContents, "export PGDATABASE=" + objects.GpInitSystemConfig.DBName)
@@ -38,6 +45,7 @@ func CreateEnvFile(t string) error {
 	return nil
 }
 
+// Obtain all the files in the environment directory
 func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Show all the environment files
@@ -66,7 +74,7 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
 		"               echo -e \"$incrementor\t$line\t\t\t$PGPORT\t\tRUNNING\t\t\t$cc_instance\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\tt$line\t\t\t$PGPORT\t\tUNKNOWN/STOPPED/FAILED\t\t\t$cc_instance\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$line\t\t\t$PGPORT\t\tUNKNOWN/STOPPED/FAILED\t\t\t$cc_instance\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
 		";done"
@@ -113,7 +121,7 @@ func PrevEnvFile(product string) (string, error) {
 	}
 
 	// Found matching environment file of this installation, now ask for confirmation
-	if len(MatchingFilesInDir) == 1 && product == "confirm" {
+	if len(MatchingFilesInDir) > 0 && product == "confirm" {
 
 		_, err := ListEnvFile(MatchingFilesInDir)
 		if err != nil { return "", err }
@@ -173,6 +181,41 @@ func SetVersionEnv(filename string) error {
 
 	// Cleanup the file file.
 	_ = methods.DeleteFile(executeFile)
+
+	return nil
+}
+
+// Extract PORT and GPHOME location
+func ExtractPortAndGPHOME(env_file string) error {
+
+	// Read the file and extract the PGPORT
+	content, err := ioutil.ReadFile(env_file)
+	if err != nil { return nil }
+	re := regexp.MustCompile(`.*PGPORT=.*`)
+	matches := re.FindStringSubmatch(string(content))
+
+	// Check if we find the PGPORT
+	if len(matches) == 0 {
+		return errors.New("Cannot find PGPORT value in the environment file: " + env_file)
+	} else {
+		port := strings.Split(matches[0], "=")[1]
+		objects.ThisDBMasterPort, err = strconv.Atoi(port)
+		if err != nil { return nil }
+	}
+
+	// Read the file and extract GPHOME
+	content, err = ioutil.ReadFile(env_file)
+	if err != nil { return nil }
+	re = regexp.MustCompile(`.*GPHOME=.*`)
+	matches = re.FindStringSubmatch(string(content))
+
+	// Check if we find the GPHOME
+	if len(matches) == 0 {
+		return errors.New("Cannot find GPHOME value in the environment file: " + env_file)
+	} else {
+		gphome := strings.Split(matches[0], "=")[1]
+		objects.BinaryInstallLocation = gphome
+	}
 
 	return nil
 }

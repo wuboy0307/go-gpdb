@@ -50,20 +50,20 @@ func IsPortUsed(port int, iteration int) (int, error) {
 // Check if we have the last used ports
 func DoWeHavePortBase(file string, name string, which_port string) (string, error) {
 
-	FutureRefDir := file + name
-	return_code, err := methods.DoesFileOrDirExists(FutureRefDir)
+	portBaseFile := file + name
+	return_code, err := methods.DoesFileOrDirExists(portBaseFile)
 	if err != nil { return "", err }
 	if return_code {
-		log.Println("Found port file: \"" + FutureRefDir + "\"")
-		cmdOut, _ := exec.Command("grep", which_port, FutureRefDir).Output()
+		log.Println("Found port file: \"" + portBaseFile + "\"")
+		cmdOut, _ := exec.Command("grep", which_port, portBaseFile).Output()
 		s := string(cmdOut)
 		if strings.Contains(s, which_port) {
 			return strings.TrimSpace(s), nil
 		}
 		return "", nil
 	} else {
-		log.Warn("Didn't find port file: \"" + FutureRefDir + "\", using the default ports")
-		methods.CreateFile(FutureRefDir)
+		log.Warn("Didn't find port file: \"" + portBaseFile + "\", using the default ports")
+		methods.CreateFile(portBaseFile)
 		return "", nil
 	}
 
