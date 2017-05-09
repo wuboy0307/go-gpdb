@@ -49,8 +49,7 @@ func CreateEnvFile(t string) error {
 func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Show all the environment files
-	log.Warn("Found matching environment file for the version: " + arguments.RequestedInstallVersion)
-	log.Println("Below are the list of environment file of the version: " + arguments.RequestedInstallVersion + "\n")
+	log.Println("Found below matching environment file for the version: " + arguments.RequestedInstallVersion)
 
 	// Temp files
 	temp_env_file := arguments.TempDir + "temp_env.sh"
@@ -63,8 +62,8 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Bash script
 	var cmd []string
-	bashCmd :=      "incrementor=1" +
-		";echo -e \"ID\tEnvironment File\t\t\tMaster Port\t\tStatus\t\t\tGPCC Instance Name\"   > " + temp_env_out_file +
+	bashCmd := "incrementor=1" +
+		";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus\t\t\tGPCC Instance Name\"   > " + temp_env_out_file +
 		";echo \"-----------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
 		";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
 		";do    " +
@@ -72,11 +71,12 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 		"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
 		"       ;retcode=$?" +
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
-		"               echo -e \"$incrementor\t$line\t\t\t$PGPORT\t\tRUNNING\t\t\t$cc_instance\" >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t\t\t$GPCC_INSTANCE_NAME\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\t$line\t\t\t$PGPORT\t\tUNKNOWN/STOPPED/FAILED\t\t\t$cc_instance\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tUNKNOWN/STOPPED/FAILED\t$GPCC_INSTANCE_NAME\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
+		"       unset GPCC_INSTANCE_NAME" +
 		";done"
 	cmd = append(cmd, bashCmd)
 
@@ -177,7 +177,7 @@ func SetVersionEnv(filename string) error {
 	// Write to the file
 	_ = methods.WriteFile(executeFile, cmd)
 	_, err := exec.Command("/bin/sh", executeFile).Output()
-	if err != nil { return nil }
+	if err != nil { return err }
 
 	// Cleanup the file file.
 	_ = methods.DeleteFile(executeFile)
@@ -185,14 +185,24 @@ func SetVersionEnv(filename string) error {
 	return nil
 }
 
+// grepping for keyword from file
+func ExtractKeywordFromFile(env_file string, kwrd string) ([]string, error) {
+
+	content, err := ioutil.ReadFile(env_file)
+	if err != nil { return []string{""}, nil }
+	re := regexp.MustCompile(``+ kwrd + ``)
+	matches := re.FindStringSubmatch(string(content))
+
+	return matches, nil
+}
+
+
 // Extract PORT and GPHOME location
 func ExtractPortAndGPHOME(env_file string) error {
 
 	// Read the file and extract the PGPORT
-	content, err := ioutil.ReadFile(env_file)
-	if err != nil { return nil }
-	re := regexp.MustCompile(`.*PGPORT=.*`)
-	matches := re.FindStringSubmatch(string(content))
+	matches, err := ExtractKeywordFromFile(env_file, ".*PGPORT=.*")
+	if err != nil { return err }
 
 	// Check if we find the PGPORT
 	if len(matches) == 0 {
@@ -200,14 +210,12 @@ func ExtractPortAndGPHOME(env_file string) error {
 	} else {
 		port := strings.Split(matches[0], "=")[1]
 		objects.ThisDBMasterPort, err = strconv.Atoi(port)
-		if err != nil { return nil }
+		if err != nil { return err }
 	}
 
 	// Read the file and extract GPHOME
-	content, err = ioutil.ReadFile(env_file)
-	if err != nil { return nil }
-	re = regexp.MustCompile(`.*GPHOME=.*`)
-	matches = re.FindStringSubmatch(string(content))
+	matches, err = ExtractKeywordFromFile(env_file, ".*GPHOME=.*")
+	if err != nil { return err }
 
 	// Check if we find the GPHOME
 	if len(matches) == 0 {
@@ -215,6 +223,36 @@ func ExtractPortAndGPHOME(env_file string) error {
 	} else {
 		gphome := strings.Split(matches[0], "=")[1]
 		objects.BinaryInstallLocation = gphome
+	}
+
+	// extract GPPERFMON instance name
+	matches, err = ExtractKeywordFromFile(env_file, ".*GPCC_INSTANCE_NAME=.*")
+	if err != nil { return err }
+
+	// Check if we find the CC_instance
+	if len(matches) != 0 {
+		ccinstance := strings.Split(matches[0], "=")[1]
+		objects.GPCC_INSTANCE_NAME = ccinstance
+	}
+
+	// extract GPCC_PORT
+	matches, err = ExtractKeywordFromFile(env_file, ".*GPCCPORT=.*")
+	if err != nil { return err }
+
+	// Check if we find the GPCCPORT
+	if len(matches) != 0 {
+		ccport := strings.Split(matches[0], "=")[1]
+		objects.ThisEnvGPCCPort, _ = strconv.Atoi(ccport)
+	}
+
+	// extract GPPERFMONHOME
+	matches, err = ExtractKeywordFromFile(env_file, ".*GPPERFMONHOME=.*")
+	if err != nil { return err }
+
+	// Check if we find the GPPERFMONHOME
+	if len(matches) != 0 {
+		gpperfhome := strings.Split(matches[0], "=")[1]
+		objects.GPPERFMONHOME = gpperfhome
 	}
 
 	return nil

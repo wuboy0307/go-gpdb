@@ -60,9 +60,7 @@ func DoWeHavePortBase(file string, name string, which_port string) (string, erro
 		if strings.Contains(s, which_port) {
 			return strings.TrimSpace(s), nil
 		}
-		return "", nil
 	} else {
-		log.Warn("Didn't find port file: \"" + portBaseFile + "\", using the default ports")
 		methods.CreateFile(portBaseFile)
 		return "", nil
 	}

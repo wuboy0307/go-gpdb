@@ -39,6 +39,32 @@ func  WriteFile(path string, args []string) error {
 	return nil
 }
 
+func AppendFile(path string, args []string) error {
+
+	// open file using READ & APPEND permission
+	var file, err = os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil { return err}
+	defer file.Close()
+
+	// Close once done
+	defer file.Close()
+
+	// append to the file
+	for _, a := range args {
+
+		if _, err = file.WriteString(a + "\n"); err != nil {
+			return err
+		}
+
+	}
+
+	// save changes
+	err = file.Sync()
+	if err != nil { return err}
+
+	return nil
+}
+
 func ReadFile(path string) ([]byte, error) {
 	// re-open file
 	var file, err = os.OpenFile(path, os.O_RDWR, 0644)

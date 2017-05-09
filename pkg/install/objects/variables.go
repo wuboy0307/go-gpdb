@@ -14,4 +14,11 @@ var GpInitSystemConfigDir string
 var EnvFileName string
 var ThisDBMasterPort int
 
+// GPCC
+var GPCC_PORT string
+var InstallWLM bool = false
+var GPCC_INSTANCE_NAME string
+var ThisEnvGPCCPort int
+var GPPERFMONHOME string
+
 

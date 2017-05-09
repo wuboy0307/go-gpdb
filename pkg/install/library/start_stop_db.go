@@ -30,7 +30,7 @@ func StopAllDB() error {
 			 "done"
 
 	// Execute the command
-	StopScriptLoc := arguments.TempDir + "stop_db.sh"
+	StopScriptLoc := arguments.TempDir + "stop_all_db.sh"
 	var StopScript []string
 	StopScript = append(StopScript, cleanupScript)
 	err := ExecuteBash(StopScriptLoc, StopScript)

@@ -132,6 +132,7 @@ func ExecuteBash(filename string, BashScript []string) error {
 	if err != nil { return err }
 
 	// Execute the script
+	log.Println("Executing the file: " + filename)
 	cmd := exec.Command("/bin/sh", filename)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

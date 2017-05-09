@@ -13,3 +13,7 @@ const MASTER_PORT = 3000
 // gpinitsystem temp file
 const GpInitSystemConfigFile = "gpinitsystemconfig"
 const MachineFileList = "hostfile"
+
+// GPCC Port Base
+const GPCCPortBaseFileName = "gpccportbase.txt"
+const GPCC_PORT_BASE = 28080
