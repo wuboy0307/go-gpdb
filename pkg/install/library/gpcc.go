@@ -109,26 +109,6 @@ func StartGPCC (cc_name string, cc_home string) error {
 }
 
 
-// Update Environment file
-func UpdateEnvFile(cc_name string) error {
-
-	log.Println("Updating the environment file \"" + objects.EnvFileName + "\" with the GPCC environment")
-
-	// Environment file contents
-	var EnvFileContents []string
-	EnvFileContents = append(EnvFileContents, "export GPPERFMONHOME=" + objects.BinaryInstallLocation)
-	EnvFileContents = append(EnvFileContents, "export PATH=$GPPERFMONHOME/bin:$PATH")
-	EnvFileContents = append(EnvFileContents, "export LD_LIBRARY_PATH=$GPPERFMONHOME/lib:$LD_LIBRARY_PATH")
-	EnvFileContents = append(EnvFileContents, "export GPCC_INSTANCE_NAME=" + cc_name)
-	EnvFileContents = append(EnvFileContents, "export GPCCPORT=" + objects.GPCC_PORT)
-
-	// Append to file
-	err := methods.AppendFile(objects.EnvFileName, EnvFileContents)
-	if err != nil {return nil}
-
-	return nil
-}
-
 // Store the last used port
 func StoreLastUsedGPCCPort() error {
 

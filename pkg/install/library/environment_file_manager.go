@@ -198,7 +198,7 @@ func ExtractKeywordFromFile(env_file string, kwrd string) ([]string, error) {
 
 
 // Extract PORT and GPHOME location
-func ExtractPortAndGPHOME(env_file string) error {
+func ExtractEnvVariables(env_file string) error {
 
 	// Read the file and extract the PGPORT
 	matches, err := ExtractKeywordFromFile(env_file, ".*PGPORT=.*")
@@ -254,6 +254,65 @@ func ExtractPortAndGPHOME(env_file string) error {
 		gpperfhome := strings.Split(matches[0], "=")[1]
 		objects.GPPERFMONHOME = gpperfhome
 	}
+
+	// Extract WLM Version
+	matches, err = ExtractKeywordFromFile(env_file, ".*WLM_VERSION=.*")
+	if err != nil { return err }
+
+	// Check if we find the WLM Version
+	if len(matches) != 0 {
+		wlmversion := strings.Split(matches[0], "=")[1]
+		objects.WLMVersion = wlmversion
+	}
+
+	// Extract WLM Install Directory
+	matches, err = ExtractKeywordFromFile(env_file, ".*WLM_INSTALL_DIR=.*")
+	if err != nil { return err }
+
+	// Check if we find the WLM Install directory
+	if len(matches) != 0 {
+		wlminstalldir := strings.Split(matches[0], "=")[1]
+		objects.WLMInstallDir = wlminstalldir
+	}
+
+	return nil
+}
+
+
+// Update Environment file
+func UpdateEnvFile(cc_name string) error {
+
+	log.Println("Updating the environment file \"" + objects.EnvFileName + "\" with the GPCC environment")
+
+	// Environment file contents
+	var EnvFileContents []string
+	EnvFileContents = append(EnvFileContents, "export GPPERFMONHOME=" + objects.BinaryInstallLocation)
+	EnvFileContents = append(EnvFileContents, "export PATH=$GPPERFMONHOME/bin:$PATH")
+	EnvFileContents = append(EnvFileContents, "export LD_LIBRARY_PATH=$GPPERFMONHOME/lib:$LD_LIBRARY_PATH")
+	EnvFileContents = append(EnvFileContents, "export GPCC_INSTANCE_NAME=" + cc_name)
+	EnvFileContents = append(EnvFileContents, "export GPCCPORT=" + objects.GPCC_PORT)
+
+	// Append to file
+	err := methods.AppendFile(objects.EnvFileName, EnvFileContents)
+	if err != nil {return nil}
+
+	return nil
+}
+
+// Update WLM to Environment file
+func UpdateWlmEnvFile(WLMDir string, WLMVersion string) error {
+
+	log.Println("Updating the environment file \"" + objects.EnvFileName + "\", with workload manager path")
+
+	// Now update the environment file with the WLM Information.
+	var WLMEnvArgs []string
+	WLMEnvArgs = append(WLMEnvArgs, "source " + WLMDir + "/gp-wlm/gp-wlm_path.sh")
+	WLMEnvArgs = append(WLMEnvArgs, "export WLM_INSTALL_DIR=" + WLMDir)
+	WLMEnvArgs = append(WLMEnvArgs, "export WLM_VERSION=" + WLMVersion)
+
+	// Append to file
+	err := methods.AppendFile(objects.EnvFileName, WLMEnvArgs)
+	if err != nil {return nil}
 
 	return nil
 }

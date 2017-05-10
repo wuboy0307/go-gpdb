@@ -27,7 +27,7 @@ func InstalSingleNodeGPCC()  error {
 	}
 
 	// store the this database port and the GPHOME location
-	err = library.ExtractPortAndGPHOME(objects.EnvFileName)
+	err = library.ExtractEnvVariables(objects.EnvFileName)
 	if err != nil { return err }
 
 	// extract current date and time
@@ -35,15 +35,15 @@ func InstalSingleNodeGPCC()  error {
 
 	// If exists then is there a GPCC already installed, if yes then ask for confirmation
 	if objects.GPCC_INSTANCE_NAME != "" {
-		log.Warn("Found a instance of GPCC already installed on this environment, please confirm if the exiting GPCC can be uninstalled")
+		log.Warn("Found a instance of GPCC already installed on this environment, please confirm if the existing GPCC can be uninstalled")
 		// Now ask for the confirmation
 		confirm := methods.YesOrNoConfirmation()
 
 		// What was the confirmation
-		if confirm == "y" {  // yes
+		if confirm == "y" {  // yes, then uninstall the old GPCC installation
 			err := library.UninstallGPCC(t, objects.EnvFileName)
 			if err != nil { return err }
-		} else { // no
+		} else { // no then exit
 			log.Println("Cancelling the installation...")
 			os.Exit(0)
 		}
@@ -131,11 +131,19 @@ func InstalSingleNodeGPCC()  error {
 	err = library.StoreLastUsedGPCCPort()
 	if err != nil { return err }
 
+	//// Uninstall the WLM
+	if !methods.IsValueEmpty(objects.WLMInstallDir) {
+		err := library.UninstallWLM(t)
+		if err != nil { return err }
+	}
+
 	// Install the WLM
+	err = library.InstallWLM()
+	if err != nil { return err }
 
 	// Start the new browser for use
 
-	// when starting , start gpcc instance
+	// when starting , start gpcc instance & WLM
 
 	log.Println("Installation of GPCC software has been completed successfully")
 

@@ -20,5 +20,7 @@ var InstallWLM bool = false
 var GPCC_INSTANCE_NAME string
 var ThisEnvGPCCPort int
 var GPPERFMONHOME string
+var WLMVersion string
+var WLMInstallDir string
 
 

@@ -46,9 +46,6 @@ func AppendFile(path string, args []string) error {
 	if err != nil { return err}
 	defer file.Close()
 
-	// Close once done
-	defer file.Close()
-
 	// append to the file
 	for _, a := range args {
 
