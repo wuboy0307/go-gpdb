@@ -64,6 +64,12 @@ func InstalSingleNodeGPCC()  error {
 	err = library.ExecuteBinaries(binary_file, objects.InstallGPDBBashFileName, script_option)
 	if err != nil { return err }
 
+	// If this the first time then GPPERFHOME would not be there
+	// on the environment file, so we update the global variable here
+	if methods.IsValueEmpty(objects.GPPERFMONHOME) {
+		objects.GPPERFMONHOME = objects.BinaryInstallLocation
+	}
+
 	// Install the command center database (GPPERFMON)
 	err = library.InstallGpperfmon()
 	if err != nil { return err }
@@ -103,9 +109,9 @@ func InstalSingleNodeGPCC()  error {
 	if strings.HasPrefix(arguments.RequestedCCInstallVersion, "1") {
 		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
 		library.InstallGPCCUI(script_option, objects.BinaryInstallLocation)
-	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2") {
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.3") {
 		objects.InstallWLM = true
-		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
+		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, strconv.Itoa(ccp + 1), "n", "n", "n", "n", "EOF"}
 		library.InstallGPCCUI(script_option, objects.BinaryInstallLocation)
 	} else {
 		objects.InstallWLM = true
@@ -131,21 +137,20 @@ func InstalSingleNodeGPCC()  error {
 	err = library.StoreLastUsedGPCCPort()
 	if err != nil { return err }
 
-	//// Uninstall the WLM
-	if !methods.IsValueEmpty(objects.WLMInstallDir) {
-		err := library.UninstallWLM(t)
-		if err != nil { return err }
-	}
+	// Install the WLM (it works but complication due to non uniformity of WLM structure, will work on it on future )
+	//err = library.InstallWLM(t)
+	//if err != nil { return err }
 
-	// Install the WLM
-	err = library.InstallWLM()
+	// Start the new browser for use ( Work's , but cant figure out way to run the firefox web in the background )
+	//err = library.StartGPCCBrowser()
+	//if err != nil { return err }
+
+	// Open terminal after source the environment file
+	err = library.SetVersionEnv(objects.EnvFileName)
 	if err != nil { return err }
 
-	// Start the new browser for use
-
-	// when starting , start gpcc instance & WLM
-
-	log.Println("Installation of GPCC software has been completed successfully")
+	log.Println("GPCC Web URL: http://127.0.0.1:" + objects.GPCC_PORT + ", username / password: gpmon / " + arguments.EnvYAML.Install.GpMonPass)
+	log.Println("Installation of GPCC/WLM software has been completed successfully")
 
 	return nil
 }

@@ -79,7 +79,7 @@ func InstallSingleNodeGPDB() error {
 	err = library.StoreLastUsedPort()
 	if err != nil { return err }
 
-	// Request the source the environment file to start using the environment
+	// Open terminal after source the environment file
 	err = library.SetVersionEnv(objects.EnvFileName)
 	if err != nil { return err }
 

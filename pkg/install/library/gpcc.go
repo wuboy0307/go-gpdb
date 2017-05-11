@@ -87,28 +87,6 @@ func InstallGPCCUI(args []string, cc_home string) error {
 	return nil
 }
 
-// Started GPCC WebUI
-func StartGPCC (cc_name string, cc_home string) error {
-
-	log.Println("Starting command center WEB UI")
-
-	// Start the command center web UI
-	var gpcmdrStartarg []string
-	gpcmdrStartarg = append(gpcmdrStartarg, "source " + objects.EnvFileName)
-	gpcmdrStartarg = append(gpcmdrStartarg, "source " + cc_home + "/gpcc_path.sh")
-	gpcmdrStartarg = append(gpcmdrStartarg, "echo")
-	gpcmdrStartarg = append(gpcmdrStartarg, "gpcmdr --start " + cc_name)
-	gpcmdrStartarg = append(gpcmdrStartarg, "echo")
-
-	// Write it to the file.
-	file := arguments.TempDir + "gpcmdr_start.sh"
-	err := ExecuteBash(file, gpcmdrStartarg)
-	if err != nil { return err }
-
-	return nil
-}
-
-
 // Store the last used port
 func StoreLastUsedGPCCPort() error {
 
@@ -125,7 +103,7 @@ func StoreLastUsedGPCCPort() error {
 	// Contents to write to the file
 	var FutureContents []string
 	port, _ := strconv.Atoi(objects.GPCC_PORT)
-	port = port + 1
+	port = port + 3
 	FutureContents = append(FutureContents, "GPCC_PORT: " + strconv.Itoa(port))
 
 	// Write to the file
@@ -156,7 +134,6 @@ func UninstallGPCC(t string, env_file string) error {
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "cp "+ env_file +" "+ env_file + "." + t )
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "egrep -v \"GPPERFMONHOME|GPCC_INSTANCE_NAME|GPCCPORT\" " + env_file + "." + t + " > " + env_file)
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "rm -rf "+ env_file + "." + t)
-	uninstallGPCCArgs = append(uninstallGPCCArgs, "gpstop -afr")
 
 	// Write it to the file.
 	file := arguments.TempDir + "uninstall_gpcc.sh"
@@ -165,3 +142,4 @@ func UninstallGPCC(t string, env_file string) error {
 
 	return nil
 }
+

@@ -62,22 +62,44 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Bash script
 	var cmd []string
+	//bashCmd := "incrementor=1" +
+	//	";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus \t   GPCC (GPCC URL) \t\t\t\t\t\t WLM Version\"   > " + temp_env_out_file +
+	//	";echo \"--------------------------------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
+	//	";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
+	//	";do    " +
+	//	"       unset GPCC_INSTANCE_NAME; unset GPCCPORT; unset WLM_VERSION ; unset WLM_PATH" +
+	//	"       ;WLM_PATH=`grep "+ arguments.EnvYAML.Install.MasterDataDirectory + "wlm/ " + arguments.EnvFileDir +"${line} | grep source | awk '{print $2}'`" +
+	//	"       ;if [ ! -f $WLM_PATH ]; then sed -i -e '/(^source.*wlm.*|.*WLM.*=.*)/d' "+ arguments.EnvFileDir + "$line ;fi" +
+	//	"       ;source "+arguments.EnvFileDir+"$line" +
+	//	"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
+	//	"       ;retcode=$?" +
+	//	"       ;if [ \"$retcode\" == \"0\" ]; then" +
+	//	"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\t $WLM_VERSION\" >> " + temp_env_out_file +
+	//	"       ;else" +
+	//	"               echo -e \"$incrementor\t$line\t$PGPORT\t\tSTOPPED\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\t $WLM_VERSION\"  >> " + temp_env_out_file +
+	//	"       ;fi" +
+	//	"       ;incrementor=$((incrementor+1))" +
+	//	";done"
+
 	bashCmd := "incrementor=1" +
-		";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus\t\t\tGPCC Instance Name\"   > " + temp_env_out_file +
-		";echo \"-----------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
+		";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus \t   GPCC Instance Name (GPCC URL)\"   > " + temp_env_out_file +
+		";echo \"--------------------------------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
 		";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
 		";do    " +
-		"       source "+arguments.EnvFileDir+"/$line" +
+		"       unset GPCC_INSTANCE_NAME; unset GPCCPORT; unset WLM_VERSION ; unset WLM_PATH" +
+		"       ;WLM_PATH=`grep "+ arguments.EnvYAML.Install.MasterDataDirectory + "wlm/ " + arguments.EnvFileDir +"${line} | grep source | awk '{print $2}'`" +
+		"       ;if [ ! -f $WLM_PATH ]; then sed -i -e '/(^source.*wlm.*|.*WLM.*=.*)/d' "+ arguments.EnvFileDir + "$line ;fi" +
+		"       ;source "+arguments.EnvFileDir+"$line" +
 		"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
 		"       ;retcode=$?" +
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
-		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t\t\t$GPCC_INSTANCE_NAME\" >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tUNKNOWN/STOPPED/FAILED\t$GPCC_INSTANCE_NAME\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tSTOPPED\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
-		"       unset GPCC_INSTANCE_NAME" +
 		";done"
+
 	cmd = append(cmd, bashCmd)
 
 	// Copy it to the file
@@ -89,7 +111,8 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Display the output
 	out, _ := ioutil.ReadFile(temp_env_out_file)
-	fmt.Println(string(out))
+	outReplace := strings.Replace(string(out), "(http://127.0.0.1:)", "", -1)
+	fmt.Println(outReplace)
 
 	// Cleanup the temp files
 	_ = methods.DeleteFile(temp_env_file)
@@ -109,9 +132,13 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 func PrevEnvFile(product string) (string, error) {
 
 	log.Println("Checking if there is previous installation for the version: " + arguments.RequestedInstallVersion)
+
+	// Read all the file in the env directory
 	var MatchingFilesInDir []string
 	allfiles, err := ioutil.ReadDir(arguments.EnvFileDir)
 	if err != nil { return "", err }
+
+	// Match the version on this directory
 	for _, file := range allfiles {
 
 		if strings.Contains(file.Name(), arguments.RequestedInstallVersion) {
@@ -303,6 +330,9 @@ func UpdateEnvFile(cc_name string) error {
 func UpdateWlmEnvFile(WLMDir string, WLMVersion string) error {
 
 	log.Println("Updating the environment file \"" + objects.EnvFileName + "\", with workload manager path")
+
+	// extract the version of the wlm
+	//wlmv, err := GetWLMVersion(WLMDir)
 
 	// Now update the environment file with the WLM Information.
 	var WLMEnvArgs []string
