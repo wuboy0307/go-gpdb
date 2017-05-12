@@ -77,10 +77,9 @@ func StoreLastUsedPort() error {
 	log.Println("Storing the last used ports for this installation at: " + FurtureRefFile)
 
 	// Delete the file if already exists
-	err := methods.DeleteFile(FurtureRefFile)
-	if err != nil {return nil}
-	err = methods.CreateFile(FurtureRefFile)
-	if err != nil {return nil}
+	_ = methods.DeleteFile(FurtureRefFile)
+	err := methods.CreateFile(FurtureRefFile)
+	if err != nil {return err}
 
 	// Contents to write to the file
 	var FutureContents []string
@@ -89,7 +88,7 @@ func StoreLastUsedPort() error {
 
 	// Write to the file
 	err = methods.WriteFile(FurtureRefFile, FutureContents)
-	if err != nil {return nil}
+	if err != nil {return err}
 
 	return nil
 }

@@ -177,6 +177,10 @@ func PrevEnvFile(product string) (string, error) {
 		choosenEnv := envStore[choice-1]
 		return choosenEnv, nil
 
+	} else if len(MatchingFilesInDir) == 1 && product == "choose" { // if there is only one , then there is no choose just provide the only one
+
+		return MatchingFilesInDir[0], nil
+
 	} else if product == "list" {
 		_, err := ListEnvFile(MatchingFilesInDir)
 		if err != nil { return "", err }
@@ -324,7 +328,7 @@ func UpdateEnvFile(cc_name string) error {
 
 	// Append to file
 	err := methods.AppendFile(objects.EnvFileName, EnvFileContents)
-	if err != nil {return nil}
+	if err != nil {return err}
 
 	return nil
 }
@@ -345,7 +349,7 @@ func UpdateWlmEnvFile(WLMDir string, WLMVersion string) error {
 
 	// Append to file
 	err := methods.AppendFile(objects.EnvFileName, WLMEnvArgs)
-	if err != nil {return nil}
+	if err != nil {return err}
 
 	return nil
 }

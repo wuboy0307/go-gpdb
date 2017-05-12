@@ -146,11 +146,14 @@ func ArgParser() {
 	if RemoveCmd.Parsed() {
 
 		if *RemoveVersionFlag == "" {
-			fmt.Println("Please supply the message using -message option.")
-			return
+			fmt.Println("ERROR: Missing version information for remove command")
+			fmt.Print("Usage of remove: \n")
+			RemoveCmd.PrintDefaults()
+			os.Exit(2)
+		} else {
+			arguments.RequestedRemoveVersion = *RemoveVersionFlag
 		}
 
-		fmt.Printf("Your message is sent to %q.\n", *RemoveVersionFlag)
 	}
 
 }

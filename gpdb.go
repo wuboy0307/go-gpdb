@@ -4,6 +4,7 @@ import (
 	"./src/download"
 	"./src/install"
 	"./src/env"
+	"./src/remove"
 	"./src/argParser"
 	"./src/core"
 	log "./pkg/core/logger"
@@ -55,7 +56,8 @@ func main() {
 			}
 		case "remove":
 			// Run remove
-			log.Println("Run Remove")
+			err := remove.Remove(arguments.RequestedRemoveVersion)
+			methods.Fatal_handler(err)
 		case "env":
 			//Run env
 			err := env.Environment(arguments.RequestedVersionEnv)

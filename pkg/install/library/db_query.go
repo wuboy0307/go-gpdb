@@ -6,6 +6,7 @@ import (
 	"../objects"
 	"strconv"
 	"../../core/arguments"
+	"../../core/methods"
 	"os"
 )
 
@@ -66,6 +67,15 @@ func CreateUnistallScript(t string) error {
 
 	// Execute the query
 	_, err := execute_db_query(query_string, "template1", true, UninstallFileDir)
+	if err != nil { return err }
+
+	// add commands to remove the environment file & uninstall script once done.
+	var uninstallAddons []string
+	uninstallAddons = append(uninstallAddons, "rm -rf " + arguments.EnvFileDir + "env_" + arguments.RequestedInstallVersion + "_" + t)
+	uninstallAddons = append(uninstallAddons, "rm -rf " + UninstallFileDir)
+
+	// append to the file.
+	err = methods.AppendFile(UninstallFileDir, uninstallAddons)
 	if err != nil { return err }
 
 	return nil

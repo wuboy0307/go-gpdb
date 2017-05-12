@@ -27,5 +27,8 @@ var RequestedCCInstallVersion string
 var RequestedVersionEnv string
 
 
+// Remove
+var RequestedRemoveVersion string
+
 // Core
 var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }
