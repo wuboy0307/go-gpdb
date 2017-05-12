@@ -128,7 +128,7 @@ func UninstallGPCC(t string, env_file string) error {
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "cp $MASTER_DATA_DIRECTORY/pg_hba.conf $MASTER_DATA_DIRECTORY/pg_hba.conf." + t)
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "grep -v gpmon $MASTER_DATA_DIRECTORY/pg_hba.conf."+ t +" > $MASTER_DATA_DIRECTORY/pg_hba.conf")
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "rm -rf $MASTER_DATA_DIRECTORY/pg_hba.conf."+ t )
-	uninstallGPCCArgs = append(uninstallGPCCArgs, "psql -d template1 -p $PGPORT -Atc \"drop database if exists gpperfmon\" &>/dev/null")
+	uninstallGPCCArgs = append(uninstallGPCCArgs, "psql -d template1 -p $PGPORT -Atc \"drop database gpperfmon\" &>/dev/null")
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "psql -d template1 -p $PGPORT -Atc \"drop role gpmon\" &>/dev/null")
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "rm -rf $MASTER_DATA_DIRECTORY/gpperfmon/*")
 	uninstallGPCCArgs = append(uninstallGPCCArgs, "cp "+ env_file +" "+ env_file + "." + t )

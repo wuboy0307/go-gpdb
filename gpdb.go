@@ -3,6 +3,7 @@ package main
 import (
 	"./src/download"
 	"./src/install"
+	"./src/env"
 	"./src/argParser"
 	"./src/core"
 	log "./pkg/core/logger"
@@ -56,8 +57,9 @@ func main() {
 			// Run remove
 			log.Println("Run Remove")
 		case "env":
-			// Run env
-			log.Println("Run env")
+			//Run env
+			err := env.Environment(arguments.RequestedVersionEnv)
+			methods.Fatal_handler(err)
 		default:
 			// Error if command is invalid
 			log.Fatal("Command not recognized")

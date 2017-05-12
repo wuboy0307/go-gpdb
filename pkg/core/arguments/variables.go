@@ -23,5 +23,9 @@ var RequestedInstallProduct string
 var RequestedInstallVersion string
 var RequestedCCInstallVersion string
 
+// Environment
+var RequestedVersionEnv string
+
+
 // Core
 var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }

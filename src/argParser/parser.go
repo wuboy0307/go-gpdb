@@ -33,7 +33,6 @@ func ArgParser() {
 
 	// Environment Command Parser
 	EnvCmd := flag.NewFlagSet("env", flag.ExitOnError)
-	EnvListFlag := EnvCmd.String("l", "", "List all the version that is currently installed")
 	EnvVersionFlag := EnvCmd.String("v", "", "Provide the version from the installed list to remove")
 
 	// If no COMMAND keyword provided then show the help menu.
@@ -134,6 +133,15 @@ func ArgParser() {
 		}
 	}
 
+	// If the command is to extract the env listing then
+	if EnvCmd.Parsed() {
+
+		if *EnvVersionFlag != "" {
+			arguments.RequestedVersionEnv = *EnvVersionFlag
+		}
+
+	}
+
 	// All the below command line parse will be updated when the function is written
 	if RemoveCmd.Parsed() {
 
@@ -143,22 +151,6 @@ func ArgParser() {
 		}
 
 		fmt.Printf("Your message is sent to %q.\n", *RemoveVersionFlag)
-	}
-
-
-	if EnvCmd.Parsed() {
-
-		if *EnvListFlag == "" {
-			fmt.Println("Please supply the message using -message option.")
-			return
-		}
-		if *EnvVersionFlag == "" {
-			fmt.Println("Please supply the message using -message option.")
-			return
-		}
-
-		fmt.Printf("Your message is sent to %q.\n", *EnvListFlag)
-		fmt.Printf("Message: %q.\n", *EnvVersionFlag)
 	}
 
 }

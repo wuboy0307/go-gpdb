@@ -82,7 +82,7 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 	//	";done"
 
 	bashCmd := "incrementor=1" +
-		";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus \t   GPCC Instance Name (GPCC URL)\"   > " + temp_env_out_file +
+		";echo -e \"\nID\tMaster Port\tStatus \t\tEnvironment File\t\t     GPCC Instance Name (GPCC URL)\"   > " + temp_env_out_file +
 		";echo \"--------------------------------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
 		";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
 		";do    " +
@@ -93,9 +93,9 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 		"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
 		"       ;retcode=$?" +
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
-		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\" >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tRUNNING\t\t$line\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\t$line\t$PGPORT\t\tSTOPPED\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tSTOPPED\t\t$line\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
 		";done"
@@ -177,6 +177,9 @@ func PrevEnvFile(product string) (string, error) {
 		choosenEnv := envStore[choice-1]
 		return choosenEnv, nil
 
+	} else if product == "list" {
+		_, err := ListEnvFile(MatchingFilesInDir)
+		if err != nil { return "", err }
 	}
 
 	// return the environment file.
