@@ -142,7 +142,7 @@ func ArgParser() {
 
 	}
 
-	// All the below command line parse will be updated when the function is written
+	// If the command is to remove the environment then remove it
 	if RemoveCmd.Parsed() {
 
 		if *RemoveVersionFlag == "" {

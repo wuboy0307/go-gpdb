@@ -88,7 +88,7 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {
-		if err != nil {return []byte(""), errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")")}
+		return []byte(""), errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")")
 	}
 
 	// Close the body once its done
