@@ -115,8 +115,9 @@ func CreateDir() error {
 
 func Config() error {
 
+	home := os.Getenv("HOME")
 	// Read the config file and store the value on a struct
-	source, err := ioutil.ReadFile("config.yml")
+	source, err := ioutil.ReadFile(home + "/.config.yml")
 	if err != nil {return err}
 	yaml.Unmarshal(source, &arguments.EnvYAML)
 

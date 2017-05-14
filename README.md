@@ -37,7 +37,7 @@ git clone https://github.com/ielizaga/piv-go-gpdb.git
 ```
 
 + Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
-+ Open the config.yml and update API TOKEN, and update the other configuration based on the config.yml
++ Open the config.yml and update API TOKEN, and update the other configuration based on your environment like where to download , install etc.
 
 ```
 API_TOKEN: <API TOKEN>                         # You can get it after login to PivNet

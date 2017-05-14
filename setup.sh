@@ -81,11 +81,17 @@ rm -f /tmp/go.tar.gz
 #
 
 echo "Pulling newer version of the code"
-cp config.yml /tmp/config.yml
-git clean -fd
-git pull
-mv /tmp/config.yml config.yml
+if [ -f $HOME/.config.yml ]; then
+    cp $HOME/.config.yml /tmp/.config.yml
+fi
 
+git checkout
+git pull
+cp config.yml $HOME/.config.yml
+
+if [ -f /tmp/.config.yml ]; then
+    mv /tmp/.config.yml $HOME/.config.yml
+fi
 
 #
 # Download program dependencies
@@ -127,4 +133,5 @@ mv gpdb bin/
 #
 
 echo "GPDBInstall Script has been successfully installed"
+echo "Config file is cachec at location: "$HOME"/.config.yml"
 echo "Please close this terminal and open up a new terminal to set the environment"
