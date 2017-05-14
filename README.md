@@ -1,11 +1,9 @@
 
 # Introduction
-------
 
 This repo helps to download, install, remove and manage the software of GPDB / GPCC. This scripts is designed for a single node installation ( only primary ) and not for multipe node ( i.e primary / mirror )
 
 # System Requirements
-------
 
 + CentOS 7
 + RAM: 6 to 8 GM
@@ -13,7 +11,6 @@ This repo helps to download, install, remove and manage the software of GPDB / G
 + Internet connection to download the product from PivNet.
 
 # Setup
-------
 
 + Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
 + Install it on VMWare Fusion or VirtualBox
@@ -50,7 +47,6 @@ API_TOKEN: <API TOKEN>                         # You can get it after login to P
 + Open new terminal to use the software.
 
 # Usage
-------
 
 The usage of software
 
@@ -67,7 +63,6 @@ COMMAND:
 ```
 
 # Command Reference
-------
 
 #### Download
 
