@@ -2,22 +2,75 @@
 #!/bin/bash
 set -e
 
-# things to do after install
-# Yum update
-# yum install git -y
-# clone the git: https://github.com/ielizaga/piv-go-gpdb.git
+# Permission of data folder / local folder / hostname check
+# Fix for this error
+# ps: /usr/local/greenplum-db-4.3.13.0/lib/libz.so.1: no version information available (required by /lib64/libdw.so.1)
+# Check if the API Token is provided
+# remove the YAML folder
+# change permission of /usr/local
+# CHange the name of the hostname
+# if the terminal cannot be open then just show them what option they can choose
 
 #
 # Core check
 #
 
-# Check if the internet connect is working
-wget -q --tries=10 --timeout=20 --spider http://google.com
+TEST_FAILURE=FALSE
+
+# Check if the internet connection is working
+wget -q --tries=2 --timeout=5 --spider http://google.com
 if [[ $? -eq 0 ]]; then
-        echo "Internet connection is available, contine ...."
+        echo "Internet connection is available: PASSED"
 else
-        echo "No Internet connection, exiting from the program..."
-        exit 2
+        echo "Internet connection is available: FAILED"
+        TEST_FAILURE=TRUE
+fi
+
+# Check if /usr/local/ directory exists & writable ( needed for installing GPDB software )
+if [ -d /usr/local ]; then
+     echo "Directory /usr/local/ exists: PASSED"
+else
+    echo "Directory /usr/local/ exists: FAILED"
+    TEST_FAILURE=TRUE
+fi
+
+if [ -w /usr/local ]; then
+     echo "Directory /usr/local/ writable: PASSED"
+else
+    echo "Directory /usr/local/ writable: FAILED"
+    TEST_FAILURE=TRUE
+fi
+
+# Check if the BASE DIRECTORY exists & writable
+BASE_DIR=`grep BASE_DIR config.yml | cut -d':' -f2 | awk '{print $1}'`
+if [ -d "$BASE_DIR" ]; then
+     echo "Base directory $BASE_DIR exists: PASSED"
+else
+    echo "Base directory $BASE_DIR exists: FAILED"
+    TEST_FAILURE=TRUE
+fi
+
+if [ -w "$BASE_DIR" ]; then
+     echo "Directory $BASE_DIR writable: PASSED"
+else
+    echo "Directory $BASE_DIR writable: FAILED"
+    TEST_FAILURE=TRUE
+fi
+
+
+# Check if the hostname is reachable
+host=`grep MASTER_HOST config.yml | cut -d':' -f2 | awk '{print $1}'`
+ping -c 1 $host &>/dev/null
+if [ $? -eq 0 ]; then
+    echo "Host $host can be reached: PASSED"
+else
+   echo "Host $host can be reached: FAILED"
+   TEST_FAILURE=TRUE
+fi
+
+# If any one of the precheck failed, then exit the setup process.
+if [ $TEST_FAILURE == "TRUE" ]; then
+    echo "Pre check failed, exiting...."
 fi
 
 #
@@ -45,6 +98,10 @@ fi
 echo "Extracting ..."
 tar -C "$HOME" -xzf /tmp/go.tar.gz
 mv "$HOME/go" "$HOME/.go"
+
+#
+# Update environment information
+#
 
 # Updating the bashrc with the information of GOROOT.
 if grep -q "GOROOT" "$HOME/.bashrc";
@@ -82,16 +139,27 @@ rm -f /tmp/go.tar.gz
 
 echo "Pulling newer version of the code"
 if [ -f $HOME/.config.yml ]; then
-    cp $HOME/.config.yml /tmp/.config.yml
+    cp config.yml /tmp/config.yml
 fi
 
 git checkout
 git pull
-cp config.yml $HOME/.config.yml
 
-if [ -f /tmp/.config.yml ]; then
-    mv /tmp/.config.yml $HOME/.config.yml
+if [ -f /tmp/config.yml ]; then
+    mv /tmp/config.yml $HOME/.config.yml
+else
+    cp config.yml $HOME/.config.yml
 fi
+
+
+#
+# Removed the gopkg.in/yaml.v2 folder
+#
+
+echo "Removing gopkg.in/yaml.v2 files"
+
+rm -rf src/gopkg.in/yaml.v2
+rm -rf pkg/gopkg.in/yaml.v2
 
 #
 # Download program dependencies
@@ -133,5 +201,5 @@ mv gpdb bin/
 #
 
 echo "GPDBInstall Script has been successfully installed"
-echo "Config file is cachec at location: "$HOME"/.config.yml"
+echo "Config file is cached at location: "$HOME/.config.yml
 echo "Please close this terminal and open up a new terminal to set the environment"

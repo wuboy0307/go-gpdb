@@ -36,3 +36,6 @@ conf
 config.yml
 bin/
 pkg/darwin_amd64/
+
+# Ignore vagrant file
+Vagrant/.vagrant/
