@@ -4,11 +4,12 @@ echo "Reloading sysctl"
 sysctl -p
 
 echo "Cleaning RPM cache"
-yum clean all
+sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/*
+sudo yum clean all
 
 echo "Installing RPMs"
-yum -y install ed unzip tar git
-yum -y install ed unzip tar git
+sudo yum -y install ed unzip tar git
+sudo yum -y install ed unzip tar git
 
 echo "Creating gpadmin user"
 useradd gpadmin

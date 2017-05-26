@@ -167,9 +167,21 @@ func PrevEnvFile(product string) (string, error) {
 
 		return MatchingFilesInDir[0], nil
 
-	} else if product == "list" {
-		_, err := ListEnvFile(MatchingFilesInDir)
+	} else if product == "listandchoose" {
+		envStore, err := ListEnvFile(MatchingFilesInDir)
 		if err != nil { return "", err }
+
+		// if there is no environment file, then exit
+		if len(MatchingFilesInDir) == 0 {
+			return "", err
+		}
+
+		// What is users choice
+		choice := methods.Prompt_choice(len(envStore))
+
+		// return the enviornment file to the main function
+		choosenEnv := envStore[choice-1]
+		return choosenEnv, nil
 	}
 
 	// return the environment file.
