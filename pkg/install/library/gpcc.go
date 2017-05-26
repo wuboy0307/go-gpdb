@@ -97,7 +97,7 @@ func InstallGPCCWEBUI(cc_name string, ccp int) error {
 	if strings.HasPrefix(arguments.RequestedCCInstallVersion, "1") { // CC Version 1.x doesn't have WLM and the option used are
 		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
 		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
-	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.5") { // Option of CC 2.5 & after
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.5") || strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.4") { // Option of CC 2.5 & after
 		objects.InstallWLM = true
 		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, strconv.Itoa(ccp + 1), "n", "n", "n", "n", "EOF"}
 		InstallGPCCUI(script_option, objects.BinaryInstallLocation)

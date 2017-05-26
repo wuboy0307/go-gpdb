@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"archive/zip"
 	"errors"
+	"strings"
 )
 
 // Provides all the files in the directory
@@ -65,7 +66,10 @@ func Unzip(src, dest string) error {
 			}
 		}()
 
-		path := filepath.Join(dest, f.Name)
+		// there is no consistency in the name of binaries, so here we will ensure the
+		// binary name is equal to the zip file name
+		filename := strings.Replace(src, ".zip", ".bin", 1)
+		path := filename
 
 		if f.FileInfo().IsDir() {
 			os.MkdirAll(path, f.Mode())

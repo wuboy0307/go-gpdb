@@ -12,9 +12,11 @@ This repo helps to download, install, remove and manage the software of GPDB / G
 
 # Setup
 
+You can use either of the two method "using vagrant" & "manual" to install the gpdb auto installer, below is the step to install using the two methods.
+
 #### Using Vagrant
 
-+ On your MAC install vagrant using 
++ On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
 brew cask install vagrant
@@ -32,13 +34,15 @@ git clone https://github.com/ielizaga/piv-go-gpdb.git
 cd piv-go-gpdb/Vagrant
 ```
 
++ Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
+
 + Open the Vagrant file and update your API KEY 
 
 ```
 api_key = "APIKEY"
 ```
 
-and IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet.
+and IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
 
 ```
 node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
