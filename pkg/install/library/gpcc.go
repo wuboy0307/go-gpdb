@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"errors"
 	"strconv"
+	"strings"
 )
 
 
@@ -87,6 +88,40 @@ func InstallGPCCUI(args []string, cc_home string) error {
 	return nil
 }
 
+// Install GPCC WebUI
+func InstallGPCCWEBUI(cc_name string, ccp int) error {
+
+	log.Println("Running the setup for installing GPCC WEB UI")
+
+	// CC OPtion for different version of cc installer
+	if strings.HasPrefix(arguments.RequestedCCInstallVersion, "1") { // CC Version 1.x doesn't have WLM and the option used are
+		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.5") { // Option of CC 2.5 & after
+		objects.InstallWLM = true
+		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, strconv.Itoa(ccp + 1), "n", "n", "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.1") || strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.0") { // Option of CC 2.0 & after
+		objects.InstallWLM = true
+		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2") { // Option for other version of cc 2.x
+		objects.InstallWLM = true
+		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, strconv.Itoa(ccp + 1), "n", "n", "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "3.0") { // Option for CC version 3.0
+		objects.InstallWLM = true
+		var script_option = []string{cc_name, cc_name, "n", strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	} else { // All the newer version option unless changed.
+		objects.InstallWLM = true
+		var script_option = []string{cc_name, cc_name, "n", strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, "n", "n", "EOF"}
+		InstallGPCCUI(script_option, objects.BinaryInstallLocation)
+	}
+
+	return nil
+}
+
 // Store the last used port
 func StoreLastUsedGPCCPort() error {
 
@@ -141,4 +176,3 @@ func UninstallGPCC(t string, env_file string) error {
 
 	return nil
 }
-

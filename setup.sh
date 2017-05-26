@@ -5,11 +5,8 @@ set -e
 # Permission of data folder / local folder / hostname check
 # Fix for this error
 # ps: /usr/local/greenplum-db-4.3.13.0/lib/libz.so.1: no version information available (required by /lib64/libdw.so.1)
-# Check if the API Token is provided
-# remove the YAML folder
-# change permission of /usr/local
-# CHange the name of the hostname
 # if the terminal cannot be open then just show them what option they can choose
+# Vagrant ssh to gpadmin
 
 #
 # Core check
@@ -87,8 +84,8 @@ if [ -d "$HOME/.go" ]; then
 fi
 
 # Downloading the go tar file
-echo "Downloading $DFILE ..."
-wget https://storage.googleapis.com/golang/$DFILE -O /tmp/go.tar.gz
+echo "Downloading the GO binary $DFILE ..., please wait might take few minutes based on your internet connection"
+wget https://storage.googleapis.com/golang/$DFILE -O /tmp/go.tar.gz -q
 if [ $? -ne 0 ]; then
     echo "Download failed! Exiting."
     exit 1

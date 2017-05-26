@@ -60,26 +60,12 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 	err := methods.CreateFile(temp_env_file)
 	if err != nil { return []string{}, err }
 
+	// Get the IP address from the server
+	ip, err := GetLocalIP()
+	if err != nil { return []string{}, err }
+
 	// Bash script
 	var cmd []string
-	//bashCmd := "incrementor=1" +
-	//	";echo -e \"\nID\tEnvironment File\t\tMaster Port\tStatus \t   GPCC (GPCC URL) \t\t\t\t\t\t WLM Version\"   > " + temp_env_out_file +
-	//	";echo \"--------------------------------------------------------------------------------------------------------------------------------------------------\"    >> " + temp_env_out_file +
-	//	";ls -1 " + arguments.EnvFileDir + " | grep env_"+ arguments.RequestedInstallVersion +" | while read line" +
-	//	";do    " +
-	//	"       unset GPCC_INSTANCE_NAME; unset GPCCPORT; unset WLM_VERSION ; unset WLM_PATH" +
-	//	"       ;WLM_PATH=`grep "+ arguments.EnvYAML.Install.MasterDataDirectory + "wlm/ " + arguments.EnvFileDir +"${line} | grep source | awk '{print $2}'`" +
-	//	"       ;if [ ! -f $WLM_PATH ]; then sed -i -e '/(^source.*wlm.*|.*WLM.*=.*)/d' "+ arguments.EnvFileDir + "$line ;fi" +
-	//	"       ;source "+arguments.EnvFileDir+"$line" +
-	//	"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
-	//	"       ;retcode=$?" +
-	//	"       ;if [ \"$retcode\" == \"0\" ]; then" +
-	//	"               echo -e \"$incrementor\t$line\t$PGPORT\t\tRUNNING\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\t $WLM_VERSION\" >> " + temp_env_out_file +
-	//	"       ;else" +
-	//	"               echo -e \"$incrementor\t$line\t$PGPORT\t\tSTOPPED\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\t $WLM_VERSION\"  >> " + temp_env_out_file +
-	//	"       ;fi" +
-	//	"       ;incrementor=$((incrementor+1))" +
-	//	";done"
 
 	bashCmd := "incrementor=1" +
 		";echo -e \"\nID\tMaster Port\tStatus \t\tEnvironment File\t\t     GPCC Instance Name (GPCC URL)\"   > " + temp_env_out_file +
@@ -93,9 +79,9 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 		"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
 		"       ;retcode=$?" +
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
-		"               echo -e \"$incrementor\t$PGPORT\t\tRUNNING\t\t$line\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\" >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tRUNNING\t\t$line\t   $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\t$PGPORT\t\tSTOPPED\t\t$line\t   $GPCC_INSTANCE_NAME (http://127.0.0.1:$GPCCPORT)\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tSTOPPED\t\t$line\t   $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
 		";done"
@@ -111,7 +97,7 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 
 	// Display the output
 	out, _ := ioutil.ReadFile(temp_env_out_file)
-	outReplace := strings.Replace(string(out), "(http://127.0.0.1:)", "", -1)
+	outReplace := strings.Replace(string(out), "(http://"+ ip +":)", "", -1)
 	fmt.Println(outReplace)
 
 	// Cleanup the temp files
@@ -211,7 +197,10 @@ func SetVersionEnv(filename string) error {
 	// Write to the file
 	_ = methods.WriteFile(executeFile, cmd)
 	_, err := exec.Command("/bin/sh", executeFile).Output()
-	if err != nil { return err }
+	if err != nil {
+		log.Println("Couldn't open a new terminal, please copy / paste the below environment location to set the environment")
+		log.Println("\n source " + filename + "\n")
+	}
 
 	// Cleanup the file file.
 	_ = methods.DeleteFile(executeFile)

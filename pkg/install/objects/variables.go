@@ -1,6 +1,5 @@
 package objects
 
-
 // SingleNode GPDB Install
 var MasterDIR string
 var SegmentDIR string
@@ -13,6 +12,7 @@ var GpInitSystemConfigDir string
 // Core
 var EnvFileName string
 var ThisDBMasterPort int
+var CoreIP string = "192.0.0.0"
 
 // GPCC
 var GPCC_PORT string

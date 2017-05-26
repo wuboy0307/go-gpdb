@@ -106,18 +106,7 @@ func InstalSingleNodeGPCC()  error {
 	// Install the GPCC Web UI without WLM
 	cc_name := "gpcc_" + arguments.RequestedInstallVersion + "_" + arguments.RequestedCCInstallVersion + "_" + t
 	cc_name = strings.Replace(cc_name, ".", "", -1)
-	if strings.HasPrefix(arguments.RequestedCCInstallVersion, "1") { // CC Version doesn't have WLM
-		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), objects.GPCC_PORT, "n", "n", "n", "n", "EOF"}
-		library.InstallGPCCUI(script_option, objects.BinaryInstallLocation)
-	} else if strings.HasPrefix(arguments.RequestedCCInstallVersion, "2.3") { // Option of CC 2.3 & after
-		objects.InstallWLM = true
-		var script_option = []string{cc_name, "n", cc_name, strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, strconv.Itoa(ccp + 1), "n", "n", "n", "n", "EOF"}
-		library.InstallGPCCUI(script_option, objects.BinaryInstallLocation)
-	} else { // All the newer version option unless changed.
-		objects.InstallWLM = true
-		var script_option = []string{cc_name, cc_name, "n", strconv.Itoa(objects.ThisDBMasterPort), "n", objects.GPCC_PORT, "n", "n", "EOF"}
-		library.InstallGPCCUI(script_option, objects.BinaryInstallLocation)
-	}
+	_ = library.InstallGPCCWEBUI(cc_name, ccp)
 
 	// Start the GPCC Web UI
 	err = library.StartGPCC(cc_name, objects.BinaryInstallLocation)
