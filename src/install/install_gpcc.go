@@ -138,7 +138,8 @@ func InstalSingleNodeGPCC()  error {
 	err = library.SetVersionEnv(objects.EnvFileName)
 	if err != nil { return err }
 
-	log.Println("GPCC Web URL: http://127.0.0.1:" + objects.GPCC_PORT + ", username / password: gpmon / " + arguments.EnvYAML.Install.GpMonPass)
+	ip, _ := library.GetLocalIP()
+	log.Println("GPCC Web URL: http://"+ ip +":" + objects.GPCC_PORT + ", username / password: gpmon / " + arguments.EnvYAML.Install.GpMonPass)
 	log.Println("Installation of GPCC/WLM software has been completed successfully")
 
 	return nil

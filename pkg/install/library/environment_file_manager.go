@@ -79,9 +79,9 @@ func ListEnvFile(MatchingFilesInDir []string) ([]string, error) {
 		"       ;psql -d template1 -p $PGPORT -Atc \"select 1\" &>/dev/null" +
 		"       ;retcode=$?" +
 		"       ;if [ \"$retcode\" == \"0\" ]; then" +
-		"               echo -e \"$incrementor\t$PGPORT\t\tRUNNING\t\t$line\t   $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\" >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tRUNNING\t\t$line\t     $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\" >> " + temp_env_out_file +
 		"       ;else" +
-		"               echo -e \"$incrementor\t$PGPORT\t\tSTOPPED\t\t$line\t   $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\"  >> " + temp_env_out_file +
+		"               echo -e \"$incrementor\t$PGPORT\t\tSTOPPED\t\t$line\t     $GPCC_INSTANCE_NAME (http://"+ ip +":$GPCCPORT)\"  >> " + temp_env_out_file +
 		"       ;fi" +
 		"       ;incrementor=$((incrementor+1))" +
 		";done"
@@ -198,8 +198,8 @@ func SetVersionEnv(filename string) error {
 	_ = methods.WriteFile(executeFile, cmd)
 	_, err := exec.Command("/bin/sh", executeFile).Output()
 	if err != nil {
-		log.Println("Couldn't open a new terminal, please copy / paste the below environment location to set the environment")
-		log.Println("\n source " + filename + "\n")
+		log.Warn("Couldn't open a new terminal to source the environment, please copy / paste the below environment location to set the environment")
+		fmt.Println("\nsource " + filename + "\n")
 	}
 
 	// Cleanup the file file.

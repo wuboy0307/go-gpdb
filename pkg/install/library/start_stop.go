@@ -157,7 +157,7 @@ func StartGPCC (cc_name string, cc_home string) error {
 	var gpcmdrStartarg []string
 	gpcmdrStartarg = append(gpcmdrStartarg, "source " + objects.EnvFileName)
 	gpcmdrStartarg = append(gpcmdrStartarg, "source " + cc_home + "/gpcc_path.sh")
-	gpcmdrStartarg = append(gpcmdrStartarg, "gpcmdr --start " + cc_name + "&>/dev/null << EOF")
+	gpcmdrStartarg = append(gpcmdrStartarg, "gpcmdr --start " + cc_name + " &>/dev/null << EOF")
 	gpcmdrStartarg = append(gpcmdrStartarg, "y")
 	gpcmdrStartarg = append(gpcmdrStartarg, "EOF")
 

@@ -12,6 +12,48 @@ This repo helps to download, install, remove and manage the software of GPDB / G
 
 # Setup
 
+#### Using Vagrant
+
++ On your MAC install vagrant using 
+
+```
+brew cask install vagrant
+```
+
++ Clone the repo
+
+```
+git clone https://github.com/ielizaga/piv-go-gpdb.git
+```
+
++ Navigate to the vagrant folder 
+
+```
+cd piv-go-gpdb/Vagrant
+```
+
++ Open the Vagrant file and update your API KEY 
+
+```
+api_key = "APIKEY"
+```
+
+and IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet.
+
+```
+node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
+```
+
++ Now execute the below command to bring the system up
+
+```
+vagrant up
+```
+
++ Login to vagrant box and your setup is complete.
+
+#### Manual method
+
 + Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
 + Install it on VMWare Fusion or VirtualBox
 + When installing make sure you create a user called "gpadmin"
