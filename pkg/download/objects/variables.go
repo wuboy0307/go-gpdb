@@ -22,6 +22,7 @@ var ChoiceMap VersionObjects
 var ProductFileJsonType ProductFilesObjects
 var ProductFileName string
 var ProductFileSize int64
+var EULA string
 var ProductOutputMap = make(map[string]string)
 var ProductOptions []string
 var FileNameContains = []string{

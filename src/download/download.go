@@ -21,7 +21,7 @@ func extract_product() (objects.ProductObjects, error) {
 	log.Println("Obtaining the product ID")
 
 	// Get the API from the Pivotal Products URL
-	ProductApiResponse, err := library.GetApi(objects.Products, false, "", 0)
+	ProductApiResponse, err := library.GetApi("GET", objects.Products, false, "", 0)
 	if err != nil {return objects.ProductObjects{}, err}
 
 	// Store all the JSON on the Product struct
@@ -49,7 +49,7 @@ func extract_release(productJson objects.ProductObjects) (objects.ReleaseObjects
 	if objects.ReleaseURL != "" {
 
 		// Extract all the releases
-		ReleaseApiResponse, err := library.GetApi(objects.ReleaseURL, false, "", 0)
+		ReleaseApiResponse, err := library.GetApi("GET", objects.ReleaseURL, false, "", 0)
 		if err != nil {return objects.ReleaseObjects{}, err}
 
 		// Store all the releases on the release struct
@@ -116,11 +116,14 @@ func extract_downloadURL(ver string, url string) (objects.VersionObjects, error)
 	log.Println("Obtaining the files under the greenplum version: " + ver)
 
 	// Extract all the files from the API
-	VersionApiResponse, err := library.GetApi(url, false, "", 0)
+	VersionApiResponse, err := library.GetApi("GET", url, false, "", 0)
 	methods.Fatal_handler(err)
 
 	// Load it to struct
 	json.Unmarshal(VersionApiResponse, &objects.VersionJsonType)
+
+	// Updating the EULA Acceptance link
+	objects.EULA = objects.VersionJsonType.Links.Eula_acceptance.Href
 
 	// Return the result
 	return objects.VersionJsonType, nil
@@ -202,7 +205,7 @@ func extract_filename_and_size (url string) error {
 	log.Println("Extracting the filename and the size of the product file.")
 
 	// Obtain the JSON response of the product file API
-	ProductFileApiResponse, err := library.GetApi(url, false , "" , 0)
+	ProductFileApiResponse, err := library.GetApi("GET", url, false , "" , 0)
 	if err != nil {return err}
 
 	// Store it on JSON
@@ -221,7 +224,7 @@ func Download() error {
 
 	// Authentication validations
 	log.Println("Checking if the user is a valid user")
-	_, err := library.GetApi(objects.Authentication, false, "", 0)
+	_, err := library.GetApi("GET", objects.Authentication, false, "", 0)
 	if err != nil {return err}
 
 	// Product list
@@ -258,10 +261,15 @@ func Download() error {
 	err = extract_filename_and_size(objects.ProductFileURL)
 	if err != nil {return err}
 
+	// Accept the EULA
+	log.Println("Accepting the EULA (End User License Agreement): " + objects.EULA)
+	_, err = library.GetApi("POST", objects.EULA, false, "", 0)
+	if err != nil {return err}
+
 	// Download the version
 	log.Println("Starting downloading of file: " + objects.ProductFileName)
 	if objects.DownloadURL != "" {
-		_, err := library.GetApi(objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
+		_, err := library.GetApi("GET", objects.DownloadURL, true, objects.ProductFileName, objects.ProductFileSize)
 		if err != nil {return err}
 	} else {
 		return errors.New("Download URL is blank, cannot download the product.")

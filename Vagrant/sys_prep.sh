@@ -17,6 +17,9 @@ useradd gpadmin
 echo "Setting gpadmin password"
 echo "gpadmin:changeme" | chpasswd
 
+echo "Setting root password"
+echo "root:changeme" | chpasswd
+
 echo "Cloning piv-go-gpdb repository"
 git clone https://github.com/ielizaga/piv-go-gpdb.git /home/gpadmin/piv-go-gpdb
 chown -R gpadmin:gpadmin /home/gpadmin

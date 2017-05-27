@@ -15,6 +15,7 @@ import (
 import (
 	"../../core/methods"
 	"../../core/arguments"
+	"encoding/json"
 )
 
 // Progress of download
@@ -65,10 +66,10 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 // Get the Json from the provided URL or download the file
 // if requested.
-func GetApi(urlLink string, download bool, filename string, filesize int64) ([]byte, error) {
+func GetApi(method string, urlLink string, download bool, filename string, filesize int64) ([]byte, error) {
 
 	// Get the request
-	req, err := http.NewRequest("GET", urlLink, nil)
+	req, err := http.NewRequest(method, urlLink, nil)
 	methods.Fatal_handler(err)
 
 	// Add Header to the Http Request
@@ -88,6 +89,35 @@ func GetApi(urlLink string, download bool, filename string, filesize int64) ([]b
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {
+
+		// If we get 451 even after accepting the EULA, then the user would manually
+		// connect to the webpage and accept the EULA as its pivotal legal policy
+		// to accept the EULA if you are downloading the product for the first time.
+		if resp.StatusCode == 451 {
+
+			// Print to why we got this error
+			fmt.Println("\n\x1b[33;1mReceived Status code 451 when access the API, this means as per the pivotal " +
+				"legal policy if you are attempting to download the product for the first time you are requested to " +
+				"to manually accept the end user license agreement (only one time). please connect " +
+				"to PivNet and accept the end user license agreement and then try again, as this step cannot be avoided. Click on the link " +
+				"mentioned below to redirect you to website to accept the EULA \x1b[0m")
+
+
+			// Read the error text and store it
+			bodyText, _ := ioutil.ReadAll(resp.Body)
+			defer resp.Body.Close()
+			var f interface{}
+			_ = json.Unmarshal(bodyText, &f)
+			m := f.(map[string]interface{})
+
+			// Obtain the URL that the user can access to accept the EULA
+			for k, v := range m {
+				if k == "message" {
+					fmt.Println("\n\x1b[35;1m" + v.(string) + "\x1b[0m\n")
+				}
+			}
+
+		}
 		return []byte(""), errors.New("API ERROR: HTTP Status code expected ("+ strconv.Itoa(http.StatusOK) +") / received (" + strconv.Itoa(resp.StatusCode) + "), URL (" + urlLink + ")")
 	}
 

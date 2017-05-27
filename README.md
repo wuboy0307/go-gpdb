@@ -213,3 +213,16 @@ gpdb env -v <GPDB VERSION>
 ```
 gpdb remove -v <GPDB VERSION>
 ```
+
+# Troubleshooting
+
++ When downloading the product, the script ends up with error 451.
+
+```
+user with email 'xxx@xxx.com' has not accepted the current EULA for release with 'id'=5349. Please manually accept the EULA via this URL: https://network.pivotal.io/products/60/releases/5349/eulas/120","links":{"eula":{"href":"https://network.pivotal.io/products/60/releases/5349/eulas/120"}}}
+2017-05-27 18:51:47:-FATAL:-API ERROR: HTTP Status code expected (200) / received (451), URL (https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/5349/product_files/21200/download)
+```
+
+As per the pivotal legal policy if you have never downloaded the product before then you are requested to manually login to the website and accept the EULA, this particular steps cannot be avoided. Once accepted it will never prompt you to accept the EULA again for that product.
+
+
