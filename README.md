@@ -16,7 +16,8 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
-+ If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using 
++ Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
++ If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
  
 ```
 brew cask install virtualbox
@@ -47,24 +48,19 @@ cd piv-go-gpdb/Vagrant
 api_key = "APIKEY"
 ```
 
-and IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
+and also update the IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
 
 ```
 node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 ```
 
-+ Now execute the below command to bring the system up
-
-```
-vagrant up
-```
-
-+ Login to vagrant box and your setup is complete.
++ Now execute the below command to bring the system up ```vagrant up```
++ Once the setup is complete, Login to vagrant box using ```vagrant ssh```
 + Never user ```vagrant halt``` due to bug mentioned [here](https://dcosjira.atlassian.net/browse/VAGRANT-40), to inactivate your VM run ```vagrant suspend```
 
 **OPTIONAL:** You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal.
 
-Provide the directory location of vagrant file for the parameter "VAGRANT_FILE_LOCATION".
+Provide the full path directory location of vagrant file i.e full path of "piv-go-gpdb/Vagrant" to the parameter "VAGRANT_FILE_LOCATION".
 
 ```
 {
@@ -79,6 +75,8 @@ Provide the directory location of vagrant file for the parameter "VAGRANT_FILE_L
     echo
 } >> $HOME/.profile
 ```
+
+Once done source the ".profile" using ``` source $HOME/.profile ``` and start using the above shortcuts anywhere or in any directory on terminal. 
 
 ### Manual method
 
@@ -195,7 +193,7 @@ gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
 
 #### Environment
 
-+ To list all environment that has been installed.
++ To list all environment that has been installed and choose env in interactive mode.
 
 ```
 gpdb env
