@@ -110,7 +110,7 @@ func SourceGPDBPath() error {
 	if err != nil {return err}
 	err = os.Setenv("PATH", os.Getenv("GPHOME") + "/bin:" + os.Getenv("PYTHONHOME") + "/bin:" +  os.Getenv("PATH"))
 	if err != nil {return err}
-	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME") + "/lib:" + os.Getenv("PYTHONHOME") + "/lib:" + os.Getenv("LD_LIBRARY_PATH"))
+	err = os.Setenv("LD_LIBRARY_PATH", "/usr/lib64:/lib64:/usr/lib:/lib:" + os.Getenv("GPHOME") + "/lib:" + os.Getenv("PYTHONHOME") + "/lib:" + os.Getenv("LD_LIBRARY_PATH"))
 	if err != nil {return err}
 	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME") + "/etc/openssl.cnf")
 	if err != nil {return err}

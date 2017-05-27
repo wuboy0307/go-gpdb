@@ -14,7 +14,7 @@ This repo helps to download, install, remove and manage the software of GPDB / G
 
 You can use either of the two method "using vagrant" or "manual" to install the gpdb auto installer, below is the step to install using the two methods.
 
-#### Using Vagrant
+### Using Vagrant
 
 + If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using 
  
@@ -62,7 +62,25 @@ vagrant up
 + Login to vagrant box and your setup is complete.
 + Never user ```vagrant halt``` due to bug mentioned [here](https://dcosjira.atlassian.net/browse/VAGRANT-40), to inactivate your VM run ```vagrant suspend```
 
-#### Manual method
+**OPTIONAL:** You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal.
+
+Provide the directory location of vagrant file for the parameter "VAGRANT_FILE_LOCATION".
+
+```
+{
+	echo
+	echo '# Vagrant specific alias ( shortcuts )'
+	echo 'export VAGRANT_FILE_LOCATION="< FULL DIRECTORY PATH OF YOUR VAGRANT FILE >"'
+	echo 'alias vdown="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant suspend; cd $CURRENT_DIR"'
+	echo 'alias vup="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant up; cd $CURRENT_DIR"'
+	echo 'alias vssh="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant ssh; cd $CURRENT_DIR"'
+	echo 'alias vstatus="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant status; cd $CURRENT_DIR"'
+	echo 'alias vdestroy="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant destroy -f; cd $CURRENT_DIR"'
+    echo
+} >> $HOME/.profile
+```
+
+### Manual method
 
 + Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
 + Install it on VMWare Fusion or VirtualBox

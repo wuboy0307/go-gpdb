@@ -2,10 +2,6 @@
 #!/bin/bash
 set -e
 
-# Fix for this error
-# ps: /usr/local/greenplum-db-4.3.13.0/lib/libz.so.1: no version information available (required by /lib64/libdw.so.1)
-# Vagrant ssh to gpadmin
-
 #
 # Core check
 #

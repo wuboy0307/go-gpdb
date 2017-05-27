@@ -32,7 +32,7 @@ func CreateEnvFile(t string) error {
 	EnvFileContents = append(EnvFileContents, "export PYTHONPATH=$GPHOME/lib/python")
 	EnvFileContents = append(EnvFileContents, "export PYTHONHOME=$GPHOME/ext/python")
 	EnvFileContents = append(EnvFileContents, "export PATH=$GPHOME/bin:$PYTHONHOME/bin:$PATH")
-	EnvFileContents = append(EnvFileContents, "export LD_LIBRARY_PATH=$GPHOME/lib:$PYTHONHOME/lib:$LD_LIBRARY_PATH")
+	EnvFileContents = append(EnvFileContents, "export LD_LIBRARY_PATH=/usr/lib64:/lib64:/usr/lib:/lib:$GPHOME/lib:$PYTHONHOME/lib:$LD_LIBRARY_PATH")
 	EnvFileContents = append(EnvFileContents, "export OPENSSL_CONF=$GPHOME/etc/openssl.cnf")
 	EnvFileContents = append(EnvFileContents, "export MASTER_DATA_DIRECTORY=" + objects.GpInitSystemConfig.MasterDir + "/" + objects.GpInitSystemConfig.ArrayName + "-1")
 	EnvFileContents = append(EnvFileContents, "export PGPORT=" + strconv.Itoa(objects.GpInitSystemConfig.MasterPort))
@@ -210,7 +210,7 @@ func SetVersionEnv(filename string) error {
 	_ = methods.WriteFile(executeFile, cmd)
 	_, err := exec.Command("/bin/sh", executeFile).Output()
 	if err != nil {
-		log.Warn("Couldn't open a new terminal to source the environment, please copy / paste the below environment location to set the environment")
+		log.Warn("Couldn't open a new terminal to source the environment, please copy / paste the below text to source the environment")
 		fmt.Println("\nsource " + filename + "\n")
 	}
 

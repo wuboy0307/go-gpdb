@@ -8,8 +8,8 @@ sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/*
 sudo yum clean all
 
 echo "Installing RPMs"
-sudo yum -y install ed unzip tar git
-sudo yum -y install ed unzip tar git
+sudo yum -y install ed unzip tar git strace gdb
+sudo yum -y install ed unzip tar git strace gdb
 
 echo "Creating gpadmin user"
 useradd gpadmin
@@ -46,6 +46,9 @@ echo "Moving the config file to /home/gpadmin/ directory"
 mv ~/.config.yml /home/gpadmin
 
 echo "Updating the vagrant user bashrc to auto login to gpadmin"
-echo "sudo su - gpadmin" >> /home/vagrant/.bashrc
+{
+    echo "sudo su - gpadmin"
+    echo "exit"
+} >> /home/vagrant/.bashrc
 
 echo "The vagrant setup is complete"

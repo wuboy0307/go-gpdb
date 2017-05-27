@@ -70,12 +70,8 @@ func Environment(version string) error {
 		if err != nil { return err }
 
 		// set the chosen environment
-		if methods.IsValueEmpty(chosenEnvFile) {
-			return errors.New("There is no any installation of GPDB, please install the product to list the environment here")
-		} else {
-			err = SettheChoosenEnv(chosenEnvFile, version)
-			if err != nil { return err }
-		}
+		err = SettheChoosenEnv(chosenEnvFile, version)
+		if err != nil { return err }
 	}
 
 	log.Println("Exiting ..... ")
