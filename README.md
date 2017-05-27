@@ -56,27 +56,28 @@ node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 
 + Now execute the below command to bring the system up ```vagrant up```
 + Once the setup is complete, Login to vagrant box using ```vagrant ssh```
-+ Never user ```vagrant halt``` due to bug mentioned [here](https://dcosjira.atlassian.net/browse/VAGRANT-40), to inactivate your VM run ```vagrant suspend```
 
-**OPTIONAL:** You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal.
+**OPTIONAL:** You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter "VAGRANT_FILE_LOCATION".
 
-Provide the full path directory location of vagrant file i.e full path of "piv-go-gpdb/Vagrant" to the parameter "VAGRANT_FILE_LOCATION".
+"VAGRANT_FILE_LOCATION" is the full path directory location where vagrant file is located i.e full path of directory "piv-go-gpdb/Vagrant".
 
 ```
 {
 	echo
 	echo '# Vagrant specific alias ( shortcuts )'
 	echo 'export VAGRANT_FILE_LOCATION="< FULL DIRECTORY PATH OF YOUR VAGRANT FILE >"'
-	echo 'alias vdown="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant suspend; cd $CURRENT_DIR"'
-	echo 'alias vup="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant up; cd $CURRENT_DIR"'
-	echo 'alias vssh="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant ssh; cd $CURRENT_DIR"'
-	echo 'alias vstatus="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant status; cd $CURRENT_DIR"'
-	echo 'alias vdestroy="CURRENT_DIR=\"`pwd`\"; cd $VAGRANT_FILE_LOCATION; vagrant destroy -f; cd $CURRENT_DIR"'
-    echo
+	echo 'alias vdown="cd $VAGRANT_FILE_LOCATION; vagrant suspend; cd - 1>/dev/null"'
+	echo 'alias vup="cd $VAGRANT_FILE_LOCATION; vagrant up; cd - 1>/dev/null"'
+	echo 'alias vssh="cd $VAGRANT_FILE_LOCATION; vagrant ssh; cd - 1>/dev/null"'
+	echo 'alias vstatus="cd $VAGRANT_FILE_LOCATION; vagrant status; cd - 1>/dev/null"'
+	echo 'alias vdestroy="cd $VAGRANT_FILE_LOCATION; vagrant destroy -f; cd - 1>/dev/null"'
+	echo
 } >> $HOME/.profile
 ```
 
 Once done source the ".profile" using ``` source $HOME/.profile ``` and start using the above shortcuts anywhere or in any directory on terminal. 
+
++ Never user ```vagrant halt``` due to bug mentioned [here](https://dcosjira.atlassian.net/browse/VAGRANT-40), to inactivate your VM run ```vagrant suspend```
 
 ### Manual method
 
