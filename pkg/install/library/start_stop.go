@@ -33,7 +33,7 @@ func StopAllDB() error {
 	StopScriptLoc := arguments.TempDir + "stop_all_db.sh"
 	var StopScript []string
 	StopScript = append(StopScript, cleanupScript)
-	StopScript = append(StopScript, "ps -ef | grep gpmon | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null; echo > /dev/null")
+	StopScript = append(StopScript, "ps -ef | egrep \"gpmon|lighttpd\" | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null; echo > /dev/null")
 	err := ExecuteBash(StopScriptLoc, StopScript)
 	if err != nil { return err }
 
