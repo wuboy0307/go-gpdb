@@ -23,6 +23,20 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 brew cask install virtualbox
 ```
 
+Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
+
+```
+IRFALI123:Vagrant fali$ ifconfig
+vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether 0a:00:27:00:00:00
+vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
+	ether 0a:00:27:00:00:01
+	inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
+
+```
+
+if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) on how to set those two interfaces up
+
 + On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
@@ -48,7 +62,13 @@ cd piv-go-gpdb/Vagrant
 api_key = "APIKEY"
 ```
 
-and also update the IP that is subnet of your virtualbox. For eg.s replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
+and also update the IP that is subnet of your virtualbox. 
+
+For eg.s 
+
+As shown above my interface vboxnet1 is on the subnet 192.168.11.x, so a IP within that subnet range should work fine for accessing the VM within my MAC, so we have choosen an IP 192.168.11.10. 
+
+If your IP subnet is not "192.168.11.x" then replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
 
 ```
 node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
@@ -224,5 +244,3 @@ user with email 'xxx@xxx.com' has not accepted the current EULA for release with
 ```
 
 As per the pivotal legal policy if you have never downloaded the product before then you are requested to manually login to the website and accept the EULA, this particular steps cannot be avoided. Once accepted it will never prompt you to accept the EULA again for that product.
-
-
