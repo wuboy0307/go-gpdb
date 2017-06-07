@@ -8,8 +8,8 @@ sed -i 's/gpgcheck=1/gpgcheck=0/g' /etc/yum.repos.d/*
 sudo yum clean all
 
 echo "Installing RPMs"
-sudo yum -y install ed unzip tar git strace gdb
-sudo yum -y install ed unzip tar git strace gdb
+sudo yum -y install ed unzip tar git strace gdb vim-enhanced
+sudo yum -y install ed unzip tar git strace gdb vim-enhanced
 
 echo "Creating gpadmin user"
 useradd gpadmin
