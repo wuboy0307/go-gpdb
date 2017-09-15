@@ -131,16 +131,16 @@ func extract_downloadURL(ver string, url string) (objects.VersionObjects, error)
 
 // Ask user what file in that version are they interested in downloading
 // Default is to download GPDB, GPCC and other with a option from parser
-func which_product(versionJson objects.VersionObjects) error {
+func which_product(versionJson objects.VersionObjects, VerToDownload string) error {
 
 	// Clearing up the buffer to ensure we are using a clean array and MAP
 	objects.ProductOutputMap = make(map[string]string)
 	objects.ProductOptions = []string{}
 
-	// Not sure why from 5.0, all the files are listed inside Product file
+	// Not sure why from 5.0 beta version, all the files are listed inside Product file
 	// Since the list is not a correct and its not what all the other product
 	// follows , will ask the user to choose from it
-	if len(versionJson.Product_files) >= 2 {
+	if len(versionJson.Product_files) >= 2 && ( strings.Contains(VerToDownload, "beta") || strings.Contains(VerToDownload, "alpha") ){
 		for _,k := range versionJson.Product_files {
 			objects.ProductOutputMap[k.Name] = k.Links.Self.Href
 			objects.ProductOptions = append(objects.ProductOptions, k.Name)
@@ -247,14 +247,14 @@ func Download() error {
 	if err != nil {return err}
 
 	// The users choice to what to download from that version
-	err = which_product(versionFileJson)
+	err = which_product(versionFileJson, choice)
 	if err != nil {return err}
 
 	// If we didn't find the database File, then fall back to interactive mode.
 	if (arguments.RequestedDownloadProduct == "gpdb" || arguments.RequestedDownloadProduct == "gpcc") && objects.ProductFileURL == "" {
 		log.Warn("Couldn't find binaries for GPDB version \"" + choice + "\", failing back to interactive mode...")
 		arguments.RequestedDownloadProduct = "gpextras"
-		which_product(versionFileJson)
+		which_product(versionFileJson, choice)
 	}
 
 	// Extract the filename and the size of the file

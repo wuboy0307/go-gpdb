@@ -31,4 +31,3 @@ var FileNameContains = []string{
 	"RedHat Enterprise Linux",
 	"REDHAT ENTERPRISE LINUX",
 	"RHEL"}
-
