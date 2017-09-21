@@ -161,11 +161,15 @@ COMMAND:
 gpdb download
 ```
 
+![gpdb download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download.gif)
+
 + To download a specific version
 
 ```
 gpdb download -v <GPDB VERSION>
 ```
+
+![gpdb download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download_with_version.gif)
 
 + To download and install a specific version
 
@@ -173,11 +177,15 @@ gpdb download -v <GPDB VERSION>
 gpdb download -v <GPDB VERSION> -install
 ```
 
+![gpdb download with install](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download_and_install.gif)
+
 + To download GPCC software in interactive mode.
 
 ```
 gpdb download -p gpcc
 ```
+
+![gpcc download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_download.gif)
 
 + To download GPCC software of specific version.
 
@@ -185,12 +193,15 @@ gpdb download -p gpcc
 gpdb download -p gpcc -v <GPDB VERSION>
 ```
 
+![gpcc download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_download_with_version.gif)
+
+
 + To download all products in interactive mode
 
 ```
 gpdb download -p gpextras
 ```
-![gpextras download](https://media.giphy.com/media/l378l0w4pQ9e33i4E/giphy.gif)
+![gpextras download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/download_gp_extras.gif)
 
 + To download all products of specific version.
 
@@ -198,7 +209,7 @@ gpdb download -p gpextras
 gpdb download -p gpextras -v <GPDB VERSION>
 ```
 
-![gpextras download with version](https://media.giphy.com/media/l378cNohUTle4soWQ/giphy.gif)
+![gpextras download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/extras_download_with_version.gif)
 
 #### Install
 
@@ -208,11 +219,15 @@ gpdb download -p gpextras -v <GPDB VERSION>
 gpdb install -v <GPDB VERSION>
 ```
 
+![gpdb install](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_install.gif)
+
 + To install gpcc
 
 ```
 gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
 ```
+
+![gpdb install with gpcc](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_install.gif)
 
 #### Environment
 
@@ -222,7 +237,7 @@ gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
 gpdb env
 ```
 
-![gpdb env](https://media.giphy.com/media/3ov9k4znQiqPm3UnC0/giphy.gif)
+![gpdb env](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/env_set.gif)
 
 + To start and use a specific installation.
 
@@ -230,7 +245,7 @@ gpdb env
 gpdb env -v <GPDB VERSION>
 ```
 
-![gpdb env with version](https://media.giphy.com/media/3ov9k8iCgcmnnC6cw0/giphy.gif)
+![gpdb env with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/env_with_version.gif)
 
 #### Uninstall / Remove
 
@@ -239,6 +254,8 @@ gpdb env -v <GPDB VERSION>
 ```
 gpdb remove -v <GPDB VERSION>
 ```
+
+![gpdb remove](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_remove.gif)
 
 # Troubleshooting
 
