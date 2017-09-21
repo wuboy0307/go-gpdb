@@ -190,13 +190,15 @@ gpdb download -p gpcc -v <GPDB VERSION>
 ```
 gpdb download -p gpextras
 ```
-
+![gpextras download](https://media.giphy.com/media/l378l0w4pQ9e33i4E/giphy.gif)
 
 + To download all products of specific version.
 
 ```
 gpdb download -p gpextras -v <GPDB VERSION>
 ```
+
+![gpextras download with version](https://media.giphy.com/media/l378cNohUTle4soWQ/giphy.gif)
 
 #### Install
 
@@ -220,11 +222,15 @@ gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
 gpdb env
 ```
 
+![gpdb env](https://media.giphy.com/media/3ov9k4znQiqPm3UnC0/giphy.gif)
+
 + To start and use a specific installation.
 
 ```
 gpdb env -v <GPDB VERSION>
 ```
+
+![gpdb env with version](https://media.giphy.com/media/3ov9k8iCgcmnnC6cw0/giphy.gif)
 
 #### Uninstall / Remove
 
