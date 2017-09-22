@@ -31,16 +31,16 @@ echo "Changing the permission of /usr/local"
 chmod 777 /usr/local
 
 echo "Create /data/ directory"
-mkdir -p /datacd piv
+mkdir -p /data
 chown gpadmin:gpadmin /data
 
 echo "Running piv-go-gpdb script"
 mkdir /home/gpadmin/piv-go-gpdb
 cd /home/gpadmin/piv-go-gpdb
-cp /tmp/piv-go-gpdb/config.yml /home/gpadmin
-cp /tmp/piv-go-gpdb/setup.sh /home/gpadmin
+cp /tmp/piv-go-gpdb/config.yml /home/gpadmin/piv-go-gpdb
+cp /tmp/piv-go-gpdb/setup.sh /home/gpadmin/piv-go-gpdb
 chown -R gpadmin:gpadmin /home/gpadmin
-/bin/sh setup.sh
+/bin/sh /home/gpadmin/piv-go-gpdb/setup.sh
 
 echo "Moving the go binaries to gpadmin user home directory"
 mv $HOME/.go /home/gpadmin
@@ -57,5 +57,8 @@ echo "Updating the vagrant user bashrc to auto login to gpadmin"
     echo "sudo su - gpadmin"
     echo "exit"
 } >> /home/vagrant/.bashrc
+
+echo "Cleaning up the tmp directory"
+rm -rf /tmp/piv-go-gpdb
 
 echo "The vagrant setup is complete"

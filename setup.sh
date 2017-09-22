@@ -153,7 +153,6 @@ rm -rf pkg/
 
 echo "Downloading program dependencies"
 
-
 # go-logging package
 # YAML package
 source "$HOME/.bashrc"
@@ -179,15 +178,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#
+# Changing the owner to gpadmin:gpadmin
+#
+
+chown -R gpadmin:gpadmin /home/gpadmin
 
 #
 # Build go executable file.
 #
 
 echo "Compiling the program... "
-
 # Compile the program
-go build gpdb.go
+go build $GOPATH/src/github.com/ielizaga/piv-go-gpdb/gpdb.go
 if [ $? -ne 0 ]; then
     echo "Cannot build gpdb executable, exiting ....."
     exit 1
