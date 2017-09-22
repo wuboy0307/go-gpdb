@@ -52,6 +52,10 @@ cp ~/.bashrc /home/gpadmin
 echo "Moving the config file to /home/gpadmin/ directory"
 mv ~/.config.yml /home/gpadmin
 
+echo "Upgrading the semaphore values"
+echo "kernel.sem = 250 512000 100 2048" >> /etc/sysctl.conf
+/sbin/sysctl -p
+
 echo "Updating the vagrant user bashrc to auto login to gpadmin"
 {
     echo "sudo su - gpadmin"
