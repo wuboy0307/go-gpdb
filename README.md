@@ -296,6 +296,7 @@ this will update all the files with the newer version of the code.
 cd Vagrant
 ```
 
++ Check if the APIKEY and the IP Address subset in the Vagrantfile that matches to your environment, and if not set make appropriate changes.
 + destroy your vagrant env either using
 
 ```
@@ -320,6 +321,7 @@ If you have used your own VM for the piv-go-gpdb
 git pull
 ```
 
++ Check if the APIKEY in the config.yml is set as per your profile, and if not set make appropriate changes.
 + and then run the setup.sh script to update your binaries.
 
 ```
