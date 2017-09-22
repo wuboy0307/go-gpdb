@@ -39,4 +39,4 @@ pkg/darwin_amd64/
 
 # Ignore vagrant file
 Vagrant/.vagrant/
-Vagrant/Vagrantfile
+
