@@ -296,7 +296,7 @@ this will update all the files with the newer version of the code.
 cd Vagrant
 ```
 
-+ Check if the APIKEY and the IP Address subset in the Vagrantfile and ensure its matches to your environment, and if matching make appropriate changes.
++ Check if the APIKEY and the IP Address subnet in the Vagrantfile and ensure its matches to your environment, and if its not matching make appropriate changes as per your environment (check setup section on how to find your API KEY and what subnet the IP should be).
 + destroy your vagrant env either using
 
 ```
