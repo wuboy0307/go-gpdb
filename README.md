@@ -1,3 +1,20 @@
+# Table of Contents
+
+- [System Requirements](#system-requirements)
+- [Setup](#setup)
+    - [Using Vagrant](#using-vagrant)
+    - [Manual method](#manual-method)
+- [Usage](#usage)
+- [Command Reference](#command-reference)
+     - [Download](#download)
+     - [Install](#install)
+     - [Environment](#environment)
+     - [Uninstall / Remove](#remove)
+- [Upgrade](#upgrade)
+     - [Vagrant](#vagrant)
+     - [Manual](#manual)
+- [Troubleshooting](#troubleshooting)
+
 # Introduction [![Go Version](https://img.shields.io/badge/go-v1.7.4-green.svg?style=flat-square)](https://golang.org/dl/) [![MIT License](https://img.shields.io/badge/License-MIT_License-green.svg?style=flat-square)](https://github.com/ielizaga/piv-go-gpdb/blob/master/LICENSE)
 
 This repo helps to download, install, remove and manage the software of GPDB / GPCC. This scripts is designed for a single node installation ( only primary ) and not for multipe node ( i.e primary / mirror )
@@ -152,7 +169,7 @@ COMMAND:
 
 # Command Reference
 
-#### Download
+### Download
 
 + To download product in interactive mode, run
 
@@ -210,7 +227,7 @@ gpdb download -p gpextras -v <GPDB VERSION>
 
 ![gpextras download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/extras_download_with_version.gif)
 
-#### Install
+### Install
 
 + To install gpdb
 
@@ -228,7 +245,7 @@ gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
 
 ![gpdb install with gpcc](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_install.gif)
 
-#### Environment
+### Environment
 
 + To list all environment that has been installed and choose env in interactive mode.
 
@@ -246,7 +263,7 @@ gpdb env -v <GPDB VERSION>
 
 ![gpdb env with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/env_with_version.gif)
 
-#### Uninstall / Remove
+### Remove
 
 + To remove a particular installation.
 
@@ -255,6 +272,59 @@ gpdb remove -v <GPDB VERSION>
 ```
 
 ![gpdb remove](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_remove.gif)
+
+# Upgrade
+
+To upgrade the piv-go-gpdb binaries.
+
+### Vagrant
+
+If you are using vagrant
+
++ Navigate onto your local machine where your have cloned the repo
++ run the below command to update your files
+
+```
+git pull
+```
+
+this will update all the files with the newer version of the code.
+
++ Navigate to your Vagrantfile directory
+
+```
+cd Vagrant
+```
+
++ destroy your vagrant env either using
+
+```
+vagrant destroy
+```
+
++ and recreate it again using
+
+```
+vagrant up
+```
+
+### Manually
+
+If you have used your own VM for the piv-go-gpdb
+
++ Connect to you VM via ssh
++ Navigate to the folder where you have cloned the repo
++ run the below command to pull the newer version of the code.
+
+```
+git pull
+```
+
++ and then run the setup.sh script to update your binaries.
+
+```
+/bin/sh setup.sh
+```
 
 # Troubleshooting
 

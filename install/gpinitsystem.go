@@ -32,18 +32,16 @@ func BuildGpInitSystemConfig(t string) error {
 
 	// Check if we have the last used port base file
 	log.Info("Obtaining ports to be set for PORT_BASE")
-	PORT_BASE , _ := DoWeHavePortBase(core.FutureRefDir, PortBaseFileName, "PORT_BASE")
-	if PORT_BASE != "" {
-		PORT_BASE = string(PORT_BASE)[11:]
+	PORTBASE , _ := DoWeHavePortBase(core.FutureRefDir, PortBaseFileName, "PORT_BASE")
+	if PORTBASE != "" {
+		PORTBASE = string(PORTBASE)[11:]
 	} else {
-		PORT_BASE, _ := strconv.Atoi(PORT_BASE)
 		log.Warning("Didn't find PORT_BASE in the file, setting it to default value: " + strconv.Itoa(PORT_BASE))
-		BASE_PORT := strconv.Itoa(PORT_BASE)
-		PORT_BASE, _ = strconv.Atoi(BASE_PORT)
+		PORTBASE = strconv.Itoa(PORT_BASE)
 	}
 
 	// Check if the port is available or not
-	pb, err := strconv.Atoi(PORT_BASE)
+	pb, err := strconv.Atoi(PORTBASE)
 	if err != nil { return err }
 	pb, err = IsPortUsed(pb, core.EnvYAML.Install.TotalSegments)
 	if err != nil { return err }
@@ -52,18 +50,16 @@ func BuildGpInitSystemConfig(t string) error {
 
 	// Check if we have the last used master port file
 	log.Info("Obtaining ports to be set for MASTER_PORT")
-	MASTER_PORT , _ := DoWeHavePortBase(core.FutureRefDir, PortBaseFileName, "MASTER_PORT")
-	if MASTER_PORT != "" {
-		MASTER_PORT = string(MASTER_PORT)[13:]
+	MASTERPORT , _ := DoWeHavePortBase(core.FutureRefDir, PortBaseFileName, "MASTER_PORT")
+	if MASTERPORT != "" {
+		MASTERPORT = string(MASTERPORT)[13:]
 	} else {
-		MASTER_PORT, _ := strconv.Atoi(MASTER_PORT)
 		log.Warning("Didn't find MASTER_PORT in the file, setting it to default value: " + strconv.Itoa(MASTER_PORT))
-		PORT_MASTER := strconv.Itoa(MASTER_PORT)
-		MASTER_PORT, _ = strconv.Atoi(PORT_MASTER)
+		MASTERPORT = strconv.Itoa(MASTER_PORT)
 	}
 
 	// MASTER PORT
-	mp, err := strconv.Atoi(MASTER_PORT)
+	mp, err := strconv.Atoi(MASTERPORT)
 	if err != nil { return err }
 	mp, err = IsPortUsed(mp, 1)
 	if err != nil { return err }
