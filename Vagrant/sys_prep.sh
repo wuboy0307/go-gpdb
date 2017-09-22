@@ -31,7 +31,7 @@ echo "Changing the permission of /usr/local"
 chmod 777 /usr/local
 
 echo "Create /data/ directory"
-mkdir -p /data
+mkdir -p /datacd piv
 chown gpadmin:gpadmin /data
 
 echo "Running piv-go-gpdb script"
