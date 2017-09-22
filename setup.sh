@@ -204,6 +204,12 @@ fi
 # move it to bin directory
 mv gpdb bin/
 
+
+#
+# Changing the owner to gpadmin:gpadmin
+#
+chown -R gpadmin:gpadmin /home/gpadmin
+
 #
 # Success message.
 #
