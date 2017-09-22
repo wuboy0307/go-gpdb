@@ -38,6 +38,8 @@ func BuildGpInitSystemConfig(t string) error {
 	} else {
 		PORT_BASE, _ := strconv.Atoi(PORT_BASE)
 		log.Warning("Didn't find PORT_BASE in the file, setting it to default value: " + strconv.Itoa(PORT_BASE))
+		BASE_PORT := strconv.Itoa(PORT_BASE)
+		PORT_BASE, _ = strconv.Atoi(BASE_PORT)
 	}
 
 	// Check if the port is available or not
@@ -56,6 +58,8 @@ func BuildGpInitSystemConfig(t string) error {
 	} else {
 		MASTER_PORT, _ := strconv.Atoi(MASTER_PORT)
 		log.Warning("Didn't find MASTER_PORT in the file, setting it to default value: " + strconv.Itoa(MASTER_PORT))
+		PORT_MASTER := strconv.Itoa(MASTER_PORT)
+		MASTER_PORT, _ = strconv.Atoi(PORT_MASTER)
 	}
 
 	// MASTER PORT

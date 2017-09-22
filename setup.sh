@@ -181,7 +181,6 @@ fi
 #
 # Changing the owner to gpadmin:gpadmin
 #
-
 chown -R gpadmin:gpadmin /home/gpadmin
 
 #
@@ -198,11 +197,11 @@ fi
 
 # move the binary file to bin directory
 if [ ! -d bin ]; then
-    mkdir -p bin/
+    mkdir -p $GOPATH/bin/
 fi
 
 # move it to bin directory
-mv gpdb bin/
+mv gpdb $GOPATH/bin/
 
 
 #
