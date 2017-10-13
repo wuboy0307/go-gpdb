@@ -32,10 +32,13 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
+##### Vagrant Setup (Pre Steps)
+
 + Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
 + If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
 
 ```
+brew update
 brew cask install virtualbox
 ```
 
@@ -56,8 +59,18 @@ if its not shown then refer to the [link](http://islandora.ca/content/fixing-mis
 + On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
+brew update
 brew cask install vagrant
 ```
+
+If you have already installed vagrant ensure you are running the latest version of vagrant, to update your vagrant run
+
+```
+brew update
+brew cask reinstall vagrant
+```
+
+###### Setting up this repository with vagrant
 
 + Clone the repo
 
@@ -72,17 +85,17 @@ cd piv-go-gpdb/Vagrant
 ```
 
 + Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
-+ Open the Vagrant file and update your API KEY
++ Open the **Vagrantfile** and update your API KEY.
 
 ```
 api_key = "APIKEY"
 ```
 
-and also update the IP that is subnet of your virtualbox.
++ While in the vagrantfile, update the IP that is subnet of your virtualbox (needed to access command center locally on your mac).
 
 For eg.s
 
-As shown above my interface vboxnet1 is on the subnet 192.168.11.x, so a IP within that subnet range should work fine for accessing the VM within my MAC, so we have choosen an IP 192.168.11.10.
+As shown above (Vagrant Setup Section) my interface vboxnet1 is on the subnet 192.168.11.x, so a IP within that subnet range should work fine for accessing the VM within my MAC, so we have choosen an IP 192.168.11.10.
 
 If your IP subnet is not "192.168.11.x" then replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
 
@@ -93,7 +106,9 @@ node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 + Now execute the below command to bring the system up ```vagrant up```
 + Once the setup is complete, Login to vagrant box using ```vagrant ssh```
 
-**OPTIONAL:** You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter "VAGRANT_FILE_LOCATION".
+**OPTIONAL:**
+
+You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter "VAGRANT_FILE_LOCATION".
 
 "VAGRANT_FILE_LOCATION" is the full path directory location where vagrant file is located i.e full path of directory "piv-go-gpdb/Vagrant".
 
@@ -112,8 +127,6 @@ node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 ```
 
 Once done source the ".profile" using ``` source $HOME/.profile ``` and start using the above shortcuts anywhere or in any directory on terminal.
-
-+ Never user ```vagrant halt``` due to bug mentioned [here](https://dcosjira.atlassian.net/browse/VAGRANT-40), to inactivate your VM run ```vagrant suspend```
 
 ### Manual method
 
