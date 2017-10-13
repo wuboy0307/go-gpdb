@@ -33,7 +33,7 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
-##### <span style="color:blue">Vagrant Setup (Pre Steps)</span>
+##### Vagrant Setup (PRE STEPS)
 
 
 1. Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
@@ -72,7 +72,7 @@ brew update
 brew cask reinstall vagrant
 ```
 
-##### <span style="color:blue">Setting up this repository with vagrant</span>
+##### Repo Installation Steps (With Vagrant)
 
 1. Clone the repo
 
