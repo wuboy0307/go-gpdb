@@ -32,10 +32,11 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
-##### Vagrant Setup (Pre Steps)
+##### **Vagrant Setup (Pre Steps)**
 
-+ Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
-+ If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
+
+1. Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
+2. If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
 
 ```
 brew update
@@ -56,7 +57,7 @@ vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
 
 if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) on how to set those two interfaces up
 
-+ On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
+3. On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
 brew update
@@ -70,28 +71,28 @@ brew update
 brew cask reinstall vagrant
 ```
 
-###### Setting up this repository with vagrant
+##### **Setting up this repository with vagrant**
 
-+ Clone the repo
+1. Clone the repo
 
 ```
 git clone https://github.com/ielizaga/piv-go-gpdb.git
 ```
 
-+ Go to the vagrant folder
+2. Go to the vagrant folder
 
 ```
 cd piv-go-gpdb/Vagrant
 ```
 
-+ Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
-+ Open the **Vagrantfile** and update your API KEY.
+3. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
+4. Open the **Vagrantfile** and update your API KEY.
 
 ```
 api_key = "APIKEY"
 ```
 
-+ While in the vagrantfile, update the IP that is subnet of your virtualbox (needed to access command center locally on your mac).
+5. While in the vagrantfile, update the IP that is subnet of your virtualbox (needed to access command center locally on your mac).
 
 For eg.s
 
@@ -103,8 +104,8 @@ If your IP subnet is not "192.168.11.x" then replace "192.168.11.10" with IP tha
 node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 ```
 
-+ Now execute the below command to bring the system up ```vagrant up```
-+ Once the setup is complete, Login to vagrant box using ```vagrant ssh```
+6. Now execute the below command to bring the system up ```vagrant up```
+7. Once the setup is complete, Login to vagrant box using ```vagrant ssh```
 
 **OPTIONAL:**
 
@@ -130,39 +131,39 @@ Once done source the ".profile" using ``` source $HOME/.profile ``` and start us
 
 ### Manual method
 
-+ Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
-+ Install it on VMWare Fusion or VirtualBox
-+ When installing make sure you create a user called "gpadmin"
-+ Make sure the internet connection works (needed for downloading the product from PivNet)
-+ Once installed, login as root and
-+ Update the YUM repository
+1. Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
+2. Install it on VMWare Fusion or VirtualBox
+3. When installing make sure you create a user called "gpadmin"
+4. Make sure the internet connection works (needed for downloading the product from PivNet)
+5. Once installed, login as root and
+6. Update the YUM repository
 
 ```
 yum update
 ```
 
-+ Install git
+8. Install git
 
 ```
 yum install git -y
 ```
 
-+ Connect as "gpadmin"
-+ Clone the repo
+9. Connect as "gpadmin"
+10. Clone the repo
 
 ```
 git clone https://github.com/ielizaga/piv-go-gpdb.git
 ```
 
-+ Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
-+ Open the config.yml and update API TOKEN, and update the other configuration based on your environment like where to download , install etc.
+11. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
+12. Open the config.yml and update API TOKEN, and update the other configuration based on your environment like where to download , install etc.
 
 ```
 API_TOKEN: <API TOKEN>                         # You can get it after login to PivNet
 ```
 
-+ Now run the "setup.sh" file found in the "piv-go-gpdb" file.
-+ Open new terminal to use the software.
+13. Now run the "setup.sh" file found in the "piv-go-gpdb" file.
+14. Open new terminal to use the software.
 
 # Usage
 
