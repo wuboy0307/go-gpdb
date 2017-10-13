@@ -25,6 +25,7 @@ This repo helps to download, install, remove and manage the software of GPDB / G
 + RAM: 6 to 8 GM
 + Hard Disk: 40GB
 + Internet connection to download the product from PivNet.
++ Vagrant version: 2.0.0 or above (if using vagrant)
 
 # Setup
 
@@ -32,7 +33,7 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
-##### **Vagrant Setup (Pre Steps)**
+##### <span style="color:brown">Vagrant Setup (Pre Steps)</span>
 
 
 1. Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
@@ -71,7 +72,7 @@ brew update
 brew cask reinstall vagrant
 ```
 
-##### **Setting up this repository with vagrant**
+##### <span style="color:brown">Setting up this repository with vagrant</span>
 
 1. Clone the repo
 
