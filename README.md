@@ -108,9 +108,26 @@ node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 6. Now execute the below command to bring the system up ```vagrant up```
 7. Once the setup is complete, Login to vagrant box using ```vagrant ssh```
 
+**IMPORTANT:**
+
+If you shutdown vagrant using `vagrant halt` or reboot of your computer without suspending your vagrant VM, when attempting to start using `vagrant up` you might see the vagrant hung at the stage
+
+```
+Configuring and enabling network interfaces...
+```
+
+this is due to couple of [Issue 1](https://github.com/hashicorp/vagrant/issues/7876), [issue 2](https://github.com/hashicorp/vagrant/issues/8295) etc with vagrant software, so its best to suspending the VM using `vagrant suspend` rather than shutting down.
+
+if you do end up at the hung situtation, please destroy and recreate the VM.
+
+```
+vagrant destory
+vagrant up
+```
+
 **OPTIONAL:**
 
-You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter "VAGRANT_FILE_LOCATION".
+You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter `"VAGRANT_FILE_LOCATION"`.
 
 "VAGRANT_FILE_LOCATION" is the full path directory location where vagrant file is located i.e full path of directory "piv-go-gpdb/Vagrant".
 
