@@ -56,7 +56,7 @@ vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
 
 ```
 
-if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) on how to set those two interfaces up
+if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
 
 3. On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
