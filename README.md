@@ -33,7 +33,7 @@ You can use either of the two method "using vagrant" or "manual" to install the 
 
 ### Using Vagrant
 
-##### Vagrant Setup (PRE STEPS)
+> ##### Vagrant Setup (PRE STEPS)
 
 
 1. Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
@@ -72,7 +72,7 @@ brew update
 brew cask reinstall vagrant
 ```
 
-##### Repo Installation Steps (With Vagrant)
+> ##### Repo Installation Steps (With Vagrant)
 
 1. Clone the repo
 
@@ -108,7 +108,7 @@ node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
 6. Now execute the below command to bring the system up ```vagrant up```
 7. Once the setup is complete, Login to vagrant box using ```vagrant ssh```
 
-**IMPORTANT:**
+> **IMPORTANT:**
 
 If you shutdown vagrant using `vagrant halt` or reboot of your computer without suspending your vagrant VM, when attempting to start using `vagrant up` you might see the vagrant hung at the stage
 
@@ -125,7 +125,7 @@ vagrant destory
 vagrant up
 ```
 
-**OPTIONAL:**
+> **OPTIONAL:**
 
 You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter `"VAGRANT_FILE_LOCATION"`.
 
