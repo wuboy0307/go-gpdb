@@ -86,7 +86,7 @@ git clone https://github.com/ielizaga/piv-go-gpdb.git
 cd piv-go-gpdb/Vagrant
 ```
 
-3. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
+3. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (PLEASE NOTE: This token will change if you click on the “Request New API Token” again)
 4. Open the **Vagrantfile** and update your API KEY.
 
 ```
