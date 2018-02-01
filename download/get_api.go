@@ -11,7 +11,46 @@ import (
 	"fmt"
 	"encoding/json"
 	"github.com/ielizaga/piv-go-gpdb/core"
+	"bytes"
 )
+
+// Implementing the new PivNet API token system
+// The below function extract the token ( UAA )
+func getToken(uaa_token string) (string, error) {
+
+	body := AuthBody{RefreshToken: uaa_token}
+	b, err := json.Marshal(body)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal API token request body: %s", err.Error())
+	}
+
+	// Placing request for access token.
+	req, err := http.NewRequest("POST", RefreshToken, bytes.NewReader(b))
+	if err != nil {
+		return "", fmt.Errorf("failed to construct API token request: %s", err.Error())
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("API token request failed: %s", err.Error())
+	}
+
+	defer resp.Body.Close()
+
+	// Is it a success or not
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to fetch API token - received status %v", resp.StatusCode)
+	}
+
+	// Let store it for the rest of the program
+	err = json.NewDecoder(resp.Body).Decode(&AuthenicationResponse)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode API token response: %s", err.Error())
+	}
+
+	return AuthenicationResponse.Token, nil
+
+}
 
 // Get the Json from the provided URL or download the file
 // if requested.
@@ -25,16 +64,30 @@ func GetApi(method string, urlLink string, download bool, filename string, files
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 
+	// Adding Token header.
 	// Verify there is a token on config file
 	if core.IsValueEmpty(core.EnvYAML.Download.ApiToken) {
 		return []byte(""), errors.New("Cannot find value for \"API_TOKEN\", check \"config.yml\"")
 	} else {
-		req.Header.Set("Authorization", "Token " + core.EnvYAML.Download.ApiToken)
+		 //Initial kickoff will not have any valid token
+		 //so we will request for the token
+		if AuthenicationResponse.Token == "" {
+			req.Header.Set("Authorization", "Bearer " + core.EnvYAML.Download.ApiToken)
+			new_refresh_token, err := getToken(core.EnvYAML.Download.ApiToken)
+			if err != nil || new_refresh_token == "" {
+				return []byte(""), fmt.Errorf("Authentication Failure: %s", err.Error())
+			}
+			return []byte(""), nil
+		} else { // hey we have the access token, so lets move on.
+			req.Header.Set("Authorization", "Bearer " + AuthenicationResponse.Token)
+		}
 	}
+
 
 	// Handle the request
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {return []byte(""), err}
+
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {

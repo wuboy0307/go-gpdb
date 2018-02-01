@@ -2,8 +2,10 @@ package download
 
 // All the PivNet Url's
 const (
-	Authentication = "https://network.pivotal.io/api/v2/authentication"
-	Products =  "https://network.pivotal.io/api/v2/products"
+	EndPoint = "https://network.pivotal.io"
+	Authentication = EndPoint + "/api/v2/authentication"
+	RefreshToken = EndPoint + "/api/v2/authentication/access_tokens"
+	Products =  EndPoint + "/api/v2/products"
 )
 
 // Slug ID that is of our importance
@@ -17,6 +19,9 @@ const (
 
 // Products
 var ProductJsonType ProductObjects
+
+// Authentication
+var AuthenicationResponse AuthResp
 
 // Release
 var ReleaseJsonType ReleaseObjects

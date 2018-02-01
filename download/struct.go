@@ -117,3 +117,11 @@ type verFileGroupType struct {
 	Name string `json:"name"`
 	Product_files []verProdType `json:"product_files"`
 }
+
+type AuthResp struct {
+	Token string `json:"access_token"`
+}
+
+type AuthBody struct {
+	RefreshToken string `json:"refresh_token"`
+}

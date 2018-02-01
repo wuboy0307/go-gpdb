@@ -40,3 +40,9 @@ pkg/darwin_amd64/
 # Ignore vagrant file
 Vagrant/.vagrant/
 Vagrant/Vagrantfile
+
+# Ignoring the Docker Build Script for now , since
+# Can't seems to change the hostname on Docker build
+# and also don't know why the centos version tells to connect as root for
+# Doing root operation when Im already a root user
+Docker
