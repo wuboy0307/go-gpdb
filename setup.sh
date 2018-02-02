@@ -201,8 +201,8 @@ if [ ! -d bin ]; then
     mkdir -p $GOPATH/bin/
 fi
 
-# move it to bin directory
-mv gpdb $GOPATH/bin/
+# move it to bin directory (forcefully, no need to prompt)
+mv -f gpdb $GOPATH/bin/
 
 #
 # Changing the owner to gpadmin:gpadmin
