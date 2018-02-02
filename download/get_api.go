@@ -85,11 +85,9 @@ func GetApi(method string, urlLink string, download bool, filename string, files
 		}
 	}
 
-
 	// Handle the request
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {return []byte(""), err}
-
 
 	// If the status code is not 200, then error out
 	if resp.StatusCode != http.StatusOK {

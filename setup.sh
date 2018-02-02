@@ -89,6 +89,7 @@ fi
 echo "Extracting ..."
 tar -C "$HOME" -xzf /tmp/go.tar.gz
 mv "$HOME/go" "$HOME/.go"
+chown -R gpadmin:gpadmin "$HOME/.go"
 
 #
 # Update environment information
@@ -202,7 +203,6 @@ fi
 
 # move it to bin directory
 mv gpdb $GOPATH/bin/
-
 
 #
 # Changing the owner to gpadmin:gpadmin

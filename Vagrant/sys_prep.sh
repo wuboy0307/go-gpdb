@@ -44,13 +44,18 @@ chown -R gpadmin:gpadmin /home/gpadmin
 
 echo "Moving the go binaries to gpadmin user home directory"
 mv $HOME/.go /home/gpadmin
-chown gpadmin:gpadmin /home/gpadmin/.go
+
+echo "Changing the ownership of the go binaries to gpadmin"
+chown -R gpadmin:gpadmin /home/gpadmin/.go
 
 echo "Copy the bashrc to gpadmin user folder"
 cp ~/.bashrc /home/gpadmin
 
 echo "Moving the config file to /home/gpadmin/ directory"
 mv ~/.config.yml /home/gpadmin
+
+echo "Changing the ownership of config file in /home/gpadmin/ to gpadmin"
+chown gpadmin:gpadmin /home/gpadmin/.config.yml
 
 echo "Upgrading the semaphore values"
 echo "kernel.sem = 250 512000 100 2048" >> /etc/sysctl.conf
