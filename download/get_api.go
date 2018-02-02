@@ -18,6 +18,8 @@ import (
 // The below function extract the token ( UAA )
 func getToken(uaa_token string) (string, error) {
 
+	log.Info("Getting the access token from the UAA token provided.")
+
 	body := AuthBody{RefreshToken: uaa_token}
 	b, err := json.Marshal(body)
 	if err != nil {
