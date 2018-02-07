@@ -61,6 +61,17 @@ echo "Upgrading the semaphore values"
 echo "kernel.sem = 250 512000 100 2048" >> /etc/sysctl.conf
 /sbin/sysctl -p
 
+echo "Updating the vagrant user bashrc to auto login to gpadmin"
+if [ "${2}" == "hack" ]; then
+    echo "Requested to auto login to gpadmin during vagrant ssh"
+    {
+        echo "sudo su - gpadmin"
+        echo "exit"
+    } >> /home/vagrant/.bashrc
+else
+     echo "Skipping the step to auto login as per the request"
+fi
+
 echo "Cleaning up the tmp directory"
 rm -rf /tmp/piv-go-gpdb
 
