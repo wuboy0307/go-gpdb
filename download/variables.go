@@ -50,4 +50,7 @@ var FileNameContains = []string{
 	"RedHat Entrerprise Linux",
 	"RedHat Enterprise Linux",
 	"REDHAT ENTERPRISE LINUX",
-	"RHEL"}
+	"RHEL",
+	"Binary Installer for RHEL"}
+
+var IgnoreFileExtension = "RPM for RHEL"

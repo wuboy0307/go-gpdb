@@ -152,7 +152,8 @@ func which_product(versionJson VersionObjects, VerToDownload string) error {
 				if strings.Contains(k.Name, DBServer) {
 					for _, j := range k.Product_files {
 						for _, name := range FileNameContains {
-							if strings.Contains(j.Name, name) {
+							if strings.Contains(j.Name, name) && !strings.Contains(j.Name, IgnoreFileExtension) {
+								fmt.Println(j.Name, name)
 								ProductFileURL = j.Links.Self.Href
 								DownloadURL = j.Links.Download.Href
 							}
