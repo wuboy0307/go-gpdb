@@ -1,13 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
 
 func install() {
 
-	Debugf("Running the installation for the product: %s", cmdOptions.Product)
+	Infof("Running the installation for the product: %s", cmdOptions.Product)
 
+	// Checking if this is a single install VM or Mutli node VM
+	var singleORmulti string
+	noSegments, _ := strconv.Atoi(os.Getenv("GPDB_SEGMENT"))
+	if noSegments > 0 {
+		singleORmulti = "multi"
+	} else {
+		singleORmulti = "single"
+	}
+	Debugf("Is this single or multi node installation: %s", singleORmulti)
+
+	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
-		installGPDB()
+		installGPDB(singleORmulti)
 	} else { // its a GPCC installation
 		installGPCC()
 	}
@@ -15,7 +30,7 @@ func install() {
 }
 
 // Install GPDB
-func installGPDB() {
+func installGPDB(singleOrMutli string) {
 
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 

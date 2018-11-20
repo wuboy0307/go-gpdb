@@ -35,6 +35,7 @@ spinner $! "Allow passwordless sudo for gpadmin"
 { 
   { echo '# GO-GPDB'
     echo 'export UAA_API_TOKEN='$1
+    echo 'export GPDB_SEGMENTS='$2
     echo 'source /vagrant/scripts/functions.h'
     echo 'source <(parse_yaml /vagrant/gpdb/config.yml)'
   } >> /etc/profile.d/gpdb.profile.sh

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/jinzhu/configor"
+	"os"
 )
 
 // Struct that store the configuration file for the program to run
@@ -80,7 +81,13 @@ func validateConfiguration() {
 
 	// Check if API Token
 	if IsValueEmpty(Config.DOWNLOAD.APITOKEN) || Config.DOWNLOAD.APITOKEN == "<API TOKEN>" {
-		Fatal("The API Token is either missing or not provided, please update the config file and try again")
+		// Check if its set as environment variables
+		token := os.Getenv("UAA_API_TOKEN")
+		if token == "" { // No token set
+			Fatal("The API Token is either missing or not provided, please update the config file and try again")
+		} else {
+			Config.DOWNLOAD.APITOKEN = token
+		}
 	}
 
 	// Check if the directory exists, else create one.
