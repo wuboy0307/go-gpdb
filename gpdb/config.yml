@@ -1,0 +1,19 @@
+# Make sure the directory names ends with "/"
+---
+CORE:
+  APPLICATION_NAME: gpdb	                              # Application Folder Name
+  OS: "linux"                                             # OS Platform
+  ARCH: "amd64"                                           # OS Architecture 
+  GO_BUILD: "1.7.4"                                       # Version of GO the Application will use to Build (1.7.4)
+  BASE_DIR: /usr/local/src/go                             # Location Where [APPLICATION_NAME] Files Will Be Created
+  TEMP_DIR: /temp/                                        # Temporary Folder Location for Hostfile and Init
+DOWNLOAD:
+  API_TOKEN: <API TOKEN>           						  # You can get it after login to PivNet
+INSTALL:
+  MASTER_HOST: gpdb                                       # Hostname of Master
+  MASTER_USER: gpadmin                                    # User that will install GPDB s/w usually "gpadmin"
+  MASTER_PASS: changeme                                   # Password of MASTER_USER user
+  GPMON_PASS: changeme                                    # Password for GPMON
+  MASTER_DATA_DIRECTORY: /data/master/                    # Master Data Directory
+  SEGMENT_DATA_DIRECTORY: /data/primary/                  # Segment Data Directory
+  TOTAL_SEGMENT: 2                                        # Total Segments to be created
