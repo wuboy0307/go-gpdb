@@ -13,7 +13,7 @@ require "ipaddr"
 
 # ENV APPLICATION DEFAULTS
 @subnet = ENV['GPDB_SUBNET'] || "192.168.99.100"
-@hostname = ENV['GPDB_HOSTNAME'] || "go-gpdb"
+@hostname = ENV['GPDB_HOSTNAME'] || "gpdb"
 @segments = ENV['GPDB_SEGMENTS'].to_i || 0
 
 # Define a Template for Building All Our VMs.
@@ -73,9 +73,9 @@ Vagrant.configure("2") do |config|
   # Segment Nodes:
   (1..@segments).each do |i|
     @ip = @ip.succ
-    puts "[#{i}] Segment Hostname: #{@hostname}-#{i}"
+    puts "[#{i}] Segment Hostname: #{@hostname}#{i}"
     puts "[#{i}] Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
+    build_vm( config, "#{@hostname}#{i}", "#{@ip}")
   end
 
   # Provisioning 
