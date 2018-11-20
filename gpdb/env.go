@@ -1,7 +1,6 @@
 package main
 
 import (
-	"path/filepath"
 	"os"
 	"bufio"
 	"strings"
@@ -13,7 +12,7 @@ import (
 func readFileAndGatherInformation(file string) string {
 
 	// Obtain the below information from env file
-	var textDetection = []string{`export PGPORT=`, `export ENV_NAME=`, `export GPCC_INSTANCE_NAME=`, `export GPCCPORT=`}
+	var textDetection = []string{`export PGPORT=`, `export GPCC_INSTANCE_NAME=`, `export GPCCPORT=`}
 	var output string
 
 	// Open the file
@@ -44,11 +43,6 @@ func readFileAndGatherInformation(file string) string {
 	return output
 }
 
-// Search the directory for the matching files
-func FilterDirsGlob(dir, search string) ([]string, error) {
-	return filepath.Glob(filepath.Join(dir, search))
-}
-
 // List all the installed enviornment files.
 func installedEnvFiles(search, confirmation string) string {
 
@@ -66,7 +60,8 @@ func installedEnvFiles(search, confirmation string) string {
 
 	// All the environments
 	for k, v := range allEnv {
-		output = append(output, strconv.Itoa(k+1) + readFileAndGatherInformation(v))
+		envName := strings.Replace(v, Config.INSTALL.ENVDIR, "", -1)
+		output = append(output, fmt.Sprintf("%s|%s%s", strconv.Itoa(k+1), envName, readFileAndGatherInformation(v)))
 	}
 
 	// Found matching environment file of this installation, now ask for confirmation
@@ -110,9 +105,10 @@ func envListing() {
 
 	var envFile string
 	if cmdOptions.Version == "" { // No version provided, show everything
-		Infof("Listing all the product installed on the environment")
+		Infof("Listing all the environment installed")
 		envFile = installedEnvFiles("*", "list&choose")
 	} else { // Version given, search for env file
+		Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
 		envFile = installedEnvFiles("*" + cmdOptions.Version + "*", "choose")
 	}
 

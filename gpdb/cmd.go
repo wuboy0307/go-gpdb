@@ -98,8 +98,8 @@ var installCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// Search the tile from all the labs
-		fmt.Println("will run install one day")
+		// Install the product that is downloaded
+		install()
 	},
 }
 

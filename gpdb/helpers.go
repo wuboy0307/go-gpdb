@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+	"github.com/mholt/archiver"
+	"path/filepath"
 )
 
 // Function that checks if the string is available on a array.
@@ -28,6 +30,7 @@ func IsValueEmpty(v string) bool {
 
 // exists returns whether the given file or directory exists or not
 func doesFileOrDirExists(path string) (bool, error) {
+	Debugf("Checking if the directory %s exists", path)
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -36,6 +39,11 @@ func doesFileOrDirExists(path string) (bool, error) {
 		return false, nil
 	}
 	return true, err
+}
+
+// Search the directory for the matching files
+func FilterDirsGlob(dir, search string) ([]string, error) {
+	return filepath.Glob(filepath.Join(dir, search))
 }
 
 // Create directory
@@ -116,5 +124,61 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 		// Ask to sleep, before repainting the screen.
 		time.Sleep(time.Second)
+	}
+}
+
+// Check if the directory provided is readable and writeable
+func dirValidator() error {
+
+	Debugf("Checking for the existences of master and segment directory")
+
+	// Check if the master & segment location is readable and writable
+	masterDirExists, err := doesFileOrDirExists(Config.INSTALL.MASTERDATADIRECTORY)
+	if err != nil {
+		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
+	}
+
+	segmentDirExists, err := doesFileOrDirExists(Config.INSTALL.SEGMENTDATADIRECTORY)
+	if err != nil {
+		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
+	}
+
+	// if the file doesn't exists then let try creating it ...
+	if !masterDirExists || !segmentDirExists {
+		CreateDir(Config.INSTALL.MASTERDATADIRECTORY)
+		CreateDir(Config.INSTALL.SEGMENTDATADIRECTORY)
+	}
+
+	return nil
+}
+
+// Remove all the file based on search
+func removeFiles(path, file string) {
+	Debugf("Removing the file with %s from path %s", file, path)
+	allfiles, _ := FilterDirsGlob(path, file)
+	for _, f := range allfiles {
+		if err := os.RemoveAll(f); err != nil {
+			Fatalf("Failed to remove the file from path %s%s, err: %v", path, file, err)
+		}
+	}
+}
+
+// Unzip the binaries.
+func unzip(search string) {
+	// Check if we can find the binaries in the directory
+	allfiles, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, search)
+
+	// Did we find any
+	if len(allfiles) > 0 {
+		binary := allfiles[0]
+		Infof("Found & unzip the binary for the version %s: %s", cmdOptions.Version, binary)
+		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.Version))
+		err := archiver.Unarchive(binary, Config.DOWNLOAD.DOWNLOADDIR)
+		if err != nil {
+			Fatalf("Couldn't unzip the file, err: %v", err)
+		}
+		Debugf("Unzipped the file %s completed successfully", binary)
+	} else {
+		Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
 	}
 }
