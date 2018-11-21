@@ -8,13 +8,14 @@ require "ipaddr"
 @pivnet_token = ENV['UAA_API_TOKEN'] || ""
 
 # EVN VM DEFAULTS
-@vm_cpus = ENV['VM_CPUS'].to_i || 2
-@vm_memory = ENV['VM_MEMORY'].to_i || 2048
+@vm_os = ENV['VM.OS'] || "bento/centos-7.4"
+@vm_cpus = ENV['VM.CPUS'].to_i || 2
+@vm_memory = ENV['VM.MEMORY'].to_i || 4096
 
 # ENV APPLICATION DEFAULTS
-@subnet = ENV['GPDB_SUBNET'] || "192.168.99.100"
-@hostname = ENV['GPDB_HOSTNAME'] || "go-gpdb"
-@segments = ENV['GPDB_SEGMENTS'].to_i || 0
+@subnet = ENV['GO-GPDB.SUBNET'] || "192.168.99.100"
+@hostname = ENV['GO-GPDB.HOSTNAME'] || "go-gpdb"
+@segments = ENV['GO-GPDB.SEGMENTS'].to_i || 0
 
 # Define a Template for Building All Our VMs.
 def build_vm( config, hostname, ip )
@@ -42,9 +43,7 @@ Vagrant.configure("2") do |config|
 
   @ip = IPAddr.new @subnet
 
-  # You can find all the vagrant boxes at location here
-  # https://app.vagrantup.com/bento/
-  config.vm.box = "bento/centos-7.4"
+  config.vm.box = @vm_os
   
   # If "vagrant ssh", login As gpadmin, without hacking the vagrant profile
   if ARGV[0] == "ssh"
