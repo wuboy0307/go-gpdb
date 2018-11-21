@@ -16,7 +16,7 @@ const (
 var (
 	rx_gpcc = `Greenplum Command Center`
 	rx_gpdb = `Greenplum Database (\d+\.)(\d+\.)(\d+)?(\.\d)?( Binary Installer)? ` +
-		`for ((Red Hat Enterprise|RedHat Enterprise) Linux|RHEL).*7`
+		`for ((Red Hat Enterprise|RedHat Enterprise|RedHat Entrerprise) Linux|RHEL).*7`
 )
 
 // Struct to where all the API response will be stored

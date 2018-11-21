@@ -8,7 +8,6 @@ import (
 	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
@@ -42,11 +41,6 @@ func doesFileOrDirExists(path string) (bool, error) {
 		return false, nil
 	}
 	return true, err
-}
-
-// Search the directory for the matching files
-func FilterDirsGlob(dir, search string) ([]string, error) {
-	return filepath.Glob(filepath.Join(dir, search))
 }
 
 // Create directory
@@ -130,17 +124,6 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 	}
 }
 
-// Remove all the file based on search
-func removeFiles(path, file string) {
-	Debugf("Removing the file with %s from path %s", file, path)
-	allfiles, _ := FilterDirsGlob(path, file)
-	for _, f := range allfiles {
-		if err := os.RemoveAll(f); err != nil {
-			Fatalf("Failed to remove the file from path %s%s, err: %v", path, file, err)
-		}
-	}
-}
-
 // Unzip the binaries.
 func unzip(search string) string {
 	// Check if we can find the binaries in the directory
@@ -194,5 +177,4 @@ func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 	}
 
 	return buf
-
 }

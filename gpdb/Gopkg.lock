@@ -10,10 +10,9 @@
   version = "v0.3.1"
 
 [[projects]]
-  digest = "1:945fd448c53295c5b743da408c20c5c48d75b094d6cbf5a851bbf1c76c661976"
+  digest = "1:8807cd4c63a6a0d66c234268c7011c2bf508ece1bcaa5fd568d5d69591d414b2"
   name = "github.com/benhoyt/goawk"
   packages = [
-    ".",
     "internal/ast",
     "interp",
     "lexer",
@@ -154,7 +153,8 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/benhoyt/goawk",
+    "github.com/benhoyt/goawk/interp",
+    "github.com/benhoyt/goawk/parser",
     "github.com/jinzhu/configor",
     "github.com/mholt/archiver",
     "github.com/ryanuber/columnize",

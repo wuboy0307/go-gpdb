@@ -14,7 +14,7 @@ require "ipaddr"
 
 # ENV APPLICATION DEFAULTS
 @subnet = ENV['GO-GPDB.SUBNET'] || "192.168.99.100"
-@hostname = ENV['GO-GPDB.HOSTNAME'] || "go-gpdb"
+@hostname = ENV['GO-GPDB.HOSTNAME'] || "gpdb"
 @segments = ENV['GO-GPDB.SEGMENTS'].to_i || 0
 
 # Define a Template for Building All Our VMs.

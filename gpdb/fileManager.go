@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 // Create the file
@@ -112,8 +113,24 @@ func deleteFile(path string) {
 	Debugf("Deleting the file: %s", path)
 
 	// delete file
-	var err = os.Remove(path)
+	var err = os.RemoveAll(path)
 	if err != nil && !os.IsNotExist(err) {
 		Fatalf("Error in deleting the file: %v", err)
+	}
+}
+
+// Search the directory for the matching files
+func FilterDirsGlob(dir, search string) ([]string, error) {
+	return filepath.Glob(filepath.Join(dir, search))
+}
+
+// Remove all the file based on search
+func removeFiles(path, file string) {
+	Debugf("Removing the file with %s from path %s", file, path)
+	allfiles, _ := FilterDirsGlob(path, file)
+	for _, f := range allfiles {
+		if err := os.RemoveAll(f); err != nil {
+			Fatalf("Failed to remove the file from path %s%s, err: %v", path, file, err)
+		}
 	}
 }
