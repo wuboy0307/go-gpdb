@@ -4,6 +4,10 @@
 
 # Folders
 .vagrant/
+.idea/
+.idea/vcs.xml
+gpdb/vendor/
+notes
 
 # Files
 .DS_Store

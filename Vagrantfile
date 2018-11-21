@@ -72,13 +72,13 @@ Vagrant.configure("2") do |config|
   # Segment Nodes:
   (1..@segments).each do |i|
     @ip = @ip.succ
-    puts "[#{i}] Segment Hostname: #{@hostname}-#{i}"
+    puts "[#{i}] Segment Hostname: #{@hostname}#{i}"
     puts "[#{i}] Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
+    build_vm( config, "#{@hostname}#{i}", "#{@ip}")
   end
 
   # Provisioning 
-  config.vm.provision :shell, path: 'scripts/os.prep.sh', args: [@pivnet_token]
+  config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
 
   # Developer Mode
   # config.vm.provision :shell, path: 'scripts/go.build.sh'
