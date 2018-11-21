@@ -1,46 +1,39 @@
 package main
 
 import (
-	"os"
-	"bufio"
-	"strings"
-	"strconv"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 // Read file and find the content that we are interested
 func readFileAndGatherInformation(file string) string {
 
-	// Obtain the below information from env file
-	var textDetection = []string{`export PGPORT=`, `export GPCC_INSTANCE_NAME=`, `export GPCCPORT=`}
-	var output string
+	// TODO: change this later to use goawk package and helper functions
+	//// Obtain the below information from env file
+	//var textDetection = []string{`export PGPORT=`, `export GPCC_INSTANCE_NAME=`, `export GPCCPORT=`}
+	//var output string
+	//
+	//// From the file find the text detection information
+	//scanner := readFile(file)
+	//for scanner.Scan() {
+	//	for _, text := range textDetection {
+	//		if strings.HasPrefix(scanner.Text(), text) {
+	//			output = output + "|" + strings.Replace(scanner.Text(), text, "", -1)
+	//			if strings.HasPrefix(scanner.Text(),"export PGPORT=") {
+	//				output = output + "| STOPPED"
+	//			}
+	//		}
+	//	}
+	//}
+	//
+	//// If any error throw on the screen
+	//if err := scanner.Err(); err != nil {
+	//	Fatalf("Error in scanning the file, err: %v", err)
+	//}
 
-	// Open the file
-	f, err := os.Open(file)
-	if err != nil {
-		Fatalf("Error in opening the file, err: %v", err)
-	}
-	defer f.Close()
-
-	// From the file find the text detection information
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		for _, text := range textDetection {
-			if strings.HasPrefix(scanner.Text(), text) {
-				output = output + "|" + strings.Replace(scanner.Text(), text, "", -1)
-				if strings.HasPrefix(scanner.Text(),"export PGPORT=") {
-					output = output + "| STOPPED"
-				}
-			}
-		}
-	}
-
-	// If any error throw on the screen
-	if err := scanner.Err(); err != nil {
-		Fatalf("Error in scanning the file, err: %v", err)
-	}
-
-	return output
+	return ""
 }
 
 // List all the installed enviornment files.

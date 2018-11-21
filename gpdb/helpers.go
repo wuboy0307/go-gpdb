@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/benhoyt/goawk/interp"
+	"github.com/benhoyt/goawk/parser"
+	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
-	"github.com/mholt/archiver"
-	"path/filepath"
 )
 
 // Function that checks if the string is available on a array.
@@ -164,9 +167,9 @@ func removeFiles(path, file string) {
 }
 
 // Unzip the binaries.
-func unzip(search string) {
+func unzip(search string) string {
 	// Check if we can find the binaries in the directory
-	allfiles, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, search)
+	allfiles, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%s.zip", search))
 
 	// Did we find any
 	if len(allfiles) > 0 {
@@ -178,7 +181,49 @@ func unzip(search string) {
 			Fatalf("Couldn't unzip the file, err: %v", err)
 		}
 		Debugf("Unzipped the file %s completed successfully", binary)
+
+		// Get the binary file name
+		binFile, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%s.bin", search))
+		if len(binFile) > 0 {
+			return binFile[0]
+		} else {
+			Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
+		}
 	} else {
-		Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
+		Fatalf("No binary zip found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
 	}
+	return ""
+}
+
+
+// Extract the contents that we are interested
+func contentExtractor(contents []byte, src string, vars []string) {
+
+	prog, err := parser.ParseProgram([]byte(src), nil)
+	if err != nil {
+		Fatalf("Failed to parse the program: %s", src)
+		return
+	}
+
+	// TODO: To save the content to hostfile
+	config := &interp.Config{
+		Stdin: bytes.NewReader([]byte(contents)),
+		Vars: vars,
+	}
+
+	_, err = interp.ExecProgram(prog, config)
+	if err != nil {
+		Fatalf("Failure in executing the goawk script: %v", err)
+		return
+	}
+
+}
+
+
+// Get the hostname
+func getHostname() {
+
+	// Read the contents from the /etc/hosts and generate a hostfile.
+	contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
+
 }

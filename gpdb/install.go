@@ -10,6 +10,9 @@ func install() {
 
 	Infof("Running the installation for the product: %s", cmdOptions.Product)
 
+	// Get the hostname
+	getHostname()
+
 	// Checking if this is a single install VM or Mutli node VM
 	var singleORmulti string
 	noSegments, _ := strconv.Atoi(os.Getenv("GPDB_SEGMENT"))
@@ -40,7 +43,11 @@ func installGPDB(singleOrMutli string) {
 	// TODO: Check if there is already a version of GPDB installed
 
 	// Check if the binaries exits and unzip the binaries.
-	unzip(fmt.Sprintf("*%s*.zip", cmdOptions.Version))
+	binFile := unzip(fmt.Sprintf("*%s*", cmdOptions.Version))
+
+	Infof("Using the bin file to install the GPDB Product: %s", binFile)
+
+	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 
 }
 
@@ -48,6 +55,6 @@ func installGPDB(singleOrMutli string) {
 // Install GPCC
 func installGPCC() {
 
-
+	Infof("Installation of GPCC with version %s on GPDB with version %s is complete", cmdOptions.CCVersion, cmdOptions.Version)
 }
 
