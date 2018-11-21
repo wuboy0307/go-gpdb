@@ -14,7 +14,6 @@ INSTALL:
   ENV_DIR: /env/                                          # Folder Inside [APPLICATION_NAME]: stores source files
   UNINTSALL_DIR: /uninstall/                              # Folder Inside [APPLICATION_NAME]: stores uninstall info
   FUTUREREF_DIR: /future_reference/                       # Folder Inside [APPLICATION_NAME]: stores configuration info
-  MASTER_HOST: gpdb                                       # Hostname of Master
   MASTER_USER: gpadmin                                    # User that will install GPDB s/w usually "gpadmin"
   MASTER_PASS: changeme                                   # Password of MASTER_USER user
   GPMON_PASS: changeme                                    # Password for GPMON

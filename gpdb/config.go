@@ -23,7 +23,6 @@ var Config = struct {
 		ENVDIR               string `yaml:"ENV_DIR"`
 		UNINTSALLDIR         string `yaml:"UNINTSALL_DIR"`
 		FUTUREREFDIR         string `yaml:"FUTUREREF_DIR"`
-		MASTERHOST           string `yaml:"MASTER_HOST"`
 		MASTERUSER           string `yaml:"MASTER_USER"`
 		MASTERPASS           string `yaml:"MASTER_PASS"`
 		GPMONPASS            string `yaml:"GPMON_PASS"`
@@ -89,6 +88,9 @@ func validateConfiguration() {
 			Config.DOWNLOAD.APITOKEN = token
 		}
 	}
+
+	// TODO: Check if the MASTER PASS / SEGMENT PASS / MASTER DATA DIRECTORY
+	// TODO: TRIM the above stuff
 
 	// Check if the directory exists, else create one.
 	base_dir := Config.CORE.BASEDIR + Config.CORE.APPLICATIONNAME

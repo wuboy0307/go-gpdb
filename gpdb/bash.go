@@ -6,7 +6,7 @@ import (
 )
 
 // Build executable shell script
-func buildExecutableBashScript(filename string, executable_filename string, args []string) error {
+func buildExecutableBashScript(filename string, executableFilename string, args []string) error {
 
 	Debugf("Starting program to build executable script to install the binaries")
 
@@ -15,7 +15,7 @@ func buildExecutableBashScript(filename string, executable_filename string, args
 
 	// Create arguments on what needs to be written to the file
 	Infof("Generating installer arguments to be passed to the file: %s", filename)
-	executableLine := fmt.Sprintf("/bin/sh %s &>/dev/null << EOF", executable_filename)
+	executableLine := fmt.Sprintf("/bin/sh %s &>/dev/null << EOF", executableFilename)
 
 	// Load the contents to the file
 	var passArgs []string
@@ -32,7 +32,7 @@ func buildExecutableBashScript(filename string, executable_filename string, args
 }
 
 // Execute shell script when called
-func executeBinaries(binary_file string, bashfilename string, script_options []string) error {
+func executeBinaries(binaryFile string, bashfilename string, scriptOptions []string) error {
 
 	// Build a quick shell script to install binaries
 	// Filename name
@@ -42,7 +42,7 @@ func executeBinaries(binary_file string, bashfilename string, script_options []s
 	deleteFile(filename)
 
 	// Create the shell script
-	err := buildExecutableBashScript(filename, binary_file, script_options)
+	err := buildExecutableBashScript(filename, binaryFile, scriptOptions)
 	if err != nil {
 		return err
 	}

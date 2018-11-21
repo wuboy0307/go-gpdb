@@ -130,31 +130,6 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 	}
 }
 
-// Check if the directory provided is readable and writeable
-func dirValidator() error {
-
-	Debugf("Checking for the existences of master and segment directory")
-
-	// Check if the master & segment location is readable and writable
-	masterDirExists, err := doesFileOrDirExists(Config.INSTALL.MASTERDATADIRECTORY)
-	if err != nil {
-		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
-	}
-
-	segmentDirExists, err := doesFileOrDirExists(Config.INSTALL.SEGMENTDATADIRECTORY)
-	if err != nil {
-		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
-	}
-
-	// if the file doesn't exists then let try creating it ...
-	if !masterDirExists || !segmentDirExists {
-		CreateDir(Config.INSTALL.MASTERDATADIRECTORY)
-		CreateDir(Config.INSTALL.SEGMENTDATADIRECTORY)
-	}
-
-	return nil
-}
-
 // Remove all the file based on search
 func removeFiles(path, file string) {
 	Debugf("Removing the file with %s from path %s", file, path)
@@ -195,35 +170,29 @@ func unzip(search string) string {
 	return ""
 }
 
-
 // Extract the contents that we are interested
-func contentExtractor(contents []byte, src string, vars []string) {
+func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 
+	// Create a parser
 	prog, err := parser.ParseProgram([]byte(src), nil)
 	if err != nil {
 		Fatalf("Failed to parse the program: %s", src)
-		return
 	}
 
-	// TODO: To save the content to hostfile
+	// The configuration
+	var buf bytes.Buffer
 	config := &interp.Config{
-		Stdin: bytes.NewReader([]byte(contents)),
-		Vars: vars,
+		Stdin:  bytes.NewReader([]byte(contents)),
+		Vars:   vars,
+		Output: &buf,
 	}
 
+	// Execute the program
 	_, err = interp.ExecProgram(prog, config)
 	if err != nil {
 		Fatalf("Failure in executing the goawk script: %v", err)
-		return
 	}
 
-}
-
-
-// Get the hostname
-func getHostname() {
-
-	// Read the contents from the /etc/hosts and generate a hostfile.
-	contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
+	return buf
 
 }
