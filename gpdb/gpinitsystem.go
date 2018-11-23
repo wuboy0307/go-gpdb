@@ -26,46 +26,30 @@ func (i *Installation) buildGpInitSystem() {
 	i.executeGpInitSystem()
 }
 
+// Generate the port for master / segments / mirror & replication
 func (i *Installation) generatePortRange() {
 
 	// Check if we have the last used port base file and its usable
-	Infof("Obtaining ports to be set for primary segments")
-	i.GPInitSystem.SegmentPort, _ = doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, "PRIMARY_PORT")
-	if i.GPInitSystem.SegmentPort == "" {
-		Warnf("Didn't find PRIMARY_PORT in the file, setting it to default value: %d", defaultPrimaryPort)
-		i.GPInitSystem.SegmentPort = strconv.Itoa(defaultPrimaryPort)
-	}
-	i.GPInitSystem.SegmentPort = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.SegmentPort))
+	i.GPInitSystem.SegmentPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "PRIMARY_PORT", defaultPrimaryPort)  // segment
+	i.GPInitSystem.MasterPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "MASTER_PORT", defaultMasterPort) // master
 
-	// Check if we have the last used master port file and if its usable
-	Infof("Obtaining ports to be set for master segment")
-	i.GPInitSystem.MasterPort, _ = doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, "MASTER_PORT")
-	if i.GPInitSystem.MasterPort == "" {
-		Warnf("Didn't find MASTER_PORT in the file, setting it to default value: %d", defaultMasterPort)
-		i.GPInitSystem.MasterPort = strconv.Itoa(defaultMasterPort)
-	}
-	i.GPInitSystem.MasterPort = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.MasterPort))
-
-	// If its a multi installation we will need the mirror port as well & usable
+	// If its a multi installation we will need the mirror / repliocateion port as well & usable
 	if i.SingleORMulti == "multi" {
-		// Check if we have the last used mirror port file
-		Infof("Obtaining ports to be set for mirror segment")
-		i.GPInitSystem.MirrorPort, _ = doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, "MIRROR_PORT")
-		if i.GPInitSystem.MirrorPort == "" {
-			Warnf("Didn't find MIRROR_PORT in the file, setting it to default value: %d", defaultMirrorPort)
-			i.GPInitSystem.MirrorPort = strconv.Itoa(defaultMirrorPort)
-		}
-		i.GPInitSystem.MirrorPort = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.MirrorPort))
-
-		// Check if we have the last used replication port file
-		Infof("Obtaining ports to be set for replication segment")
-		i.GPInitSystem.ReplicationPort, _ = doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, "REPLICATION_PORT")
-		if i.GPInitSystem.ReplicationPort == "" {
-			Warnf("Didn't find REPLICATION_PORT in the file, setting it to default value: %d", defaultReplicatePort)
-			i.GPInitSystem.ReplicationPort = strconv.Itoa(defaultReplicatePort)
-		}
-		i.GPInitSystem.ReplicationPort = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.ReplicationPort))
+		i.GPInitSystem.MirrorPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "MIRROR_PORT", defaultMirrorPort) // mirror
+		i.GPInitSystem.ReplicationPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "REPLICATION_PORT", defaultReplicatePort) // replication
 	}
+}
+
+// validate port
+func (i *Installation) validatePort(dir, searchString string, defaultPort int) string {
+	Infof("Obtaining ports to be set for %s", searchString)
+	p, _ := doWeHavePortBase(dir, i.portFileName, searchString)
+	if p == "" {
+		Warnf("Didn't find %s in the file, setting it to default value: %d", searchString, defaultPort)
+		p = strconv.Itoa(defaultPort)
+	}
+	p = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.SegmentPort))
+	return p
 }
 
 // Building initsystem configuration

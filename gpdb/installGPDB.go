@@ -125,6 +125,7 @@ func (i *Installation) isHostReachable() {
 
 	// Save the working host on a separate file
 	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
+	deleteFile(i.WorkingHostFileLocation)
 	writeFile(i.WorkingHostFileLocation, saveReachableHost)
 	//TODO: remove the temp file at the end
 }
