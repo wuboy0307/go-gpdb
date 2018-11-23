@@ -8,6 +8,7 @@ import (
 	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -177,4 +178,14 @@ func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 	}
 
 	return buf
+}
+
+// Remove blank lines from the contentExtractor
+func removeBlanks(s string) string {
+	regex, err := regexp.Compile("\n$")
+	if err != nil {
+		Fatalf("Failure in removing blank lines, err: %v", err)
+	}
+	s = regex.ReplaceAllString(s, "")
+	return s
 }

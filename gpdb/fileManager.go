@@ -101,7 +101,7 @@ func readFile(path string) []byte {
 
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
-		Fatalf("Error in reading the file, err: %v", err)
+		Fatalf("Error in reading the file \"%s\", err: %v", path, err)
 	}
 
 	return content

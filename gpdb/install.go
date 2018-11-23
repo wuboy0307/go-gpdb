@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strconv"
+	"time"
 )
 
 type Installation struct {
@@ -12,12 +13,31 @@ type Installation struct {
 	SingleORMulti string
 	portFileName string
 	timestamp string
+	GpInitSystemConfigLocation string
 	GPInitSystem GPInitSystemConfig
 }
 
 type GPInitSystemConfig struct {
 	MasterHostname string
+	ArrayName	   string
+	SegPrefix	   string
+	DBName		   string
+	MasterDir      string
+	SegmentDir	   string
+	MasterHostName string
+	MasterPort	   string
+	SegmentPort	   string
+	MirrorPort	   string
+	ReplicationPort string
 }
+
+const (
+	defaultMasterPort = 3000
+	defaultGpperfmonPort = 28000
+	defaultPrimaryPort = 30000
+	defaultMirrorPort = 40000
+	defaultReplicatePort = 50000
+)
 
 func install() {
 
@@ -64,6 +84,10 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 	// Check ssh to host is working and enable password less login
 	i.setUpHost()
+
+	// Build & Execute the gpinitsystem configuration
+	i.timestamp = time.Now().Format("20060102150405")
+	i.buildGpInitSystem()
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 }

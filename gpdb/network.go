@@ -1,25 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"net"
-	"time"
 	"strconv"
-	"os/exec"
 	"strings"
+	"time"
 )
 
 // Check if the port 22 is reachable, should return back in 5 seconds
-func checkHostReachability(address string) bool {
-	_, err := net.DialTimeout("tcp", address, time.Second*5)
+func checkHostReachability(address string, errorType bool) bool {
+	conn, err := net.DialTimeout("tcp", address, time.Second * 5)
 	if err != nil {
-		Errorf("Could not reach the host: %s", address)
+		if errorType { // If we care about the error
+			Errorf("Could not reach the host: %s", address)
+		} else { // Here we are looking for free port, so place it on debug
+			Debugf("The host and the port \"%s\" is not used and can be used", address)
+		}
 		return false
 	}
+	defer conn.Close()
 	return true
 }
 
 // Check if the port is used, if yes then what is the next sequence program can use
-func isPortUsed(port int, iteration int) (int, error) {
+func isPortUsed(port int, iteration int, hostfileLoc string) (int, error) {
 
 	// Storing the base port
 	BASE := port
@@ -34,18 +39,11 @@ func isPortUsed(port int, iteration int) (int, error) {
 		}
 
 		// Check if the port is available, if not find the next sequence
-		ln, err := net.Listen("tcp", ":"+strconv.Itoa(port))
-		if err != nil {
-			Warnf("PORT \"%s\" is unavailable, finding the next sequence", strconv.Itoa(port))
-			BASE = BASE + iteration
-			return isPortUsed(BASE, iteration)
-		}
-
-		// Close listening to the port
-		err = ln.Close()
-		if err != nil {
-			if err != nil {
-				return 0, err
+		for _, host := range strings.Split(string(readFile(hostfileLoc)), "\n"){
+			if host != "" && checkHostReachability(fmt.Sprintf("%s:%d", host, port), false) {
+				Warnf("PORT \"%d\" is unavailable, finding the next sequence", port)
+				BASE = BASE + iteration
+				return isPortUsed(BASE, iteration, hostfileLoc)
 			}
 		}
 
@@ -59,24 +57,22 @@ func isPortUsed(port int, iteration int) (int, error) {
 }
 
 // Check if we have the last used ports
-func doWeHavePortBase(file string, name string, which_port string) (string, error) {
+func doWeHavePortBase(file string, name string, whichPort string) (string, error) {
 
+	// the port base file
 	portBaseFile := file + name
 	returnCode, err := doesFileOrDirExists(portBaseFile)
 	if err != nil {
-		return "", err
+		Fatalf("Error when checking for port base, err: %v", err)
 	}
 
+	// Extract the port if found, else create a file.
 	if returnCode {
-		Infof("Found port file: %s", portBaseFile)
-		cmdOut, _ := exec.Command("grep", which_port, portBaseFile).Output()
-		s := string(cmdOut)
-		if strings.Contains(s, which_port) {
-			return strings.TrimSpace(s), nil
-		}
+		Debugf("Found port file: %s", portBaseFile)
+		port := contentExtractor(readFile(portBaseFile), fmt.Sprintf("/%s/ {print $2}", whichPort), []string{"FS", "="})
+		return removeBlanks(port.String()), nil
 	} else {
 		createFile(portBaseFile)
-		return "", nil
 	}
 
 	return "", nil

@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
-	"regexp"
 )
 
 // Get and generate host file if doesn't exists the hostname
@@ -18,15 +16,7 @@ func (i *Installation) generateHostFile() {
 		Infof("Host file doesn't exists, creating one: %s", i.HostFileLocation)
 		// Read the contents from the /etc/hosts and generate a hostfile.
 		hosts := contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
-
-		// Replace the last blank lines
-		var s = hosts.String()
-		regex, err := regexp.Compile("\n$")
-		if err != nil {
-			return
-		}
-		s = regex.ReplaceAllString(s, "")
-
+		s := removeBlanks(hosts.String())
 		// write to the file
 		writeFile(i.HostFileLocation, []string{s})
 	} else {
@@ -69,12 +59,22 @@ func (i *Installation) getBinaryFile() string {
 func (i *Installation) installProduct() {
 	// Installing the binaries.
 	binFile := i.getBinaryFile()
+
+	// Location and name of the binaries
 	Infof("Using the bin file to install the GPDB Product: %s", binFile)
 	i.BinaryInstallationLocation = "/usr/local/greenplum-db-" + cmdOptions.Version
+
+	// Execute the command to install the binaries
 	var scriptOption = []string{"yes", i.BinaryInstallationLocation, "yes", "yes"}
 	err := executeBinaries(binFile, "install_software.sh", scriptOption)
 	if err != nil {
 		Fatalf("Failed in installing the binaries, err: %v", err)
+	}
+
+	// Now source the environment if installation went fine
+	err = i.sourceGPDBPath()
+	if err != nil {
+		Fatalf("Failed to set the environment variable while sourcing the file")
 	}
 }
 
@@ -94,16 +94,20 @@ func (i *Installation) setUpHost() {
 
 	// Enable passwordless login
 	i.executeGpsshExkey()
+
+	// If this is a multi installation then install the software on all the segment host
+	if i.SingleORMulti == "multi" {
+		i.runSegInstall()
+	}
 }
 
 // Check if all the host are working from the hostfile
 func (i *Installation) isHostReachable() {
 
-	// Get all the hostname from the hostfile and check if the
-	// host if reachable
+	// Get all the hostname from the hostfile and check if the host if reachable
 	var saveReachableHost []string
 	for _, host := range strings.Split(string(readFile(i.HostFileLocation)), "\n"){
-		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host)) {
+		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host), true) {
 			Debugf("The host %s is reachable", host)
 			saveReachableHost = append(saveReachableHost, host)
 		}
@@ -117,35 +121,25 @@ func (i *Installation) isHostReachable() {
 		i.SingleORMulti = "single"
 	} else if len(saveReachableHost) == 1 && saveReachableHost[0] != i.GPInitSystem.MasterHostname {
 		Fatalf("Master hosts are not reachable from the hostfile %s, check the host", i.HostFileLocation)
-	} else {
-		i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
-		writeFile(i.WorkingHostFileLocation, saveReachableHost)
-		//TODO: remove the temp file at the end
 	}
+
+	// Save the working host on a separate file
+	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
+	writeFile(i.WorkingHostFileLocation, saveReachableHost)
+	//TODO: remove the temp file at the end
 }
 
 // Run keyless access to the server
-func (i *Installation) executeGpsshExkey() error {
-
-	// Source GPDB PATH
-	err := i.sourceGPDBPath()
-	if err != nil {
-		Fatalf("Failed to set the environment variable while sourcing the file")
-	}
-
-	// Execute gpssh script to enable keyless access
+func (i *Installation) executeGpsshExkey() {
 	Infof("Running gpssh-exkeys to enable keyless access on this server")
-	cmd := exec.Command(os.Getenv("GPHOME")+"/bin/gpssh-exkeys", "-f", i.WorkingHostFileLocation)
-	err = cmd.Start()
-	if err != nil {
-		Fatalf("Failed to start the start command while doing passwordless login, err: %v", err)
-	}
-	err = cmd.Wait()
-	if err != nil {
-		Fatalf("Failed while waiting for the command related to doing passwordless login, err: %v", err)
-	}
+	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
+}
 
-	return nil
+
+// Run the gpseginstall on all host
+func (i *Installation) runSegInstall() {
+	Infof("Running seg install to install the software on all the host")
+	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
 
 // Source greenplum path
@@ -156,23 +150,23 @@ func (i *Installation) sourceGPDBPath() error {
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PYTHONPATH", os.Getenv("GPHOME")+"/lib/python")
+	err = os.Setenv("PYTHONPATH", os.Getenv("GPHOME") + "/lib/python")
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PYTHONHOME", os.Getenv("GPHOME")+"/ext/python")
+	err = os.Setenv("PYTHONHOME", os.Getenv("GPHOME") + "/ext/python")
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PATH", os.Getenv("GPHOME")+"/bin:"+os.Getenv("PYTHONHOME")+"/bin:"+os.Getenv("PATH"))
+	err = os.Setenv("PATH", os.Getenv("GPHOME") + "/bin:" + os.Getenv("PYTHONHOME") + "/bin:" + os.Getenv("PATH"))
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME")+"/lib:"+os.Getenv("PYTHONHOME")+"/lib:"+os.Getenv("LD_LIBRARY_PATH"))
+	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME") + "/lib:" + os.Getenv("PYTHONHOME")+ "/lib:" + os.Getenv("LD_LIBRARY_PATH"))
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME")+"/etc/openssl.cnf")
+	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME") + "/etc/openssl.cnf")
 	if err != nil {
 		return err
 	}
