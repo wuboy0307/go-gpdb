@@ -133,14 +133,14 @@ func (i *Installation) isHostReachable() {
 // Run keyless access to the server
 func (i *Installation) executeGpsshExkey() {
 	Infof("Running gpssh-exkeys to enable keyless access on this server")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
+	executeOsCommand( "", fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
 
 
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
 	Infof("Running seg install to install the software on all the host")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
+	executeOsCommand( "", fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
 
 // Source greenplum path

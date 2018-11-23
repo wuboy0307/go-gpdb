@@ -31,6 +31,7 @@ var Config = struct {
 		GPMONPASS            string `yaml:"GPMON_PASS"`
 		MASTERDATADIRECTORY  string `yaml:"MASTER_DATA_DIRECTORY"`
 		SEGMENTDATADIRECTORY string `yaml:"SEGMENT_DATA_DIRECTORY"`
+		MIRRORDATADIRECTORY	 string	`yaml:"MIRROR_DATA_DIRECTORY"`
 		TOTALSEGMENT         int    `yaml:"TOTAL_SEGMENT"`
 	} `yaml:"INSTALL"`
 }{}
@@ -89,9 +90,10 @@ func validateConfiguration() {
 	Config.INSTALL.FUTUREREFDIR = endWithSlash(setDefaults(Config.INSTALL.FUTUREREFDIR, "/future_reference/", "FUTUREREF_DIR")) // Future reference Directory
 	Config.INSTALL.MASTERDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.MASTERDATADIRECTORY, "/data/master/", "MASTER_DATA_DIRECTORY")) // Master Directory
 	Config.INSTALL.SEGMENTDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.SEGMENTDATADIRECTORY, "/data/primary/", "SEGMENT_DATA_DIRECTORY")) // Segment Directory
+	Config.INSTALL.MIRRORDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.MIRRORDATADIRECTORY, "/data/mirror/", "MIRROR_DATA_DIRECTORY")) // Segment Directory
 	Config.INSTALL.MASTERPASS = setDefaults(Config.INSTALL.MASTERPASS, "changeme", "MASTER_PASS") // Master password
 	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS") // Gpmon password
-	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER") // Master user
+	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER") // Master userv
 	Config.INSTALL.TOTALSEGMENT, _ = strconv.Atoi(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT")) // Total Segments
 
 	// Fail if these parameter is missing

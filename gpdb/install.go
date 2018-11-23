@@ -24,19 +24,22 @@ type GPInitSystemConfig struct {
 	DBName		   string
 	MasterDir      string
 	SegmentDir	   string
+	MirrorDir	   string
 	MasterHostName string
 	MasterPort	   string
 	SegmentPort	   string
 	MirrorPort	   string
 	ReplicationPort string
+	MirrorReplicationPort string
 }
 
 const (
 	defaultMasterPort = 3000
 	defaultGpperfmonPort = 28000
 	defaultPrimaryPort = 30000
-	defaultMirrorPort = 40000
-	defaultReplicatePort = 50000
+	defaultMirrorPort = 35000
+	defaultReplicatePort = 40000
+	defaultMirrorReplicatePort = 45000
 )
 
 func install() {

@@ -14,7 +14,8 @@ func (i *Installation) buildGpInitSystem() {
 	i.GPInitSystem.SegPrefix = "gp_" + cmdOptions.Version + "_" + i.timestamp
 	i.GPInitSystem.DBName = "gpadmin"
 	i.GPInitSystem.MasterDir = strings.TrimSuffix(Config.INSTALL.MASTERDATADIRECTORY, "/")
-	Config.INSTALL.SEGMENTDATADIRECTORY = strings.TrimSuffix(Config.INSTALL.SEGMENTDATADIRECTORY, "/")
+	i.GPInitSystem.SegmentDir = strings.TrimSuffix(Config.INSTALL.SEGMENTDATADIRECTORY, "/")
+	i.GPInitSystem.MirrorDir = strings.TrimSuffix(Config.INSTALL.MIRRORDATADIRECTORY, "/")
 
 	// Generate the port range
 	i.generatePortRange()
@@ -22,33 +23,39 @@ func (i *Installation) buildGpInitSystem() {
 	// Start building the gpinitsystem config file
 	i.buildGpInitSystemConfig()
 
+	// Stop all the database before execution
+	i.stopAllDb()
+
 	// Execute gpinitsystem
 	i.executeGpInitSystem()
+
+	// Is database healthy
+	i.isDbHealthy()
 }
 
 // Generate the port for master / segments / mirror & replication
 func (i *Installation) generatePortRange() {
 
 	// Check if we have the last used port base file and its usable
-	i.GPInitSystem.SegmentPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "PRIMARY_PORT", defaultPrimaryPort)  // segment
-	i.GPInitSystem.MasterPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "MASTER_PORT", defaultMasterPort) // master
+	i.GPInitSystem.SegmentPort = i.validatePort( "PRIMARY_PORT", defaultPrimaryPort)  // segment
+	i.GPInitSystem.MasterPort = i.validatePort("MASTER_PORT", defaultMasterPort) // master
 
-	// If its a multi installation we will need the mirror / repliocateion port as well & usable
+	// If its a multi installation we will need the mirror / replication port as well & usable
 	if i.SingleORMulti == "multi" {
-		i.GPInitSystem.MirrorPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "MIRROR_PORT", defaultMirrorPort) // mirror
-		i.GPInitSystem.ReplicationPort = i.validatePort(Config.INSTALL.FUTUREREFDIR, "REPLICATION_PORT", defaultReplicatePort) // replication
+		i.GPInitSystem.MirrorPort = i.validatePort("MIRROR_PORT", defaultMirrorPort) // mirror
+		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
 	}
 }
 
 // validate port
-func (i *Installation) validatePort(dir, searchString string, defaultPort int) string {
+func (i *Installation) validatePort(searchString string, defaultPort int) string {
 	Infof("Obtaining ports to be set for %s", searchString)
-	p, _ := doWeHavePortBase(dir, i.portFileName, searchString)
+	p, _ := doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, searchString)
 	if p == "" {
 		Warnf("Didn't find %s in the file, setting it to default value: %d", searchString, defaultPort)
 		p = strconv.Itoa(defaultPort)
 	}
-	p = strconv.Itoa(i.checkPortIsUsable(i.GPInitSystem.SegmentPort))
+	p = strconv.Itoa(i.checkPortIsUsable(p))
 	return p
 }
 
@@ -65,16 +72,12 @@ func (i *Installation) buildGpInitSystemConfig() {
 	if i.SingleORMulti == "single" {
 		writeFile(i.GpInitSystemConfigLocation, i.singleNodeGpInitSystem())
 	} else {
-		// TODO: build multi
+		writeFile(i.GpInitSystemConfigLocation, i.multiNodeGpInitSystem())
 	}
 }
 
 // The contents of single node gpinitsystem
 func (i *Installation) singleNodeGpInitSystem() []string{
-	var primaryDir string
-	for i := 1; i <= Config.INSTALL.TOTALSEGMENT; i++ {
-		primaryDir = primaryDir + " " + Config.INSTALL.SEGMENTDATADIRECTORY
-	}
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
 		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
@@ -83,8 +86,37 @@ func (i *Installation) singleNodeGpInitSystem() []string{
 		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
 		"MASTER_PORT=" + i.GPInitSystem.MasterPort,
 		"DATABASE_NAME=" + i.GPInitSystem.DBName,
-		"declare -a DATA_DIRECTORY=("+ primaryDir +")",
+		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
 	}
+}
+
+// The contents of multi node gpinitsystem
+func (i *Installation) multiNodeGpInitSystem() []string{
+	return []string{
+		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
+		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
+		"MASTER_HOSTNAME=" + i.GPInitSystem.MasterHostname,
+		"MASTER_DIRECTORY=" + i.GPInitSystem.MasterDir,
+		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
+		"MASTER_PORT=" + i.GPInitSystem.MasterPort,
+		"DATABASE_NAME=" + i.GPInitSystem.DBName,
+		"TRUSTED SHELL=ssh",
+		"CHECK_POINT_SEGMENTS=8",
+		"MIRROR_PORT_BASE=" + i.GPInitSystem.MirrorPort,
+		"REPLICATION_PORT_BASE="+ i.GPInitSystem.ReplicationPort,
+		"MIRROR_REPLICATION_PORT_BASE=" + i.GPInitSystem.MirrorReplicationPort,
+		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
+		"declare -a MIRROR_DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.MirrorDir) +")",
+	}
+}
+
+// Number of segment calculator
+func generateSegmentDirectoryList(whichDir string) string {
+	var dir string
+	for i := 1; i <= Config.INSTALL.TOTALSEGMENT; i++ {
+		dir = dir + " " + whichDir
+	}
+	return dir
 }
 
 // Check if the port is available or not
@@ -102,5 +134,5 @@ func (i *Installation) checkPortIsUsable(port string) int {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to install the database")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.WorkingHostFileLocation , "-a")
+	executeOsCommand("", fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.WorkingHostFileLocation , "-a")
 }
