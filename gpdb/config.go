@@ -94,7 +94,7 @@ func validateConfiguration() {
 	Config.INSTALL.MASTERPASS = setDefaults(Config.INSTALL.MASTERPASS, "changeme", "MASTER_PASS") // Master password
 	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS") // Gpmon password
 	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER") // Master userv
-	Config.INSTALL.TOTALSEGMENT, _ = strconv.Atoi(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT")) // Total Segments
+	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT")) // Total Segments
 
 	// Fail if these parameter is missing
 	Config.CORE.OS = isMissing(Config.CORE.OS, "OS") // Go build OS

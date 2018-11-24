@@ -15,6 +15,7 @@ type Installation struct {
 	timestamp string
 	GpInitSystemConfigLocation string
 	GPInitSystem GPInitSystemConfig
+	EnvFile string
 }
 
 type GPInitSystemConfig struct {
@@ -91,6 +92,18 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	// Build & Execute the gpinitsystem configuration
 	i.timestamp = time.Now().Format("20060102150405")
 	i.buildGpInitSystem()
+
+	// Create EnvFile
+	i.createEnvFile()
+
+	// Create uninstall script
+	i.createUninstallScript()
+
+	// Store the last used port for future use
+	i.savePort()
+
+	// Installation complete, print on the screen the env file to source
+	displayEnvFileToSource(i.EnvFile)
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 }

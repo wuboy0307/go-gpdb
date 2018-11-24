@@ -43,6 +43,7 @@ func (i *Installation) generatePortRange() {
 	// If its a multi installation we will need the mirror / replication port as well & usable
 	if i.SingleORMulti == "multi" {
 		i.GPInitSystem.MirrorPort = i.validatePort("MIRROR_PORT", defaultMirrorPort) // mirror
+		i.GPInitSystem.MirrorReplicationPort = i.validatePort("MIRROR_REPLICATION_PORT", defaultMirrorReplicatePort) // mirror replication port
 		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
 	}
 }
@@ -121,18 +122,15 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 // Check if the port is available or not
 func (i *Installation) checkPortIsUsable(port string) int {
-	pb, err := strconv.Atoi(port)
+	pb := strToInt(port)
+	pb, err := isPortUsed(pb, Config.INSTALL.TOTALSEGMENT, i.WorkingHostFileLocation)
 	if err != nil {
-		fmt.Println(err)
-	}
-	pb, err = isPortUsed(pb, Config.INSTALL.TOTALSEGMENT, i.WorkingHostFileLocation)
-	if err != nil {
-		fmt.Println(err)
+		Fatalf("Error in checking the port usage, err: %v", err)
 	}
 	return pb
 }
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to install the database")
-	executeOsCommand("", fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.WorkingHostFileLocation , "-a")
+	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.WorkingHostFileLocation , "-a")
 }

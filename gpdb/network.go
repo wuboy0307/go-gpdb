@@ -35,7 +35,7 @@ func isPortUsed(port int, iteration int, hostfileLoc string) (int, error) {
 		// Error out if the ports are not in the format needed
 		_, err := strconv.ParseUint(strconv.Itoa(port), 10, 16)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("err in parsing the integer, err: %v", err)
 		}
 
 		// Check if the port is available, if not find the next sequence
@@ -69,7 +69,7 @@ func doWeHavePortBase(file string, name string, whichPort string) (string, error
 	// Extract the port if found, else create a file.
 	if returnCode {
 		Debugf("Found port file: %s", portBaseFile)
-		port := contentExtractor(readFile(portBaseFile), fmt.Sprintf("/%s/ {print $2}", whichPort), []string{"FS", "="})
+		port := contentExtractor(readFile(portBaseFile), fmt.Sprintf("/%s/ {print $2}", whichPort), []string{"FS", ":"})
 		return removeBlanks(port.String()), nil
 	} else {
 		createFile(portBaseFile)
@@ -78,24 +78,31 @@ func doWeHavePortBase(file string, name string, whichPort string) (string, error
 	return "", nil
 }
 
-// Store the last used port
-func storeLastUsedPort(filename string, masterPort, segmentPort int) error {
+// Save the last used port number
+func (i *Installation) savePort() {
+
+	// Check if the port is not greater than 63000, since unix limit is 64000
+	if outOfRangePort(i.GPInitSystem.SegmentPort) || outOfRangePort(i.GPInitSystem.MasterPort) || outOfRangePort(i.GPInitSystem.ReplicationPort) || outOfRangePort(i.GPInitSystem.MirrorPort) || outOfRangePort(i.GPInitSystem.MirrorReplicationPort) {
+		Warnf("PORT has exceeded the unix port limit, setting it to default.")
+		i.GPInitSystem.SegmentPort = strconv.Itoa(defaultPrimaryPort)
+		i.GPInitSystem.MasterPort = strconv.Itoa(defaultMasterPort)
+		i.GPInitSystem.ReplicationPort = strconv.Itoa(defaultReplicatePort)
+		i.GPInitSystem.MirrorPort = strconv.Itoa(defaultMirrorPort)
+		i.GPInitSystem.MirrorReplicationPort = strconv.Itoa(defaultMirrorReplicatePort)
+	}
 
 	// Fully qualified filename
-	FurtureRefFile := Config.INSTALL.FUTUREREFDIR + filename
-	Infof("Storing the last used ports for this installation at: %s", FurtureRefFile)
+	portFile := Config.INSTALL.FUTUREREFDIR + i.portFileName
+	Infof("Storing the last used ports for this installation at: %s", portFile)
 
 	// Delete the file if already exists
-	deleteFile(FurtureRefFile)
-	createFile(FurtureRefFile)
-
-	// Contents to write to the file
-	var FutureContents []string
-	FutureContents = append(FutureContents, "PORT_BASE: "+strconv.Itoa(segmentPort+Config.INSTALL.TOTALSEGMENT))
-	FutureContents = append(FutureContents, "MASTER_PORT: "+strconv.Itoa(masterPort+1))
-
-	// Write to the file
-	writeFile(FurtureRefFile, FutureContents)
-
-	return nil
+	deleteFile(portFile)
+	createFile(portFile)
+	writeFile(portFile, []string{
+		"PRIMARY_PORT: " + strconv.Itoa(strToInt(i.GPInitSystem.SegmentPort) + Config.INSTALL.TOTALSEGMENT),
+		"MASTER_PORT: " + strconv.Itoa(strToInt(i.GPInitSystem.MasterPort) + 1),
+		"REPLICATION_PORT: " + strconv.Itoa(strToInt(i.GPInitSystem.ReplicationPort) + Config.INSTALL.TOTALSEGMENT),
+		"MIRROR_PORT: " + strconv.Itoa(strToInt(i.GPInitSystem.MirrorPort) + Config.INSTALL.TOTALSEGMENT),
+		"MIRROR_REPLICATION_PORT: " + strconv.Itoa(strToInt(i.GPInitSystem.MirrorReplicationPort) + Config.INSTALL.TOTALSEGMENT),
+	})
 }

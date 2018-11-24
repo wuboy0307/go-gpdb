@@ -10,7 +10,7 @@
   version = "v0.3.1"
 
 [[projects]]
-  digest = "1:8807cd4c63a6a0d66c234268c7011c2bf508ece1bcaa5fd568d5d69591d414b2"
+  digest = "1:0a81122863c41be8ada6a52eae28500b84b5568477479bb5b216c0a42da6f1d6"
   name = "github.com/benhoyt/goawk"
   packages = [
     "internal/ast",
@@ -19,8 +19,8 @@
     "parser",
   ]
   pruneopts = "UT"
-  revision = "a75cecd04d8aa8829c04b97bf370c8afaf53a68e"
-  version = "v1.0.0"
+  revision = "1b54c4550b85da91c2556b1d952d25b38fce6236"
+  version = "v1.0.1"
 
 [[projects]]
   branch = "master"

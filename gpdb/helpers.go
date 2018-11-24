@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"strconv"
 )
 
 // Function that checks if the string is available on a array.
@@ -186,6 +187,20 @@ func removeBlanks(s string) string {
 	if err != nil {
 		Fatalf("Failure in removing blank lines, err: %v", err)
 	}
-	s = regex.ReplaceAllString(s, "")
+	s = strings.TrimSpace(regex.ReplaceAllString(s, ""))
 	return s
+}
+
+// is the port out of range
+func outOfRangePort(port string) bool {
+	if strToInt(port) > 63000 {
+		return true
+	}
+	return false
+}
+
+// string to init
+func strToInt(s string) int {
+	i, _ := strconv.Atoi(s)
+	return i
 }

@@ -64,25 +64,14 @@ func executeBinaries(binaryFile string, bashfilename string, scriptOptions []str
 }
 
 // Execute Os commands
-func executeOsCommand(outFile, command string, arguments ...string) {
+func executeOsCommand(command string, arguments ...string) {
 
 	// Execute the command
 	cmd := exec.Command(command, arguments...)
 
-	// Attach the os error from the screen
+	// Attach the os error/output from the screen
 	cmd.Stderr = os.Stderr
-
-	// If request to file, then write to o/p file
-	if outFile != "" {
-		outfile, err := os.Create(outFile)
-		if err != nil {
-			Fatalf("Error in creating a file during os execution, err: %v", err)
-		}
-		defer outfile.Close()
-		cmd.Stdout = outfile
-	} else { // else throw on the screen
-		cmd.Stdout = os.Stdout
-	}
+	cmd.Stdout = os.Stdout
 
 	// Start the command
 	err := cmd.Start()
@@ -99,10 +88,10 @@ func executeOsCommand(outFile, command string, arguments ...string) {
 }
 
 // Same as executeOsCommand but this one return output
-func executeOsOutput(command string, ignoreErr bool, args ...string) []byte {
+func executeOsCommandOutput(command string, args ...string) ([]byte, error) {
 	cmdOut, err := exec.Command(command, args...).Output()
-	if err != nil && !ignoreErr {
-		Fatalf("Failed when executing OS command output, err: %v", err)
+	if err != nil {
+		return cmdOut, fmt.Errorf("failed when executing OS command output, err: %v", err)
 	}
-	return cmdOut
+	return cmdOut, nil
 }

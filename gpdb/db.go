@@ -1,6 +1,8 @@
 package main
 
-import "bytes"
+import (
+	"bytes"
+)
 
 func (i *Installation) stopAllDb() error {
 
@@ -26,7 +28,7 @@ func (i *Installation) stopAllDb() error {
 		cleanupScript,
 		"ps -ef | egrep \"gpmon|gpmonws|lighttpd\" | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null; echo > /dev/null",
 	})
-	executeOsCommand("", "/bin/sh", StopScriptLoc)
+	executeOsCommand("/bin/sh", StopScriptLoc)
 	i.areAllProcessDown()
 
 	// Cleanup temp files.
@@ -38,7 +40,7 @@ func (i *Installation) stopAllDb() error {
 // Check if the process are all down
 func (i *Installation) areAllProcessDown() {
 	// Send a warning message if the process is not completely stopped.
-	cmdOut := executeOsOutput("pgrep", true,"postgres")
+	cmdOut, _ := executeOsCommandOutput("pgrep", "postgres")
 	var EmptyBytes []byte
 	if !bytes.Equal(cmdOut, EmptyBytes) {
 		Warn("Can't stop all postgres process, seems like some are left behind")
@@ -48,19 +50,14 @@ func (i *Installation) areAllProcessDown() {
 }
 
 // Check if the database is healthy
-func (i *Installation) isDbHealthy() error {
+func (i *Installation) isDbHealthy() {
 
 	// Query string
 	Infof("Ensuring the database is healthy...")
 	queryString := "select 1"
 
-	// Execute string
-	i.executeDbQuery(queryString, "template1", "", false)
-
-	return nil
-}
-
-// Execute DB Query
-func (i *Installation) executeDbQuery(query_string, db_name, file_name string, to_write bool)  {
-	executeOsOutput("psql", false,"-p", i.GPInitSystem.MasterPort, "-d", db_name, "-Atc", query_string)
+	_, err := executeOsCommandOutput("psql", "-p", i.GPInitSystem.MasterPort, "-d", "template1", "-Atc", queryString)
+	if err != nil {
+		Fatalf("Error in checking database health, err: %v", err)
+	}
 }
