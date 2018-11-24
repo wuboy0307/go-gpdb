@@ -20,6 +20,7 @@ type Command struct {
 	Debug		bool
 	Install 	bool
 	Stop        bool
+	Force	    bool
 }
 
 // Sub Command: Download
@@ -132,8 +133,8 @@ var removeCmd = &cobra.Command{
 	Long:  "Remove sub-command helps to remove the products that was installed using the install command",
 	Example: fmt.Sprintf(removeExample(), programName),
 	Run: func(cmd *cobra.Command, args []string) {
-		// Search the tile from all the labs
-		fmt.Println("will run remove one day")
+		// Remove the installation
+		remove()
 	},
 }
 
@@ -141,13 +142,18 @@ var removeCmd = &cobra.Command{
 func removeFlags() {
 	removeCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "Which GPDB version software do you want to remove?")
 	removeCmd.MarkFlagRequired("version")
+	removeCmd.Flags().BoolVarP(&cmdOptions.Force, "force", "f",false, "OPTIONAL: If the database start fails, use force to force manual removal")
 }
 
 // Remove example
 func removeExample() string {
 	return `=> To remove a particular installation.
 
-%[1]s remove -v <GPDB VERSION>`
+%[1]s remove -v <GPDB VERSION>
+
+=> To remove a particular installation forcefully.
+
+%[1]s remove -v <GPDB VERSION> -f`
 }
 
 // Sub Command: Environment
@@ -179,7 +185,11 @@ func envExample() string {
 
 => To start and use a specific installation.
 
-%[1]s env -v <GPDB VERSION>`
+%[1]s env -v <GPDB VERSION>
+
+=> To prevent stopping other environment when the environment is set.
+
+%[1]s env -v <GPDB VERSION> --dont-stop`
 }
 
 // The root CLI.
