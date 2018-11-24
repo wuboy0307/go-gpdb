@@ -16,7 +16,7 @@ const (
 var (
 	rx_gpcc = `Greenplum Command Center`
 	rx_gpdb = `Greenplum Database (\d+\.)(\d+\.)(\d+)?(\.\d)?( Binary Installer)? ` +
-		`for ((Red Hat Enterprise|RedHat Enterprise) Linux|RHEL).*7`
+		`for ((Red Hat Enterprise|RedHat Enterprise|RedHat Entrerprise) Linux|RHEL).*7`
 )
 
 // Struct to where all the API response will be stored
@@ -284,6 +284,12 @@ func Download() {
 		Infof("Downloaded file available at: %s", r.UserRequest.ProductFileName)
 	} else {
 		Fatalf("download URL is blank, cannot download the product")
+	}
+
+	// If the install after download flag is set then run the installer script
+	if cmdOptions.Install {
+		Infof("Installation the gpdb version %s, that was just downloaded", cmdOptions.Version)
+		install()
 	}
 
 }

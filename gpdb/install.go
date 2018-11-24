@@ -1,54 +1,113 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strconv"
+	"time"
+	"fmt"
+)
+
+type Installation struct {
+	HostFileLocation string
+	WorkingHostFileLocation string
+	BinaryInstallationLocation string
+	SingleORMulti string
+	portFileName string
+	timestamp string
+	GpInitSystemConfigLocation string
+	GPInitSystem GPInitSystemConfig
+	EnvFile string
+}
+
+type GPInitSystemConfig struct {
+	MasterHostname string
+	ArrayName	   string
+	SegPrefix	   string
+	DBName		   string
+	MasterDir      string
+	SegmentDir	   string
+	MirrorDir	   string
+	MasterHostName string
+	MasterPort	   string
+	SegmentPort	   string
+	MirrorPort	   string
+	ReplicationPort string
+	MirrorReplicationPort string
+}
+
+const (
+	defaultMasterPort = 3000
+	defaultGpperfmonPort = 28000
+	defaultPrimaryPort = 30000
+	defaultMirrorPort = 35000
+	defaultReplicatePort = 40000
+	defaultMirrorReplicatePort = 45000
 )
 
 func install() {
 
 	Infof("Running the installation for the product: %s", cmdOptions.Product)
 
-	// Get the hostname
-	getHostname()
+	// Initialize the struct
+	i := new(Installation)
 
 	// Checking if this is a single install VM or Mutli node VM
 	var singleORmulti string
 	noSegments, _ := strconv.Atoi(os.Getenv("GPDB_SEGMENT"))
 	if noSegments > 0 {
-		singleORmulti = "multi"
+		i.SingleORMulti = "multi"
 	} else {
-		singleORmulti = "single"
+		i.SingleORMulti = "single"
 	}
 	Debugf("Is this single or multi node installation: %s", singleORmulti)
 
+	// Get or Generate the hostname file
+	i.generateHostFile()
+
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
-		installGPDB(singleORmulti)
+		i.portFileName = "gpdb_ports.save"
+		i.installGPDB(singleORmulti)
 	} else { // its a GPCC installation
+		i.portFileName = "gpcc_ports.save"
 		installGPCC()
 	}
-
 }
 
 // Install GPDB
-func installGPDB(singleOrMutli string) {
+func (i *Installation) installGPDB(singleOrMutli string) {
 
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
 	// Validate the master & segment exists and is readable
 	dirValidator()
 
-	// TODO: Check if there is already a version of GPDB installed
+	// Check if there is already a version of GPDB installed
+	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
 
-	// Check if the binaries exits and unzip the binaries.
-	binFile := unzip(fmt.Sprintf("*%s*", cmdOptions.Version))
+	// Start the installation procedure
+	i.installProduct()
 
-	Infof("Using the bin file to install the GPDB Product: %s", binFile)
+	// Check ssh to host is working and enable password less login
+	i.setUpHost()
+
+	// Build & Execute the gpinitsystem configuration
+	i.timestamp = time.Now().Format("20060102150405")
+	i.buildGpInitSystem()
+
+	// Create EnvFile
+	i.createEnvFile()
+
+	// Create uninstall script
+	i.createUninstallScript()
+
+	// Store the last used port for future use
+	i.savePort()
+
+	// Installation complete, print on the screen the env file to source
+	displayEnvFileToSource(i.EnvFile)
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
-
 }
 
 

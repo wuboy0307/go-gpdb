@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"strings"
 )
 
 // Build executable shell script
-func buildExecutableBashScript(filename string, executable_filename string, args []string) error {
+func buildExecutableBashScript(filename string, executableFilename string, args []string) error {
 
 	Debugf("Starting program to build executable script to install the binaries")
 
@@ -15,7 +17,7 @@ func buildExecutableBashScript(filename string, executable_filename string, args
 
 	// Create arguments on what needs to be written to the file
 	Infof("Generating installer arguments to be passed to the file: %s", filename)
-	executableLine := fmt.Sprintf("/bin/sh %s &>/dev/null << EOF", executable_filename)
+	executableLine := fmt.Sprintf("/bin/sh %s << EOF", executableFilename)
 
 	// Load the contents to the file
 	var passArgs []string
@@ -32,7 +34,7 @@ func buildExecutableBashScript(filename string, executable_filename string, args
 }
 
 // Execute shell script when called
-func executeBinaries(binary_file string, bashfilename string, script_options []string) error {
+func executeBinaries(binaryFile string, bashfilename string, scriptOptions []string) error {
 
 	// Build a quick shell script to install binaries
 	// Filename name
@@ -42,7 +44,7 @@ func executeBinaries(binary_file string, bashfilename string, script_options []s
 	deleteFile(filename)
 
 	// Create the shell script
-	err := buildExecutableBashScript(filename, binary_file, script_options)
+	err := buildExecutableBashScript(filename, binaryFile, scriptOptions)
 	if err != nil {
 		return err
 	}
@@ -59,4 +61,37 @@ func executeBinaries(binary_file string, bashfilename string, script_options []s
 	deleteFile(filename)
 
 	return nil
+}
+
+// Execute Os commands
+func executeOsCommand(command string, arguments ...string) {
+
+	// Execute the command
+	cmd := exec.Command(command, arguments...)
+
+	// Attach the os error/output from the screen
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+
+	// Start the command
+	err := cmd.Start()
+	if err != nil {
+		Fatalf("Failed to start the start command %s, err: %v", command, err)
+	}
+
+	// Wait for it to finish
+	// For some reason the gpinitsystem produces exit code 1 even then command ran successfully , so we ignore the exit code 1 here for gpinitsystem
+	err = cmd.Wait()
+	if err != nil && (strings.HasSuffix(command, "gpinitsystem") && err.Error() != "exit status 1"){
+		Fatalf("Failed while waiting for the command %s err: %v", command, err)
+	}
+}
+
+// Same as executeOsCommand but this one return output
+func executeOsCommandOutput(command string, args ...string) ([]byte, error) {
+	cmdOut, err := exec.Command(command, args...).Output()
+	if err != nil {
+		return cmdOut, fmt.Errorf("failed when executing OS command output, err: %v", err)
+	}
+	return cmdOut, nil
 }

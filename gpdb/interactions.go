@@ -114,6 +114,7 @@ func (r *Responses) ShowAvailableVersion(token string) {
 		// Selected by the user
 		r.UserRequest.releaseLink = ReleaseOutputMap[ReleaseVersion[users_choice-1]]
 		r.UserRequest.versionChoosen = ReleaseVersion[users_choice-1]
+		cmdOptions.Version = r.UserRequest.versionChoosen
 	}
 
 	// Since we have now extracted the version, now get the download URL

@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/jinzhu/configor"
+	"strconv"
 	"os"
+	"strings"
+	"fmt"
 )
 
 // Struct that store the configuration file for the program to run
@@ -23,63 +26,43 @@ var Config = struct {
 		ENVDIR               string `yaml:"ENV_DIR"`
 		UNINTSALLDIR         string `yaml:"UNINTSALL_DIR"`
 		FUTUREREFDIR         string `yaml:"FUTUREREF_DIR"`
-		MASTERHOST           string `yaml:"MASTER_HOST"`
 		MASTERUSER           string `yaml:"MASTER_USER"`
 		MASTERPASS           string `yaml:"MASTER_PASS"`
 		GPMONPASS            string `yaml:"GPMON_PASS"`
 		MASTERDATADIRECTORY  string `yaml:"MASTER_DATA_DIRECTORY"`
 		SEGMENTDATADIRECTORY string `yaml:"SEGMENT_DATA_DIRECTORY"`
+		MIRRORDATADIRECTORY	 string	`yaml:"MIRROR_DATA_DIRECTORY"`
 		TOTALSEGMENT         int    `yaml:"TOTAL_SEGMENT"`
 	} `yaml:"INSTALL"`
 }{}
 
-// Read the configuration file and create directory if not exists
-// or set default values if values are missing
-func validateConfiguration() {
-
-	Debug("Checking if the directories needed for the program exists")
-	if IsValueEmpty(Config.CORE.BASEDIR) {
-		Warn("BASE_DIR parameter missing in the config file, setting to default")
-		Config.CORE.BASEDIR = "/home/gpadmin/"
+// If the parameter not set then set the defaults
+func setDefaults(para, defaultValue, whichPara string) string {
+	if IsValueEmpty(para) {
+		Warnf("%s parameter missing in the config file, setting to default", whichPara)
+		return "/home/gpadmin/"
 	}
+	return para
+}
 
-	// App name
-	if IsValueEmpty(Config.CORE.APPLICATIONNAME) {
-		Warn("APPLICATION_NAME parameter missing in the config file, setting to default")
-		Config.CORE.APPLICATIONNAME = "gpdbinstall"
+// If the parameter not set then error out
+func isMissing(para, whichPara string) string {
+	if IsValueEmpty(para) {
+		Fatalf("Mandatory '%s' parameter is missing in the config file, please set it", whichPara)
 	}
+	return para
+}
 
-	// Temp Directory
-	if IsValueEmpty(Config.CORE.TEMPDIR) {
-		Warn("TEMP_DIR parameter missing in the config file, setting to default")
-		Config.CORE.TEMPDIR = "/temp/"
+// All the directory should end up with "/"
+func endWithSlash(path string) string {
+	if !strings.HasSuffix(path, "/") {
+		return fmt.Sprintf("%s/", path)
 	}
+	return path
+}
 
-	// Download Directory
-	if IsValueEmpty(Config.DOWNLOAD.DOWNLOADDIR) {
-		Warn("DOWNLOAD_DIR parameter missing in the config file, setting to default")
-		Config.DOWNLOAD.DOWNLOADDIR = "/download/"
-	}
-
-	// Env Directory
-	if IsValueEmpty(Config.INSTALL.ENVDIR) {
-		Warn("ENV_DIR parameter missing in the config file, setting to default")
-		Config.INSTALL.ENVDIR = "/env/"
-	}
-
-	// Uninstall Directory
-	if IsValueEmpty(Config.INSTALL.UNINTSALLDIR) {
-		Warn("UNINTSALL_DIR parameter missing in the config file, setting to default")
-		Config.INSTALL.UNINTSALLDIR = "/uninstall/"
-	}
-
-	// Future Reference Directory
-	if IsValueEmpty(Config.INSTALL.FUTUREREFDIR) {
-		Warn("UNINTSALL_DIR parameter missing in the config file, setting to default")
-		Config.INSTALL.FUTUREREFDIR = "/future_reference/"
-	}
-
-	// Check if API Token
+// Validate the token
+func validateToken() {
 	if IsValueEmpty(Config.DOWNLOAD.APITOKEN) || Config.DOWNLOAD.APITOKEN == "<API TOKEN>" {
 		// Check if its set as environment variables
 		token := os.Getenv("UAA_API_TOKEN")
@@ -89,6 +72,44 @@ func validateConfiguration() {
 			Config.DOWNLOAD.APITOKEN = token
 		}
 	}
+}
+
+// Read the configuration file and create directory if not exists
+// or set default values if values are missing
+func validateConfiguration() {
+
+	Debug("Checking if the directories needed for the program exists")
+
+	// Default parameter
+	Config.CORE.BASEDIR = endWithSlash(setDefaults(Config.CORE.BASEDIR, "/home/gpadmin/", "BASE_DIR"))  // Base Dir
+	Config.CORE.APPLICATIONNAME = setDefaults(Config.CORE.APPLICATIONNAME, "gpdbinstall", "APPLICATION_NAME") // App name
+	Config.CORE.TEMPDIR = endWithSlash(setDefaults(Config.CORE.TEMPDIR, "/temp/", "TEMP_DIR")) // Temp Directory
+	Config.DOWNLOAD.DOWNLOADDIR = endWithSlash(setDefaults(Config.DOWNLOAD.DOWNLOADDIR, "/download/", "DOWNLOAD_DIR")) // Download Directory
+	Config.INSTALL.ENVDIR = endWithSlash(setDefaults(Config.INSTALL.ENVDIR, "/env/", "ENV_DIR")) // Env Directory
+	Config.INSTALL.UNINTSALLDIR = endWithSlash(setDefaults(Config.INSTALL.UNINTSALLDIR, "/uninstall/", "UNINTSALL_DIR")) // Uninstall Directory
+	Config.INSTALL.FUTUREREFDIR = endWithSlash(setDefaults(Config.INSTALL.FUTUREREFDIR, "/future_reference/", "FUTUREREF_DIR")) // Future reference Directory
+	Config.INSTALL.MASTERDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.MASTERDATADIRECTORY, "/data/master/", "MASTER_DATA_DIRECTORY")) // Master Directory
+	Config.INSTALL.SEGMENTDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.SEGMENTDATADIRECTORY, "/data/primary/", "SEGMENT_DATA_DIRECTORY")) // Segment Directory
+	Config.INSTALL.MIRRORDATADIRECTORY = endWithSlash(setDefaults(Config.INSTALL.MIRRORDATADIRECTORY, "/data/mirror/", "MIRROR_DATA_DIRECTORY")) // Segment Directory
+	Config.INSTALL.MASTERPASS = setDefaults(Config.INSTALL.MASTERPASS, "changeme", "MASTER_PASS") // Master password
+	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS") // Gpmon password
+	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER") // Master userv
+	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT")) // Total Segments
+
+	// Fail if these parameter is missing
+	Config.CORE.OS = isMissing(Config.CORE.OS, "OS") // Go build OS
+	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH") // Go build ARCH
+	Config.CORE.GOBUILD = isMissing(Config.CORE.GOBUILD, "GO_BUILD") // Go build version
+
+	// Check if API Token
+	validateToken()
+
+	// Setup Path
+	setupPath()
+}
+
+// Setup the directory location
+func setupPath() {
 
 	// Check if the directory exists, else create one.
 	base_dir := Config.CORE.BASEDIR + Config.CORE.APPLICATIONNAME
@@ -112,9 +133,7 @@ func validateConfiguration() {
 	// Future Reference location
 	Config.INSTALL.FUTUREREFDIR = base_dir + Config.INSTALL.FUTUREREFDIR
 	CreateDir(Config.INSTALL.FUTUREREFDIR)
-
 }
-
 
 // Load the configuration file to the memory
 func config() {

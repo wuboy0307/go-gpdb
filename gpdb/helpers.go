@@ -8,9 +8,10 @@ import (
 	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
 	"os"
-	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
+	"strconv"
 )
 
 // Function that checks if the string is available on a array.
@@ -42,11 +43,6 @@ func doesFileOrDirExists(path string) (bool, error) {
 		return false, nil
 	}
 	return true, err
-}
-
-// Search the directory for the matching files
-func FilterDirsGlob(dir, search string) ([]string, error) {
-	return filepath.Glob(filepath.Join(dir, search))
 }
 
 // Create directory
@@ -130,42 +126,6 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 	}
 }
 
-// Check if the directory provided is readable and writeable
-func dirValidator() error {
-
-	Debugf("Checking for the existences of master and segment directory")
-
-	// Check if the master & segment location is readable and writable
-	masterDirExists, err := doesFileOrDirExists(Config.INSTALL.MASTERDATADIRECTORY)
-	if err != nil {
-		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
-	}
-
-	segmentDirExists, err := doesFileOrDirExists(Config.INSTALL.SEGMENTDATADIRECTORY)
-	if err != nil {
-		Fatalf("Cannot get the information of directory %s, err: %v", Config.INSTALL.MASTERDATADIRECTORY, err)
-	}
-
-	// if the file doesn't exists then let try creating it ...
-	if !masterDirExists || !segmentDirExists {
-		CreateDir(Config.INSTALL.MASTERDATADIRECTORY)
-		CreateDir(Config.INSTALL.SEGMENTDATADIRECTORY)
-	}
-
-	return nil
-}
-
-// Remove all the file based on search
-func removeFiles(path, file string) {
-	Debugf("Removing the file with %s from path %s", file, path)
-	allfiles, _ := FilterDirsGlob(path, file)
-	for _, f := range allfiles {
-		if err := os.RemoveAll(f); err != nil {
-			Fatalf("Failed to remove the file from path %s%s, err: %v", path, file, err)
-		}
-	}
-}
-
 // Unzip the binaries.
 func unzip(search string) string {
 	// Check if we can find the binaries in the directory
@@ -195,35 +155,52 @@ func unzip(search string) string {
 	return ""
 }
 
-
 // Extract the contents that we are interested
-func contentExtractor(contents []byte, src string, vars []string) {
+func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 
+	// Create a parser
 	prog, err := parser.ParseProgram([]byte(src), nil)
 	if err != nil {
 		Fatalf("Failed to parse the program: %s", src)
-		return
 	}
 
-	// TODO: To save the content to hostfile
+	// The configuration
+	var buf bytes.Buffer
 	config := &interp.Config{
-		Stdin: bytes.NewReader([]byte(contents)),
-		Vars: vars,
+		Stdin:  bytes.NewReader([]byte(contents)),
+		Vars:   vars,
+		Output: &buf,
 	}
 
+	// Execute the program
 	_, err = interp.ExecProgram(prog, config)
 	if err != nil {
 		Fatalf("Failure in executing the goawk script: %v", err)
-		return
 	}
 
+	return buf
 }
 
+// Remove blank lines from the contentExtractor
+func removeBlanks(s string) string {
+	regex, err := regexp.Compile("\n$")
+	if err != nil {
+		Fatalf("Failure in removing blank lines, err: %v", err)
+	}
+	s = strings.TrimSpace(regex.ReplaceAllString(s, ""))
+	return s
+}
 
-// Get the hostname
-func getHostname() {
+// is the port out of range
+func outOfRangePort(port string) bool {
+	if strToInt(port) > 63000 {
+		return true
+	}
+	return false
+}
 
-	// Read the contents from the /etc/hosts and generate a hostfile.
-	contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
-
+// string to init
+func strToInt(s string) int {
+	i, _ := strconv.Atoi(s)
+	return i
 }
