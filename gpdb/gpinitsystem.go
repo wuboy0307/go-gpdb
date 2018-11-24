@@ -24,13 +24,13 @@ func (i *Installation) buildGpInitSystem() {
 	i.buildGpInitSystemConfig()
 
 	// Stop all the database before execution
-	i.stopAllDb()
+	stopAllDb()
 
 	// Execute gpinitsystem
 	i.executeGpInitSystem()
 
 	// Is database healthy
-	i.isDbHealthy()
+	isDbHealthy("", i.GPInitSystem.MasterPort)
 }
 
 // Generate the port for master / segments / mirror & replication

@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"fmt"
 )
 
 type Installation struct {
@@ -81,7 +82,8 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	// Validate the master & segment exists and is readable
 	dirValidator()
 
-	// TODO: Check if there is already a version of GPDB installed
+	// Check if there is already a version of GPDB installed
+	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
 
 	// Start the installation procedure
 	i.installProduct()

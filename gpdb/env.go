@@ -32,34 +32,36 @@ func (i *Installation) createEnvFile() {
 // Read file and find the content that we are interested
 func readFileAndGatherInformation(file string) string {
 
-	// TODO: change this later to use goawk package and helper functions
-	//// Obtain the below information from env file
-	//var textDetection = []string{`export PGPORT=`, `export GPCC_INSTANCE_NAME=`, `export GPCCPORT=`}
-	//var output string
-	//
-	//// From the file find the text detection information
-	//scanner := readFile(file)
-	//for scanner.Scan() {
-	//	for _, text := range textDetection {
-	//		if strings.HasPrefix(scanner.Text(), text) {
-	//			output = output + "|" + strings.Replace(scanner.Text(), text, "", -1)
-	//			if strings.HasPrefix(scanner.Text(),"export PGPORT=") {
-	//				output = output + "| STOPPED"
-	//			}
-	//		}
-	//	}
-	//}
-	//
-	//// If any error throw on the screen
-	//if err := scanner.Err(); err != nil {
-	//	Fatalf("Error in scanning the file, err: %v", err)
-	//}
+	// Obtain the below information from env file
+	var output string
 
-	return ""
+	// From the file find the text detection information
+	content := readFile(file)
+
+	// DB PORT
+	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export PGPORT="), []string{"FS", "="})
+	output = output + "|" + removeBlanks(c.String())
+
+	// Is DB running
+	if isDbHealthy(file, "") {
+		output = output + "| RUNNING"
+	} else {
+		output = output + "| STOPPED"
+	}
+
+	// GPCC Instance
+	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_INSTANCE_NAME="), []string{"FS", "="})
+	output = output + "|" + removeBlanks(c.String())
+
+	// GPCC URL
+	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCCPORT="), []string{"FS", "="})
+	output = output + "|" + removeBlanks(c.String())
+
+	return output
 }
 
 // List all the installed enviornment files.
-func installedEnvFiles(search, confirmation string) string {
+func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 
 	var output = []string{`Index | Environment File | Master Port | Status | GPCC Instance Name | GPCC Instance URL`,
 		`------|-----------------------|-----------------|------------------|----------------------------------------|------------------------------------------`,
@@ -67,7 +69,7 @@ func installedEnvFiles(search, confirmation string) string {
 
 	// Search for environment files for that version
 	allEnv, _ := FilterDirsGlob(Config.INSTALL.ENVDIR, search)
-	if len(allEnv) == 0 && !IsValueEmpty(cmdOptions.Version) {
+	if (len(allEnv) == 0 && !IsValueEmpty(cmdOptions.Version)) && !ignoreErr {
 		Fatalf("No installation found for the version: %s, try downloading and installing it", cmdOptions.Version)
 	} else if len(allEnv) == 0 && IsValueEmpty(cmdOptions.Version) {
 		Fatalf("No installation found, try downloading and installing it")
@@ -97,7 +99,7 @@ func installedEnvFiles(search, confirmation string) string {
 		}
 
 	} else if len(allEnv) == 1 && confirmation == "choose" { // if there is only one , then there is no choose just provide the only one
-
+		startDBifNotStarted(allEnv[0])
 		return allEnv[0]
 
 	} else if (len(allEnv) > 0 && confirmation == "choose") || confirmation == "list&choose" {
@@ -109,6 +111,7 @@ func installedEnvFiles(search, confirmation string) string {
 
 		// return the enviornment file to the main function
 		choosenEnv := allEnv[choice-1]
+		startDBifNotStarted(choosenEnv)
 
 		return choosenEnv
 	}
@@ -116,21 +119,21 @@ func installedEnvFiles(search, confirmation string) string {
 	return ""
 }
 
-func envListing() {
-
+// List all the environment installed on this box
+func env() {
 	var envFile string
 	if cmdOptions.Version == "" { // No version provided, show everything
 		Infof("Listing all the environment installed")
-		envFile = installedEnvFiles("*", "list&choose")
+		envFile = installedEnvFiles("*", "list&choose", false)
 	} else { // Version given, search for env file
 		Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
-		envFile = installedEnvFiles("*" + cmdOptions.Version + "*", "choose")
+		envFile = installedEnvFiles("*" + cmdOptions.Version + "*", "choose", false)
 	}
 
 	displayEnvFileToSource(envFile)
 }
 
-
+// Display the env content on the screen
 func displayEnvFileToSource(file string) {
 	printOnScreen("Source the environment file to set the environment", []string{"source " + file})
 }

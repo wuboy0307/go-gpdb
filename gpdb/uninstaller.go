@@ -8,11 +8,13 @@ func (i *Installation) createUninstallScript() error {
 	Infof("Creating Uninstall file for this installation at: " + uninstallFile)
 
 	// Query
-	// TODO: mutli enviornment ssh
-	queryString := "select $$ps -ef|grep postgres|grep -v grep|grep $$ ||  port " +
-		"|| $$ | awk '{print $2}'| xargs -n1 /bin/kill -11 &>/dev/null $$ " +
-		"from gp_segment_configuration union select $$rm -rf /tmp/.s.PGSQL.$$ || port || $$*$$ " +
-		"from gp_segment_configuration union select $$rm -rf $$ || fselocation from pg_filespace_entry"
+	queryString := `
+select $$ssh $$ || hostname || $$ "ps -ef|grep postgres|grep -v grep|grep $$ ||  port || $$ | awk '{print $2}'| xargs -n1 /bin/kill -11 &>/dev/null" $$ from gp_segment_configuration 
+union
+select $$ssh $$ || hostname || $$ rm -rf /tmp/.s.PGSQL.$$ || port || $$*$$ from gp_segment_configuration
+union
+select $$ssh $$ || c.hostname || $$ rm -rf $$ || f.fselocation from pg_filespace_entry f, gp_segment_configuration c where c.dbid = f.fsedbid
+`
 
 	// Execute the query
 	cmdOut, err := executeOsCommandOutput("psql", "-p", i.GPInitSystem.MasterPort, "-d", "template1", "-Atc", queryString)

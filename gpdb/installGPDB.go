@@ -72,7 +72,7 @@ func (i *Installation) installProduct() {
 	}
 
 	// Now source the environment if installation went fine
-	err = i.sourceGPDBPath()
+	err = sourceGPDBPath(i.BinaryInstallationLocation)
 	if err != nil {
 		Fatalf("Failed to set the environment variable while sourcing the file")
 	}
@@ -144,10 +144,10 @@ func (i *Installation) runSegInstall() {
 }
 
 // Source greenplum path
-func (i *Installation) sourceGPDBPath() error {
+func sourceGPDBPath(binLoc string) error {
 
 	// Setting up greenplum path
-	err := os.Setenv("GPHOME", i.BinaryInstallationLocation)
+	err := os.Setenv("GPHOME", binLoc)
 	if err != nil {
 		return err
 	}

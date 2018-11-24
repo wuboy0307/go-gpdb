@@ -19,6 +19,7 @@ type Command struct {
 	CCVersion 	string
 	Debug		bool
 	Install 	bool
+	Stop        bool
 }
 
 // Sub Command: Download
@@ -160,13 +161,14 @@ var envCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// search the env directory for the environment files
 		// and broadcast to the user
-		envListing()
+		env()
 	},
 }
 
 // All the usage flags of the download command
 func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
+	envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
 }
 
 // Env example

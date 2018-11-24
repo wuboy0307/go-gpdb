@@ -286,4 +286,10 @@ func Download() {
 		Fatalf("download URL is blank, cannot download the product")
 	}
 
+	// If the install after download flag is set then run the installer script
+	if cmdOptions.Install {
+		Infof("Installation the gpdb version %s, that was just downloaded", cmdOptions.Version)
+		install()
+	}
+
 }
