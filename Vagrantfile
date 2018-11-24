@@ -13,9 +13,9 @@ require "ipaddr"
 @vm_memory = ENV['VM.MEMORY'].to_i || 4096
 
 # ENV APPLICATION DEFAULTS
-@subnet = ENV['GO-GPDB.SUBNET'] || "192.168.99.100"
-@hostname = ENV['GO-GPDB.HOSTNAME'] || "go-gpdb"
-@segments = ENV['GO-GPDB.SEGMENTS'].to_i || 0
+@subnet = ENV['GO-GPDB_SUBNET'] || "192.168.99.100"
+@hostname = ENV['GO-GPDB_HOSTNAME'] || "go-gpdb"
+@segments = ENV['GO-GPDB_SEGMENTS'].to_i || 0
 
 # Define a Template for Building All Our VMs.
 def build_vm( config, hostname, ip )
