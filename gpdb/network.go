@@ -96,7 +96,7 @@ func (i *Installation) savePort() {
 	}
 
 	// Fully qualified filename
-	portFile := Config.INSTALL.FUTUREREFDIR + i.portFileName
+	portFile := Config.INSTALL.FUTUREREFDIR + i.PortFileName
 	Infof("Storing the last used ports for this installation at: %s", portFile)
 
 	// Delete the file if already exists

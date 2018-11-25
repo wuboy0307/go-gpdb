@@ -26,7 +26,7 @@ function download_gpdb_version() {
 function install_gpdb_version() {
     local ver=`echo $1|sed 's/"//g'`
     cd ${base_dir}/gpdb
-    { go run *.go i -v ${ver} & } &> /tmp/install_${ver}.out
+    { go run *.go i -v ${ver} --standby & } &> /tmp/install_${ver}.out
     spinner $! "Install the version: ${ver}"
     if [ $? -ne 0 ]; then wait $!; fi
 }

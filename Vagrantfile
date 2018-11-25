@@ -8,9 +8,9 @@ require "ipaddr"
 @pivnet_token = ENV['UAA_API_TOKEN'] || ""
 
 # EVN VM DEFAULTS
-@vm_os = ENV['VM.OS'] || "bento/centos-7.5"
-@vm_cpus = ENV['VM.CPUS'].to_i || 2
-@vm_memory = ENV['VM.MEMORY'].to_i || 4096
+@vm_os = ENV['VM_OS'] || "bento/centos-7.5"
+@vm_cpus = ENV['VM_CPUS'] || 2
+@vm_memory = ENV['VM_MEMORY'] || 4096
 
 # ENV APPLICATION DEFAULTS
 @subnet = ENV['GO_GPDB_SUBNET'] || "192.168.99.100"
@@ -33,8 +33,8 @@ def build_vm( config, hostname, ip )
       node.vm.provider :virtualbox do |vb|
           vb.name = hostname
           vb.gui = false
-          vb.cpus = 2
-          vb.memory = "2048"
+          vb.cpus = @vm_cpus
+          vb.memory = @vm_memory
       end
     end
 end
@@ -60,18 +60,18 @@ Vagrant.configure("2") do |config|
   end
 
   puts "","UAA_API_TOKEN: #{@pivnet_token}"
-  puts "Master Hostname: #{@hostname}_m"
-  puts "Master IP: #{@ip}",""
+  puts "Standby Hostname: #{@hostname}-m"
+  puts "Standby IP: #{@ip}",""
 
   # Master Node:
-  build_vm( config, "#{@hostname}_m", "#{@ip}" )
+  build_vm( config, "#{@hostname}-m", "#{@ip}" )
 
   # Create standby host is asked
   if (@standby == 'true')
     @ip = @ip.succ
-    puts "Segment Hostname: #{@hostname}_s"
+    puts "Segment Hostname: #{@hostname}-s"
     puts "Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}_s", "#{@ip}")
+    build_vm( config, "#{@hostname}-s", "#{@ip}")
   end
 
   if (ARGV[0] == 'up')
@@ -81,9 +81,9 @@ Vagrant.configure("2") do |config|
   # Segment Nodes:
   (1..@segments).each do |i|
     @ip = @ip.succ
-    puts "[#{i}] Segment Hostname: #{@hostname}_#{i}"
+    puts "[#{i}] Segment Hostname: #{@hostname}-#{i}"
     puts "[#{i}] Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}_#{i}", "#{@ip}")
+    build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
   end
 
   # Provisioning 

@@ -21,6 +21,7 @@ type Command struct {
 	Install 	bool
 	Stop        bool
 	Force	    bool
+	Standby	    bool
 }
 
 // Sub Command: Download
@@ -98,6 +99,10 @@ var installCmd = &cobra.Command{
 		if cmdOptions.Product == "gpcc" && cmdOptions.CCVersion == "" {
 			Fatalf("ccversion is not set, with product \"gpcc\" you will need to set ccversion")
 		}
+		// if product is not gpdb then standby flag should not be set
+		if cmdOptions.Product != "gpdb" && cmdOptions.Standby {
+			Fatalf("Cannot set standby flag with product flag \"%s\"", cmdOptions.Product)
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// Install the product that is downloaded
@@ -111,6 +116,7 @@ func installFlags() {
 	installCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to install?")
 	installCmd.MarkFlagRequired("version")
 	installCmd.Flags().StringVarP(&cmdOptions.CCVersion, "ccversion", "c", "", "What is the version of GPCC that you can to install (for only -p gpcc)?")
+	installCmd.Flags().BoolVar(&cmdOptions.Standby, "standby", false, "OPTIONAL: Install standby if the standby host is available")
 }
 
 // Install example
@@ -118,6 +124,10 @@ func installExample() string {
 	return `=> To install gpdb
 
 %[1]s install -v <GPDB VERSION>
+
+=> To install gpdb & standby
+
+%[1]s install -v <GPDB VERSION> --standby
 
 => To install gpcc
 

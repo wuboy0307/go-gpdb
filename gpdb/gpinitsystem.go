@@ -12,8 +12,8 @@ func (i *Installation) buildGpInitSystem() {
 	Infof("Building and executing the gpinitsystem...")
 
 	// Set the values of the below parameters
-	i.GPInitSystem.ArrayName = "gp_" + cmdOptions.Version + "_" + i.timestamp
-	i.GPInitSystem.SegPrefix = "gp_" + cmdOptions.Version + "_" + i.timestamp
+	i.GPInitSystem.ArrayName = "gp_" + cmdOptions.Version + "_" + i.Timestamp
+	i.GPInitSystem.SegPrefix = "gp_" + cmdOptions.Version + "_" + i.Timestamp
 	i.GPInitSystem.DBName = "gpadmin"
 	i.GPInitSystem.MasterDir = strings.TrimSuffix(Config.INSTALL.MASTERDATADIRECTORY, "/")
 	i.GPInitSystem.SegmentDir = strings.TrimSuffix(Config.INSTALL.SEGMENTDATADIRECTORY, "/")
@@ -54,7 +54,7 @@ func (i *Installation) generatePortRange() {
 // validate port
 func (i *Installation) validatePort(searchString string, defaultPort int) string {
 	Infof("Obtaining ports to be set for %s", searchString)
-	p, _ := doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.portFileName, searchString)
+	p, _ := doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.PortFileName, searchString)
 	if p == "" {
 		Warnf("Didn't find %s in the file, setting it to default value: %d", searchString, defaultPort)
 		p = strconv.Itoa(defaultPort)
@@ -67,7 +67,7 @@ func (i *Installation) validatePort(searchString string, defaultPort int) string
 func (i *Installation) buildGpInitSystemConfig() {
 
 	// Build gpinitsystem config file
-	i.GpInitSystemConfigLocation = fmt.Sprintf("%s%s_%s_%s", Config.CORE.TEMPDIR, "gpinitsystemconfig", cmdOptions.Version, i.timestamp)
+	i.GpInitSystemConfigLocation = fmt.Sprintf("%s%s_%s_%s", Config.CORE.TEMPDIR, "gpinitsystemconfig", cmdOptions.Version, i.Timestamp)
 	Infof("Creating the gpinitsystem config file at: %s", i.GpInitSystemConfigLocation)
 	deleteFile(i.GpInitSystemConfigLocation)
 	createFile(i.GpInitSystemConfigLocation)

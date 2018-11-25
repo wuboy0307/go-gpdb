@@ -11,7 +11,7 @@ import (
 func (i *Installation) createEnvFile() {
 
 	// Environment file fully qualified path
-	i.EnvFile = Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.timestamp
+	i.EnvFile = Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp
 	Infof("Creating environment file for this installation at: " + i.EnvFile)
 
 	// Create the file

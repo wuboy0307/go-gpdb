@@ -113,8 +113,11 @@ func (i *Installation) isHostReachable() {
 		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host), true) {
 			Debugf("The host %s is reachable", host)
 			saveReachableHost = append(saveReachableHost, host)
-			if host != i.GPInitSystem.MasterHostname {
+			if host != i.GPInitSystem.MasterHostname && !strings.HasSuffix(host, "-s") {
 				segmentHost = append(segmentHost, host)
+			}
+			if !strings.HasSuffix(host, "-s") {
+				i.StandbyHostAvailable = true
 			}
 		}
 	}
@@ -176,6 +179,20 @@ func (i *Installation) createSoftLink() {
 		executeOsCommand("/bin/sh", softLinkFile)
 		deleteFile(softLinkFile)
 	}
+}
+
+// Activate the master standby if requested.
+func (i *Installation) activateStandby() {
+	Infof("Activating the master standby for this installation")
+	standbyHostLoc := Config.CORE.TEMPDIR + "activate_standby.sh"
+	deleteFile(standbyHostLoc)
+	createFile(standbyHostLoc)
+	writeFile(standbyHostLoc, []string{
+		fmt.Sprintf("source %s", i.EnvFile),
+		fmt.Sprintf("gpinitstandby -s %s -a", strings.Replace(i.GPInitSystem.MasterHostname, "-m", "-s", -1)),
+	})
+	executeOsCommand("/bin/sh", standbyHostLoc)
+	defer deleteFile(standbyHostLoc)
 }
 
 // Source greenplum path

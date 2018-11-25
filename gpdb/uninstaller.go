@@ -9,7 +9,7 @@ import (
 func (i *Installation) createUninstallScript() error {
 
 	// Uninstall script location
-	uninstallFile := Config.INSTALL.UNINTSALLDIR + "uninstall_" + cmdOptions.Version + "_" + i.timestamp
+	uninstallFile := Config.INSTALL.UNINTSALLDIR + "uninstall_" + cmdOptions.Version + "_" + i.Timestamp
 	Infof("Creating Uninstall file for this installation at: " + uninstallFile)
 
 	// Query
@@ -31,7 +31,7 @@ select $$ssh $$ || c.hostname || $$ "rm -rf $$ || f.fselocation || $$"$$ from pg
 	createFile(uninstallFile)
 	writeFile(uninstallFile, []string{
 		string(cmdOut),
-		"rm -rf "+ Config.INSTALL.ENVDIR +"env_" + cmdOptions.Version + "_"+ i.timestamp,
+		"rm -rf "+ Config.INSTALL.ENVDIR +"env_" + cmdOptions.Version + "_"+ i.Timestamp,
 		"rm -rf " + uninstallFile,
 
 	})

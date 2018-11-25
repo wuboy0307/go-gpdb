@@ -12,8 +12,9 @@ type Installation struct {
 	SegmentHostLocation		string
 	BinaryInstallationLocation string
 	SingleORMulti string
-	portFileName string
-	timestamp string
+	PortFileName string
+	Timestamp string
+	StandbyHostAvailable bool
 	GpInitSystemConfigLocation string
 	GPInitSystem GPInitSystemConfig
 	EnvFile string
@@ -27,7 +28,6 @@ type GPInitSystemConfig struct {
 	MasterDir      string
 	SegmentDir	   string
 	MirrorDir	   string
-	MasterHostName string
 	MasterPort	   string
 	SegmentPort	   string
 	MirrorPort	   string
@@ -66,10 +66,10 @@ func install() {
 
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
-		i.portFileName = "gpdb_ports.save"
+		i.PortFileName = "gpdb_ports.save"
 		i.installGPDB(singleORmulti)
 	} else { // its a GPCC installation
-		i.portFileName = "gpcc_ports.save"
+		i.PortFileName = "gpcc_ports.save"
 		installGPCC()
 	}
 }
@@ -92,7 +92,7 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	i.setUpHost()
 
 	// Build & Execute the gpinitsystem configuration
-	i.timestamp = time.Now().Format("20060102150405")
+	i.Timestamp = time.Now().Format("20060102150405")
 	i.buildGpInitSystem()
 
 	// Create EnvFile
@@ -100,6 +100,13 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 	// Create uninstall script
 	i.createUninstallScript()
+
+	// Initialize standby master
+	if i.StandbyHostAvailable && cmdOptions.Standby {
+		i.activateStandby()
+	} else if cmdOptions.Standby {
+		Errorf("Cannot activate standby, please activate the standby manually")
+	}
 
 	// Store the last used port for future use
 	i.savePort()
