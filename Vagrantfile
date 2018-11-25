@@ -8,14 +8,15 @@ require "ipaddr"
 @pivnet_token = ENV['UAA_API_TOKEN'] || ""
 
 # EVN VM DEFAULTS
-@vm_os = ENV['VM.OS'] || "bento/centos-7.4"
+@vm_os = ENV['VM.OS'] || "bento/centos-7.5"
 @vm_cpus = ENV['VM.CPUS'].to_i || 2
 @vm_memory = ENV['VM.MEMORY'].to_i || 4096
 
 # ENV APPLICATION DEFAULTS
 @subnet = ENV['GO_GPDB_SUBNET'] || "192.168.99.100"
-@hostname = ENV['GO_GPDB_HOSTNAME'] || "go-gpdb"
+@hostname = ENV['GO_GPDB_HOSTNAME'] || "gpdb"
 @segments = ENV['GO_GPDB_SEGMENTS'].to_i || 0
+@standby = ENV['GO_GPDB_STANDBY'] || false
 
 # Define a Template for Building All Our VMs.
 def build_vm( config, hostname, ip )
@@ -47,7 +48,7 @@ Vagrant.configure("2") do |config|
   
   # If "vagrant ssh", login As gpadmin, without hacking the vagrant profile
   if ARGV[0] == "ssh"
-      config.ssh.username = 'gpadmin'
+    config.ssh.username = 'gpadmin'
   end
 
   # If the token is empty and we are deploying, prompt for a token...
@@ -59,22 +60,30 @@ Vagrant.configure("2") do |config|
   end
 
   puts "","UAA_API_TOKEN: #{@pivnet_token}"
-  puts "Master Hostname: #{@hostname}"
+  puts "Master Hostname: #{@hostname}_m"
   puts "Master IP: #{@ip}",""
 
   # Master Node:
-  build_vm( config, @hostname, "#{@ip}" )
+  build_vm( config, "#{@hostname}_m", "#{@ip}" )
+
+  # Create standby host is asked
+  if (@standby == 'true')
+    @ip = @ip.succ
+    puts "Segment Hostname: #{@hostname}_s"
+    puts "Segment IP: #{@ip}",""
+    build_vm( config, "#{@hostname}_s", "#{@ip}")
+  end
 
   if (ARGV[0] == 'up')
-  puts "Segments Hosts: #{@segments}"
-  end 
-  
+    puts "Segments Hosts: #{@segments}"
+  end
+
   # Segment Nodes:
   (1..@segments).each do |i|
     @ip = @ip.succ
-    puts "[#{i}] Segment Hostname: #{@hostname}#{i}"
+    puts "[#{i}] Segment Hostname: #{@hostname}_#{i}"
     puts "[#{i}] Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}#{i}", "#{@ip}")
+    build_vm( config, "#{@hostname}_#{i}", "#{@ip}")
   end
 
   # Provisioning 
