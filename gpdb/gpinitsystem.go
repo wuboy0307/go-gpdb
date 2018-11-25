@@ -139,6 +139,6 @@ func (i *Installation) checkPortIsUsable(port string) int {
 }
 
 func (i *Installation) executeGpInitSystem() {
-	Infof("Executing the gpinitsystem to install the database")
+	Infof("Executing the gpinitsystem to initialize the database")
 	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
 }
