@@ -106,10 +106,14 @@ func (i *Installation) isHostReachable() {
 
 	// Get all the hostname from the hostfile and check if the host if reachable
 	var saveReachableHost []string
+	var segmentHost []string
 	for _, host := range strings.Split(string(readFile(i.HostFileLocation)), "\n"){
 		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host), true) {
 			Debugf("The host %s is reachable", host)
 			saveReachableHost = append(saveReachableHost, host)
+			if host != i.GPInitSystem.MasterHostname {
+				segmentHost = append(segmentHost, host)
+			}
 		}
 	}
 
@@ -123,11 +127,22 @@ func (i *Installation) isHostReachable() {
 		Fatalf("Master hosts are not reachable from the hostfile %s, check the host", i.HostFileLocation)
 	}
 
+	// Check if we have equal number of hosts
+	if i.SingleORMulti == "multi" && len(segmentHost)%2 == 1 {
+		Fatalf("There is odd number of segment host, installation cannot continue")
+	} else if i.SingleORMulti == "multi" &&  len(segmentHost) == 0 {
+		Fatalf("No segment host found, cannot continue")
+	}
+
 	// Save the working host on a separate file
 	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
 	deleteFile(i.WorkingHostFileLocation)
 	writeFile(i.WorkingHostFileLocation, saveReachableHost)
-	//TODO: remove the temp file at the end
+
+	// Save segment host list
+	i.SegmentHostLocation = Config.CORE.TEMPDIR + "hostfile_segment"
+	deleteFile(i.SegmentHostLocation)
+	writeFile(i.SegmentHostLocation, segmentHost)
 }
 
 // Run keyless access to the server
@@ -140,7 +155,24 @@ func (i *Installation) executeGpsshExkey() {
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
 	Infof("Running seg install to install the software on all the host")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
+	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.SegmentHostLocation)
+	i.createSoftLink()
+}
+
+// On the newer version of the GPDB they need the soft link for
+// database to work
+func (i *Installation) createSoftLink() {
+	contents := readFile(i.SegmentHostLocation)
+	for _, v := range strings.Split(removeBlanks(string(contents)), "\n") {
+		softLinkFile := Config.CORE.TEMPDIR + "soft_link.sh"
+		createFile(softLinkFile)
+		writeFile(softLinkFile, []string{
+			fmt.Sprintf("ssh %s \"rm -rf /usr/local/greenplum-db\"", v),
+			fmt.Sprintf("ssh %s \"ln -s %s /usr/local/greenplum-db\"", v, i.WorkingHostFileLocation),
+		})
+		executeOsCommand("/bin/sh", softLinkFile)
+		deleteFile(softLinkFile)
+	}
 }
 
 // Source greenplum path

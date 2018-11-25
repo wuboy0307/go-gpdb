@@ -64,6 +64,18 @@ banner "Permissions"
 } &> /tmp/yum.out
 spinner $! "Changing the permission of /usr/local"
 
+## Database Directories
+banner "Default Database Directories"
+
+{
+  mkdir -p /data/master
+  mkdir -p /data/primary
+  mkdir -p /data/mirror
+  chown gpadmin:gpadmin /data/master
+  chown gpadmin:gpadmin /data/primary
+  chown gpadmin:gpadmin /data/mirror
+} &> /tmp/yum.out
+spinner $! "Creating & Changing ownership of database directories"
 
 banner "OS Setup Complete"
 

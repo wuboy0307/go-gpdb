@@ -96,18 +96,19 @@ func (i *Installation) multiNodeGpInitSystem() []string{
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
 		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
+		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
+		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
 		"MASTER_HOSTNAME=" + i.GPInitSystem.MasterHostname,
 		"MASTER_DIRECTORY=" + i.GPInitSystem.MasterDir,
-		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
 		"MASTER_PORT=" + i.GPInitSystem.MasterPort,
-		"DATABASE_NAME=" + i.GPInitSystem.DBName,
-		"TRUSTED SHELL=ssh",
+		"TRUSTED_SHELL=ssh",
 		"CHECK_POINT_SEGMENTS=8",
+		"ENCODING=UNICODE",
 		"MIRROR_PORT_BASE=" + i.GPInitSystem.MirrorPort,
-		"REPLICATION_PORT_BASE="+ i.GPInitSystem.ReplicationPort,
+		"REPLICATION_PORT_BASE=" + i.GPInitSystem.ReplicationPort,
 		"MIRROR_REPLICATION_PORT_BASE=" + i.GPInitSystem.MirrorReplicationPort,
-		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
 		"declare -a MIRROR_DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.MirrorDir) +")",
+		"DATABASE_NAME=" + i.GPInitSystem.DBName,
 	}
 }
 
@@ -132,5 +133,5 @@ func (i *Installation) checkPortIsUsable(port string) int {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to install the database")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.WorkingHostFileLocation , "-a")
+	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
 }

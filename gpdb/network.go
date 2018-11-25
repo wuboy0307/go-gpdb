@@ -69,7 +69,7 @@ func doWeHavePortBase(file string, name string, whichPort string) (string, error
 	// Extract the port if found, else create a file.
 	if returnCode {
 		Debugf("Found port file: %s", portBaseFile)
-		port := contentExtractor(readFile(portBaseFile), fmt.Sprintf("/%s/ {print $2}", whichPort), []string{"FS", ":"})
+		port := contentExtractor(readFile(portBaseFile), fmt.Sprintf("/^%s/ {print $2}", whichPort), []string{"FS", ":"})
 		return removeBlanks(port.String()), nil
 	} else {
 		createFile(portBaseFile)

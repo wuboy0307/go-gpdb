@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"strconv"
 	"time"
 	"fmt"
 )
@@ -10,6 +9,7 @@ import (
 type Installation struct {
 	HostFileLocation string
 	WorkingHostFileLocation string
+	SegmentHostLocation		string
 	BinaryInstallationLocation string
 	SingleORMulti string
 	portFileName string
@@ -53,13 +53,13 @@ func install() {
 
 	// Checking if this is a single install VM or Mutli node VM
 	var singleORmulti string
-	noSegments, _ := strconv.Atoi(os.Getenv("GPDB_SEGMENT"))
+	noSegments := strToInt(os.Getenv("GPDB_SEGMENTS"))
 	if noSegments > 0 {
 		i.SingleORMulti = "multi"
 	} else {
 		i.SingleORMulti = "single"
 	}
-	Debugf("Is this single or multi node installation: %s", singleORmulti)
+	Debugf("Is this single or multi node installation: %s", i.SingleORMulti)
 
 	// Get or Generate the hostname file
 	i.generateHostFile()
@@ -106,6 +106,8 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 	// Installation complete, print on the screen the env file to source
 	displayEnvFileToSource(i.EnvFile)
+	defer deleteFile(i.WorkingHostFileLocation)
+	defer deleteFile(i.SegmentHostLocation)
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 }
