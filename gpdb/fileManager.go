@@ -125,12 +125,12 @@ func FilterDirsGlob(dir, search string) ([]string, error) {
 }
 
 // Remove all the file based on search
-func removeFiles(path, file string) {
-	Debugf("Removing the file with %s from path %s", file, path)
-	allfiles, _ := FilterDirsGlob(path, file)
-	for _, f := range allfiles {
+func removeFiles(path, search string) {
+	Debugf("Removing the file with search %s from path %s", search, path)
+	allFiles, _ := FilterDirsGlob(path, search)
+	for _, f := range allFiles {
 		if err := os.RemoveAll(f); err != nil {
-			Fatalf("Failed to remove the file from path %s%s, err: %v", path, file, err)
+			Fatalf("Failed to remove the file from path %s%s, err: %v", path, search, err)
 		}
 	}
 }

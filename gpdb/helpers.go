@@ -136,6 +136,7 @@ func unzip(search string) string {
 		binary := allfiles[0]
 		Infof("Found & unzip the binary for the version %s: %s", cmdOptions.Version, binary)
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.Version))
+		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*README_INSTALL*")
 		err := archiver.Unarchive(binary, Config.DOWNLOAD.DOWNLOADDIR)
 		if err != nil {
 			Fatalf("Couldn't unzip the file, err: %v", err)

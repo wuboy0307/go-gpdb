@@ -32,6 +32,8 @@ func (i *Installation) createEnvFile() {
 // Read file and find the content that we are interested
 func readFileAndGatherInformation(file string) string {
 
+	Debugf("Reading and gathering information for the file: %s", file)
+
 	// Obtain the below information from env file
 	var output string
 
@@ -62,6 +64,8 @@ func readFileAndGatherInformation(file string) string {
 
 // List all the installed enviornment files.
 func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
+
+	Debugf("Searching for installed env file using the search string: %s", search)
 
 	var output = []string{`Index | Environment File | Master Port | Status | GPCC Instance Name | GPCC Instance URL`,
 		`------|-----------------------|-----------------|------------------|----------------------------------------|------------------------------------------`,

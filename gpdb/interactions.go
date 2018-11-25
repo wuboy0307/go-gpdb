@@ -12,6 +12,8 @@ import (
 // Ask user what is the choice from the list provided.
 func PromptChoice(TotalOptions int) int {
 
+	Debugf("Promoting for choice from the total: %d", TotalOptions)
+
 	var choiceEntered int
 	fmt.Print("\nEnter your choice from the above list (eg.s 1 or 2 etc): ")
 
@@ -43,6 +45,8 @@ func PromptChoice(TotalOptions int) int {
 
 // Prompt for confirmation
 func YesOrNoConfirmation() string {
+
+	Debugf("Promoting for yes or no confirmation")
 
 	var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }
 
@@ -136,7 +140,7 @@ func (r *Responses) WhichProduct(token string)  {
 
 		// GPDB Options
 		if cmdOptions.Product == "gpdb" {
-			rx, _ := regexp.Compile(rx_gpdb)
+			rx, _ := regexp.Compile("(?i)" + rx_gpdb)
 			for _, j := range k.Product_files {
 				if rx.MatchString(j.Name) {
 					Debugf("gpdb product list: ", rx.FindString(j.Name))

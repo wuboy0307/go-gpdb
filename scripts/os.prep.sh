@@ -55,28 +55,29 @@ spinner $! "Cleaning RPM cache"
 { sudo yum -y -q -e 0 install bc ed gdb git m4 strace tar unzip vim-enhanced wget & } &> /tmp/yum.out
 spinner $! "Installing RPMs"
 
-## Default Permisions
-banner "Permissions"
+{ sudo yum install epel-release -y
+  sudo yum install jq -y
+  sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+} &> /tmp/yum.out
+spinner $! "Installing Developer tools"
+
+## Default Directories & Permisions
+banner "Default Directories & Permissions"
 
 { 
-  chmod 777 /usr/local
-  chmod 777 /usr/local/src
+  sudo chmod 777 /usr/local
+  sudo chmod 777 /usr/local/src
 } &> /tmp/yum.out
 spinner $! "Changing the permission of /usr/local"
 
-## Database Directories
-banner "Default Database Directories"
-
 {
-  mkdir -p /data/master
-  mkdir -p /data/primary
-  mkdir -p /data/mirror
-  chown gpadmin:gpadmin /data/master
-  chown gpadmin:gpadmin /data/primary
-  chown gpadmin:gpadmin /data/mirror
+  sudo mkdir -p /data/master
+  sudo mkdir -p /data/primary
+  sudo mkdir -p /data/mirror
+  sudo chown gpadmin:gpadmin /data/master
+  sudo chown gpadmin:gpadmin /data/primary
+  sudo chown gpadmin:gpadmin /data/mirror
 } &> /tmp/yum.out
 spinner $! "Creating & Changing ownership of database directories"
 
 banner "OS Setup Complete"
-
-

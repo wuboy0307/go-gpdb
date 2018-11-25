@@ -10,6 +10,7 @@ import (
 
 // Check if the port 22 is reachable, should return back in 5 seconds
 func checkHostReachability(address string, errorType bool) bool {
+	Debugf("Checking the connectivity for the address: %s", address)
 	conn, err := net.DialTimeout("tcp", address, time.Second * 5)
 	if err != nil {
 		if errorType { // If we care about the error
@@ -25,6 +26,8 @@ func checkHostReachability(address string, errorType bool) bool {
 
 // Check if the port is used, if yes then what is the next sequence program can use
 func isPortUsed(port int, iteration int, hostfileLoc string) (int, error) {
+
+	Debugf("Checking for the port usage %d", port)
 
 	// Storing the base port
 	BASE := port
@@ -61,6 +64,7 @@ func doWeHavePortBase(file string, name string, whichPort string) (string, error
 
 	// the port base file
 	portBaseFile := file + name
+	Debugf("Checking for the port for \"%s\" from the file: %s", whichPort, portBaseFile)
 	returnCode, err := doesFileOrDirExists(portBaseFile)
 	if err != nil {
 		Fatalf("Error when checking for port base, err: %v", err)

@@ -9,6 +9,8 @@ import (
 
 func (i *Installation) buildGpInitSystem() {
 
+	Infof("Building and executing the gpinitsystem...")
+
 	// Set the values of the below parameters
 	i.GPInitSystem.ArrayName = "gp_" + cmdOptions.Version + "_" + i.timestamp
 	i.GPInitSystem.SegPrefix = "gp_" + cmdOptions.Version + "_" + i.timestamp
@@ -36,6 +38,7 @@ func (i *Installation) buildGpInitSystem() {
 // Generate the port for master / segments / mirror & replication
 func (i *Installation) generatePortRange() {
 
+	Infof("Searching & Generating the port to be used for database installation")
 	// Check if we have the last used port base file and its usable
 	i.GPInitSystem.SegmentPort = i.validatePort( "PRIMARY_PORT", defaultPrimaryPort)  // segment
 	i.GPInitSystem.MasterPort = i.validatePort("MASTER_PORT", defaultMasterPort) // master
@@ -79,6 +82,7 @@ func (i *Installation) buildGpInitSystemConfig() {
 
 // The contents of single node gpinitsystem
 func (i *Installation) singleNodeGpInitSystem() []string{
+	Infof("Finalizing the gpinitsystem for the single mode database installation")
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
 		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
@@ -93,6 +97,7 @@ func (i *Installation) singleNodeGpInitSystem() []string{
 
 // The contents of multi node gpinitsystem
 func (i *Installation) multiNodeGpInitSystem() []string{
+	Infof("Finalizing the gpinitsystem for the multi mode database installation")
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
 		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
@@ -114,6 +119,7 @@ func (i *Installation) multiNodeGpInitSystem() []string{
 
 // Number of segment calculator
 func generateSegmentDirectoryList(whichDir string) string {
+	Debugf("Generating directory list of %s", whichDir)
 	var dir string
 	for i := 1; i <= Config.INSTALL.TOTALSEGMENT; i++ {
 		dir = dir + " " + whichDir
@@ -123,6 +129,7 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 // Check if the port is available or not
 func (i *Installation) checkPortIsUsable(port string) int {
+	Debugf("Checking for port \"%s\"is usable", port)
 	pb := strToInt(port)
 	pb, err := isPortUsed(pb, Config.INSTALL.TOTALSEGMENT, i.WorkingHostFileLocation)
 	if err != nil {

@@ -36,6 +36,8 @@ func stopAllDb() {
 
 // Check if the process are all down
 func areAllProcessDown() {
+
+	Debugf("Checking if the all the database process are down")
 	// Send a warning message if the process is not completely stopped.
 	cmdOut, _ := executeOsCommandOutput("pgrep", "postgres")
 	var EmptyBytes []byte
@@ -49,6 +51,7 @@ func areAllProcessDown() {
 // Check if the database is healthy
 func isDbHealthy(sourcePath, port string) bool {
 
+	Debugf("Checking if the database is healthy")
 	// Query string
 	queryString := "select 1"
 	if sourcePath == "" {

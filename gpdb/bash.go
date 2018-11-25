@@ -36,8 +36,8 @@ func buildExecutableBashScript(filename string, executableFilename string, args 
 // Execute shell script when called
 func executeBinaries(binaryFile string, bashfilename string, scriptOptions []string) error {
 
-	// Build a quick shell script to install binaries
-	// Filename name
+	Debugf("Executing the binaries with contents in the file %s", binaryFile)
+	// Build a quick shell script to install binaries, Filename name
 	filename := Config.CORE.TEMPDIR + bashfilename
 
 	// Cleanup the file if already exists (ignore error if any)
@@ -66,6 +66,7 @@ func executeBinaries(binaryFile string, bashfilename string, scriptOptions []str
 // Execute Os commands
 func executeOsCommand(command string, arguments ...string) {
 
+	Debugf("Executing the command \"%s\" using the arguments %s", command, arguments)
 	// Execute the command
 	cmd := exec.Command(command, arguments...)
 
@@ -89,6 +90,7 @@ func executeOsCommand(command string, arguments ...string) {
 
 // Same as executeOsCommand but this one return output
 func executeOsCommandOutput(command string, args ...string) ([]byte, error) {
+	Debugf("Executing the command \"%s\" with output using the arguments %s", command, args)
 	cmdOut, err := exec.Command(command, args...).Output()
 	if err != nil {
 		return cmdOut, fmt.Errorf("failed when executing OS command output, err: %v", err)

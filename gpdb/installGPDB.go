@@ -10,6 +10,7 @@ import (
 func (i *Installation) generateHostFile() {
 
 	i.HostFileLocation = fmt.Sprintf("%s/hostfile", os.Getenv("HOME"))
+	Debugf("Generating the hostfile at %s", i.HostFileLocation)
 
 	exists, _ := doesFileOrDirExists(i.HostFileLocation)
 	if !exists {
@@ -52,6 +53,7 @@ func dirValidator() error {
 
 // Check if the binaries exits and unzip the binaries.
 func (i *Installation) getBinaryFile() string {
+	Debugf("Finding and unziping the binaries for the version %s", cmdOptions.Version)
 	return unzip(fmt.Sprintf("*%s*", cmdOptions.Version))
 }
 
@@ -162,13 +164,14 @@ func (i *Installation) runSegInstall() {
 // On the newer version of the GPDB they need the soft link for
 // database to work
 func (i *Installation) createSoftLink() {
+	Debugf("Creating the softlink for the binaries on all the host")
 	contents := readFile(i.SegmentHostLocation)
 	for _, v := range strings.Split(removeBlanks(string(contents)), "\n") {
 		softLinkFile := Config.CORE.TEMPDIR + "soft_link.sh"
 		createFile(softLinkFile)
 		writeFile(softLinkFile, []string{
 			fmt.Sprintf("ssh %s \"rm -rf /usr/local/greenplum-db\"", v),
-			fmt.Sprintf("ssh %s \"ln -s %s /usr/local/greenplum-db\"", v, i.WorkingHostFileLocation),
+			fmt.Sprintf("ssh %s \"ln -s %s /usr/local/greenplum-db\"", v, i.BinaryInstallationLocation),
 		})
 		executeOsCommand("/bin/sh", softLinkFile)
 		deleteFile(softLinkFile)
@@ -177,6 +180,8 @@ func (i *Installation) createSoftLink() {
 
 // Source greenplum path
 func sourceGPDBPath(binLoc string) error {
+
+	Debugf("Sourcing the greenplum binary location")
 
 	// Setting up greenplum path
 	err := os.Setenv("GPHOME", binLoc)

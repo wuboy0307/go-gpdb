@@ -110,6 +110,7 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	defer deleteFile(i.SegmentHostLocation)
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
+	Infof("exiting ....")
 }
 
 
@@ -117,5 +118,6 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 func installGPCC() {
 
 	Infof("Installation of GPCC with version %s on GPDB with version %s is complete", cmdOptions.CCVersion, cmdOptions.Version)
+	Infof("exiting ....")
 }
 
