@@ -112,11 +112,14 @@ func (i *Installation) isHostReachable() {
 	for _, host := range strings.Split(string(readFile(i.HostFileLocation)), "\n"){
 		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host), true) {
 			Debugf("The host %s is reachable", host)
+			// Save all the host that is reachable
 			saveReachableHost = append(saveReachableHost, host)
+			// Save all the segment host list
 			if host != i.GPInitSystem.MasterHostname && !strings.HasSuffix(host, "-s") {
 				segmentHost = append(segmentHost, host)
 			}
-			if !strings.HasSuffix(host, "-s") {
+			// If we detect a standby host then record that we have one
+			if strings.HasSuffix(host, "-s") {
 				i.StandbyHostAvailable = true
 			}
 		}
@@ -124,30 +127,48 @@ func (i *Installation) isHostReachable() {
 
 	// Save the reachable host
 	Debugf("Total Host reachable is: %d", len(saveReachableHost))
-	if len(saveReachableHost) == 0 {
+	if len(saveReachableHost) == 0 { // If none of the host is reachable
 		Fatalf("No hosts are reachable from the hostfile %s, check the host", i.HostFileLocation)
-	} else if len(saveReachableHost) == 1 && saveReachableHost[0] == i.GPInitSystem.MasterHostname {
+	} else if len(saveReachableHost) == 1 && saveReachableHost[0] == i.GPInitSystem.MasterHostname { // if only one host is reachable and its master then its a single install
 		i.SingleORMulti = "single"
-	} else if len(saveReachableHost) == 1 && saveReachableHost[0] != i.GPInitSystem.MasterHostname {
+	} else if len(saveReachableHost) == 1 && saveReachableHost[0] != i.GPInitSystem.MasterHostname { // if only one host and its not master, then we can't continue
 		Fatalf("Master hosts are not reachable from the hostfile %s, check the host", i.HostFileLocation)
 	}
 
 	// Check if we have equal number of hosts
-	if i.SingleORMulti == "multi" && len(segmentHost)%2 == 1 {
+	if i.SingleORMulti == "multi" && len(segmentHost)%2 == 1 { // if its multi and we have odd number of host, then we can't create mirror
 		Fatalf("There is odd number of segment host, installation cannot continue")
-	} else if i.SingleORMulti == "multi" &&  len(segmentHost) == 0 {
+	} else if i.SingleORMulti == "multi" &&  len(segmentHost) == 0 {  // if multi and no segment host then we can't continue
 		Fatalf("No segment host found, cannot continue")
 	}
+
+	// Create hostfile based on the what we have collected so far
+	i.hostfileCreator(saveReachableHost, segmentHost)
+
+}
+
+
+// Generate hostname file based on installation.
+func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) {
 
 	// Save the working host on a separate file
 	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
 	deleteFile(i.WorkingHostFileLocation)
 	writeFile(i.WorkingHostFileLocation, saveReachableHost)
 
-	// Save segment host list
+	// Save segment host file
 	i.SegmentHostLocation = Config.CORE.TEMPDIR + "hostfile_segment"
 	deleteFile(i.SegmentHostLocation)
 	writeFile(i.SegmentHostLocation, segmentHost)
+
+	// Save gpseginstall host file
+	i.SegInstallHostLocation = Config.CORE.TEMPDIR + "hostfile_seginstall"
+	deleteFile(i.SegInstallHostLocation)
+	if i.StandbyHostAvailable {
+		segmentHost = append(segmentHost, buildStandbyHostName(i.GPInitSystem.MasterHostname))
+	}
+	writeFile(i.SegInstallHostLocation, segmentHost)
+
 }
 
 // Run keyless access to the server
@@ -160,7 +181,7 @@ func (i *Installation) executeGpsshExkey() {
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
 	Infof("Running seg install to install the software on all the host")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.SegmentHostLocation)
+	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.SegInstallHostLocation)
 	i.createSoftLink()
 }
 
@@ -168,7 +189,7 @@ func (i *Installation) runSegInstall() {
 // database to work
 func (i *Installation) createSoftLink() {
 	Debugf("Creating the softlink for the binaries on all the host")
-	contents := readFile(i.SegmentHostLocation)
+	contents := readFile(i.SegInstallHostLocation)
 	for _, v := range strings.Split(removeBlanks(string(contents)), "\n") {
 		softLinkFile := Config.CORE.TEMPDIR + "soft_link.sh"
 		generateBashFileAndExecuteTheBashFile(softLinkFile, "/bin/sh", []string{
@@ -187,8 +208,13 @@ func (i *Installation) activateStandby() {
 	// replace -s would replace -s at two places and thus causing error , so we just worry about the last character
 	generateBashFileAndExecuteTheBashFile(standbyHostLoc, "/bin/sh", []string{
 		fmt.Sprintf("source %s", i.EnvFile),
-		fmt.Sprintf("gpinitstandby -s %s -a", i.GPInitSystem.MasterHostname[0:len(i.GPInitSystem.MasterHostname)-2] + "-s"),
+		fmt.Sprintf("gpinitstandby -s %s -a", buildStandbyHostName(i.GPInitSystem.MasterHostname)),
 	})
+}
+
+// Build standby hostname
+func buildStandbyHostName(masterHostname string) string {
+	return masterHostname[0:len(masterHostname)-2] + "-s"
 }
 
 // Source greenplum path

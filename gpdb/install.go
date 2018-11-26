@@ -10,14 +10,15 @@ type Installation struct {
 	HostFileLocation string
 	WorkingHostFileLocation string
 	SegmentHostLocation		string
+	SegInstallHostLocation	string
 	BinaryInstallationLocation string
-	SingleORMulti string
-	PortFileName string
-	Timestamp string
-	StandbyHostAvailable bool
 	GpInitSystemConfigLocation string
-	GPInitSystem GPInitSystemConfig
+	PortFileName string
 	EnvFile string
+	Timestamp string
+	SingleORMulti string
+	StandbyHostAvailable bool
+	GPInitSystem GPInitSystemConfig
 }
 
 type GPInitSystemConfig struct {

@@ -68,7 +68,7 @@ spinner $! "Installing Developer tools"
 
 ## Default Directories & Permissions
 banner "Default Directories & Permissions"
-
+#TODO: Fix the permission issues at very end of the refactor of the code (this fails after vagrant provision)
 { 
   sudo chmod 777 /usr/local
   sudo chmod 777 /usr/local/src
