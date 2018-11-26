@@ -74,7 +74,9 @@ func readFileAndGatherInformation(file string) string {
 
 	// GPCC URL
 	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCCPORT="), []string{"FS", "="})
-	output = output + "|" + removeBlanks(c.String())
+	if !IsValueEmpty(c.String()) {
+		output = output + "|" + fmt.Sprintf("http://%s:%s", GetLocalIP(), removeBlanks(c.String()))
+	}
 
 	return output
 }

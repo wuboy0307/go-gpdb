@@ -123,8 +123,7 @@ func (i *Installation) postGPCCInstall() {
 	displayEnvFileToSource(i.EnvFile)
 
 	// get the ip of the host and display on the screen
-	ip, _ := GetLocalIP()
-	Infof("GPCC Web URL: http://%s:%s, username / password: gpmon / %s", ip, i.GPCC.InstancePort, Config.INSTALL.GPMONPASS)
+	Infof("GPCC Web URL: http://%s:%s, username / password: gpmon / %s", GetLocalIP(), i.GPCC.InstancePort, Config.INSTALL.GPMONPASS)
 }
 
 // Installed GPPERFMON software to the database

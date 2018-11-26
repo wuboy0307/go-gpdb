@@ -174,14 +174,14 @@ func checkIP(found_ip string) bool {
 }
 
 // Get the IP address
-func GetLocalIP() (string, error){
+func GetLocalIP() (string){
 
 	Infof("Getting local IP address")
 
 	// Get Interface address
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		return "", nil
+		return ""
 	}
 
 	// Extract the IP's and see if its in the range.
@@ -190,7 +190,7 @@ func GetLocalIP() (string, error){
 			if ipnet.IP.To4() != nil {
 				if checkIP(ipnet.IP.String()) {
 					Infof("Found Local IP address: %s", ipnet.IP.String())
-					return ipnet.IP.String(), nil
+					return ipnet.IP.String()
 				}
 			}
 		}
@@ -198,6 +198,5 @@ func GetLocalIP() (string, error){
 
 	// If nothing found then produce a warning message
 	Warnf("Cannot find local IP address in the range \"%s\", ignoring the IP....", CoreIP)
-
-	return "", nil
+	return ""
 }
