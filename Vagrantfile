@@ -60,8 +60,8 @@ Vagrant.configure("2") do |config|
   end
 
   puts "","UAA_API_TOKEN: #{@pivnet_token}"
-  puts "Standby Hostname: #{@hostname}-m"
-  puts "Standby IP: #{@ip}",""
+  puts "Master Hostname: #{@hostname}-m"
+  puts "Master IP: #{@ip}",""
 
   # Master Node:
   build_vm( config, "#{@hostname}-m", "#{@ip}" )
@@ -69,8 +69,8 @@ Vagrant.configure("2") do |config|
   # Create standby host is asked
   if (@standby == 'true')
     @ip = @ip.succ
-    puts "Segment Hostname: #{@hostname}-s"
-    puts "Segment IP: #{@ip}",""
+    puts "Standby Hostname: #{@hostname}-s"
+    puts "Standby IP: #{@ip}",""
     build_vm( config, "#{@hostname}-s", "#{@ip}")
   end
 
@@ -90,6 +90,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
 
   # Developer Mode
-  # config.vm.provision :shell, path: 'scripts/go.build.sh'
+  config.vm.provision :shell, path: 'scripts/go.build.sh'
 
 end

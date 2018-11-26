@@ -1,6 +1,11 @@
 #!/bin/bash
 source /vagrant/scripts/functions.h
 
+abort() {
+	log "$FAIL Return Code: [$1]"
+	exit $1
+}
+
 ## OS Parameters
 banner "OS Parameters"
 
@@ -61,7 +66,7 @@ spinner $! "Installing RPMs"
 } &> /tmp/yum.out
 spinner $! "Installing Developer tools"
 
-## Default Directories & Permisions
+## Default Directories & Permissions
 banner "Default Directories & Permissions"
 
 { 
