@@ -39,15 +39,15 @@ func (i *Installation) postGPDBInstall() {
 	// Store the last used port for future use
 	i.savePort()
 
-	// Create EnvFile
-	i.createEnvFile()
-
 	// Initialize standby master
 	if i.StandbyHostAvailable && cmdOptions.Standby {
 		i.activateStandby()
 	} else if cmdOptions.Standby {
 		Errorf("Cannot activate standby, please activate the standby manually")
 	}
+
+	// Create EnvFile
+	i.createEnvFile()
 
 	// Create uninstall script
 	i.createUninstallScript()

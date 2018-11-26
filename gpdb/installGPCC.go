@@ -51,7 +51,7 @@ func (i *Installation) doesThisEnvHasGPCCInstalled() {
 		confirm := YesOrNoConfirmation()
 		// What was the confirmation
 		if confirm == "y" { // yes, then uninstall the old GPCC installation
-			i.uninstallGPCC()
+			removeGPCC(i.EnvFile)
 		} else { // no then exit
 			Infof("Cancelling the installation...")
 			os.Exit(0)
@@ -64,13 +64,16 @@ func (i *Installation) installGPCCProduct() {
 
 	Infof("Installing GPCC version \"%s\" on the GPDB Version \"%s\"", cmdOptions.CCVersion, cmdOptions.Version)
 
-	// The installation b/w GPCC 3 & GPCC 4 is completely different so
-	// we need to create two working libraries to make it work.
+	// Hostfile is create by the install gpdb, since we can't run the
+	// install gpcc without gpdb, so we use the file created by the install gpdb
 	i.WorkingHostFileLocation = os.Getenv("HOME") + "/hostfile"
 	exists, _  := doesFileOrDirExists(i.WorkingHostFileLocation)
 	if !exists {
 		Fatalf("No host file found on the home location of the user")
 	}
+
+	// The installation b/w GPCC 3 & GPCC 4 is completely different so
+	// we need to create two working libraries to make it work.
 	if isThis4x() {
 		i.installGPCC4xAndAbove()
 	} else {
@@ -99,8 +102,6 @@ func (i *Installation) installGPCC4xAndAbove() {
 
 	// Install the gpcc binaries.
 	i.installGPCCbinaries4x()
-
-	// TODO: Start GPCC
 }
 
 // Install GPCC less than 4.x
@@ -116,8 +117,14 @@ func (i *Installation) postGPCCInstall() {
 	// Store the last used port for future use
 	i.savePort()
 
+	// Create the uninstall script
+	i.uninstallGPCCScript()
+
 	// Update the envfile
 	i.updateEnvFile()
+
+	// start the GPCC
+	startGPCC(i.EnvFile)
 
 	// Installation complete, print on the screen the env file to source and cleanup temp files
 	displayEnvFileToSource(i.EnvFile)
@@ -204,6 +211,21 @@ func (i *Installation) createGPCCCOnfigurationFile() string {
 // Installing gpcc instance
 func (i *Installation) installGPCCbinaries4x() {
 	Infof("Installing gpcc binaries for the cc version: %s", cmdOptions.CCVersion)
-	configFile := i.createGPCCCOnfigurationFile()
-	executeOsCommand(i.GPCC.GPCCBinaryLoc, "-c", configFile, "y", "EOF", "&> /dev/null")
+	executeGPPCFile := Config.CORE.TEMPDIR + "exectute_gpcc.sh"
+	generateBashFileAndExecuteTheBashFile(executeGPPCFile, "/bin/sh", []string{
+		fmt.Sprintf("%s -c %s &>/dev/null << EOF", i.GPCC.GPCCBinaryLoc, i.createGPCCCOnfigurationFile()),
+		"y",
+		"EOF",
+	})
+	i.extractGPPERFMON()
+}
+
+// Extract GPPERFHOME location
+func (i *Installation) extractGPPERFMON() {
+	Debugf("Extracting the gpperfmon home location")
+	file, err := FilterDirsGlob("/usr/local", fmt.Sprintf("*%s*", cmdOptions.CCVersion))
+	if err != nil || len(file) == 0 {
+		Fatalf("Cannot find the gpcc installation or encountered err: %v", err)
+	}
+	i.GPCC.GpPerfmonHome = file[0]
 }

@@ -116,5 +116,9 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to initialize the database")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
+	if i.SingleORMulti == "multi" {
+		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
+	} else {
+		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation , "-a")
+	}
 }

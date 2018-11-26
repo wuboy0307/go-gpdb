@@ -101,7 +101,7 @@ func startDBifNotStarted(envFile string)  {
 }
 
 // Start database
-func startDB(envFile string) error {
+func startDB(envFile string) {
 
 	Infof("Attempting to start the database as per the environment file: %s", envFile)
 
@@ -118,12 +118,9 @@ func startDB(envFile string) error {
 	}
 
 	// Start Command Center WEB UI if available on this environment
-	//TODO: GPCC start
-	//if !core.IsValueEmpty(GPPERFMONHOME) {
-	//	StartGPCC(GPCC_INSTANCE_NAME, GPPERFMONHOME)
-	//}
-
-	return nil
+	if isCommandCenterInstalled(envFile) {
+		startGPCC(envFile)
+	}
 }
 
 // Stop Database
@@ -136,9 +133,63 @@ func stopDB(envFile string) {
 		"gpstop -af",
 	})
 
-	// Start Command Center WEB UI if available on this environment
-	// TODO: GPCC Stop
-	//if !core.IsValueEmpty(GPPERFMONHOME) {
-	//	StopGPCC(GPCC_INSTANCE_NAME, GPPERFMONHOME)
-	//}
+	// Stop Command Center WEB UI if available on this environment
+	if isCommandCenterInstalled(envFile) {
+		stopGPCC(envFile)
+	}
+}
+
+// Start GPCC
+func startGPCC(envFile string) {
+	// start file
+	startGPCCFile := Config.CORE.TEMPDIR + "gpcc_start.sh"
+	if isThis4x() {
+		generateBashFileAndExecuteTheBashFile(startGPCCFile, "/bin/sh", []string{
+			fmt.Sprintf("source %s", envFile),
+			"source $GPPERFMONHOME/gpcc_path.sh",
+			"gpcc start ${GPCC_INSTANCE_NAME}",
+		})
+	} else {
+		Fatalf("Build me")
+	}
+}
+
+// Stop GPPC
+func stopGPCC(envFile string) {
+	// start file
+	startGPCCFile := Config.CORE.TEMPDIR + "gpcc_stop.sh"
+	if isThis4x() {
+		generateBashFileAndExecuteTheBashFile(startGPCCFile, "/bin/sh", []string{
+			fmt.Sprintf("source %s", envFile),
+			"source $GPPERFMONHOME/gpcc_path.sh",
+			"gpcc stop ${GPCC_INSTANCE_NAME}",
+		})
+	} else {
+		Fatalf("Build me")
+	}
+}
+
+// Is command center installed on this version
+func isCommandCenterInstalled(envFile string) bool {
+	content := readFile(envFile)
+	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_INSTANCE_NAME="), []string{"FS", "="})
+	if IsValueEmpty(removeBlanks(c.String())) {
+		return false
+	} else {
+		return true
+	}
+}
+
+// Is standby successfully installed or is it available
+func isStandbyAvailable(binLoc, port string) string {
+	sourceGPDBPath(binLoc)
+	total, err := executeOsCommandOutput("psql", "-p", port, "-d", "template1", "-Atc", "\"select count(*) from gp_segment_configuration where content=-1\"")
+	if err != nil {
+		Fatalf("Error in getting the status of the standby host, err: %v", err)
+	}
+	if string(total) == "2" {
+		return "Available"
+	} else {
+		return "Not Available"
+	}
 }

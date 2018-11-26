@@ -39,16 +39,18 @@ select $$ssh $$ || c.hostname || $$ "rm -rf $$ || f.fselocation || $$"$$ from pg
 }
 
 // Uninstall gpcc
-func (i *Installation) uninstallGPCC() error {
-
-	Infof("Uninstalling the version of command center that is currently installed on this environment.")
-	uninstallFile := Config.CORE.TEMPDIR + "uninstall_gpcc.sh"
-	generateBashFileAndExecuteTheBashFile(uninstallFile, "/bin/sh", []string{
+func (i *Installation) uninstallGPCCScript() error {
+	i.GPCC.UninstallFile = Config.INSTALL.UNINTSALLDIR + fmt.Sprintf("uninstall_gpcc_%s_%s_%s", cmdOptions.Version, cmdOptions.CCVersion, i.Timestamp)
+	Infof("Created uninstall script for this version of GPCC Installation: %s", i.GPCC.UninstallFile)
+	writeFile(i.GPCC.UninstallFile, []string{
 		"source " + i.EnvFile,
 		"source " + i.GPCC.GpPerfmonHome + "/gpcc_path.sh",
 		"gpcmdr --stop " + i.GPCC.InstanceName + " &>/dev/null",
+		"gpcc stop " + i.GPCC.InstanceName + " &>/dev/null",
 		"rm -rf " + i.GPCC.GpPerfmonHome + "/instances/" + i.GPCC.InstanceName,
 		"gpconfig -c gp_enable_gpperfmon -v off &>/dev/null",
+		"gpstop -af",
+		"gpstart -a",
 		"cp $MASTER_DATA_DIRECTORY/pg_hba.conf $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp,
 		"grep -v gpmon $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp + " > $MASTER_DATA_DIRECTORY/pg_hba.conf",
 		"rm -rf $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp,
@@ -56,8 +58,9 @@ func (i *Installation) uninstallGPCC() error {
 		"psql -d template1 -p $PGPORT -Atc \"drop role gpmon\" &>/dev/null",
 		"rm -rf $MASTER_DATA_DIRECTORY/gpperfmon/*",
 		"cp " + i.EnvFile + " " + i.EnvFile + "." + i.Timestamp,
-		"egrep -v \"GPPERFMONHOME|GPCC_INSTANCE_NAME|GPCCPORT\" " + i.EnvFile + "." + i.Timestamp +" > " + i.EnvFile,
+		"egrep -v \"GPCC_UNINSTALL_LOC|GPCCVersion|GPPERFMONHOME|GPCC_INSTANCE_NAME|GPCCPORT\" " + i.EnvFile + "." + i.Timestamp +" > " + i.EnvFile,
 		"rm -rf " + i.EnvFile + "." + i.Timestamp,
+		"rm -rf " + i.GPCC.UninstallFile,
 	})
 
 	return nil
@@ -91,6 +94,15 @@ func removeEnvGpDeleteSystem(envFile string) error {
 	}
 	deleteFile(file)
 	return nil
+}
+
+// Uninstall GPCC
+func removeGPCC(envFile string) {
+	Infof("Uninstalling the version of command center that is currently installed on this environment.")
+	content := readFile(envFile)
+	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_UNINSTALL_LOC="), []string{"FS", "="})
+	uninstallFile := removeBlanks(c.String())
+	executeOsCommand("/bin/sh", uninstallFile)
 }
 
 // Uninstall using manual method
@@ -137,10 +149,11 @@ func remove() {
 		Infof("Forcing uninstall of the environment: %s", chosenEnvFile)
 	}
 
+	// Uninstall GPPC
+	removeGPCC(chosenEnvFile)
+
 	// Run this to cleanup the file created by go-gpdb
 	removeEnvManually(version, timestamp)
-
-	// TODO: Uninstall GPCC
 
 	Infof("Uninstallation of environment \"%s\" was a success", chosenEnvFile)
 	Info("exiting ....")

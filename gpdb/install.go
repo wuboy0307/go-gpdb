@@ -42,6 +42,7 @@ type GPCCConfig struct {
 	GpPerfmonHome string
 	WebSocketPort string
 	GPCCBinaryLoc string
+	UninstallFile string
 }
 
 const (

@@ -26,6 +26,7 @@ func (i *Installation) createEnvFile() {
 		"export MASTER_DATA_DIRECTORY="+ i.GPInitSystem.MasterDir + "/" + i.GPInitSystem.ArrayName + "-1",
 		"export PGPORT=" + i.GPInitSystem.MasterPort,
 		"export PGDATABASE=" + i.GPInitSystem.DBName,
+		"export GPDB_STANDBY=" + isStandbyAvailable(i.BinaryInstallationLocation, i.GPInitSystem.MasterPort),
 	})
 }
 
@@ -36,11 +37,13 @@ func (i *Installation) updateEnvFile() error {
 
 	// Append to file
 	appendFile(i.EnvFile, []string{
-		"export GPPERFMONHOME=" + "sdafg",
+		"export GPPERFMONHOME=" + i.GPCC.GpPerfmonHome,
 		"export PATH=$GPPERFMONHOME/bin:$PATH",
 		"export LD_LIBRARY_PATH=$GPPERFMONHOME/lib:$LD_LIBRARY_PATH",
 		"export GPCC_INSTANCE_NAME=" + i.GPCC.InstanceName,
 		"export GPCCPORT=" + i.GPCC.InstancePort,
+		"export GPCCVersion=" + cmdOptions.CCVersion,
+		"export GPCC_UNINSTALL_LOC=" + i.GPCC.UninstallFile,
 	})
 
 	return nil
@@ -59,6 +62,10 @@ func readFileAndGatherInformation(file string) string {
 
 	// DB PORT
 	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export PGPORT="), []string{"FS", "="})
+	output = output + "|" + removeBlanks(c.String())
+
+	// Standby Available
+	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPDB_STANDBY="), []string{"FS", "="})
 	output = output + "|" + removeBlanks(c.String())
 
 	// Is DB running
@@ -86,8 +93,8 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 
 	Debugf("Searching for installed env file using the search string: %s", search)
 
-	var output = []string{`Index | Environment File | Master Port | Status | GPCC Instance Name | GPCC Instance URL`,
-		`------|-----------------------|-----------------|------------------|----------------------------------------|------------------------------------------`,
+	var output = []string{`Index | Environment File | Master Port | GPDB Standby |Status | GPCC Instance Name | GPCC Instance URL`,
+		`------|-----------------------|-----------------|------------------|------------------|----------------------------------------|------------------------------------------`,
 	}
 
 	// Search for environment files for that version
@@ -152,7 +159,6 @@ func env() {
 		Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
 		envFile = installedEnvFiles("*" + cmdOptions.Version + "*", "choose", false)
 	}
-
 	displayEnvFileToSource(envFile)
 }
 

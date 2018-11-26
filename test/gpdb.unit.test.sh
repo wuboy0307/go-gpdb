@@ -16,14 +16,16 @@ token=`env | grep UAA_API_TOKEN | cut -d'=' -f2`
 #Abort the script if found a failure
 abort() {
 	log "$FAIL Return Code: [$1]"
+	tail -20 $2
 	exit $1
 }
 
 #Download the version and test
 function download_gpdb_version() {
     local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/download_${ver}.out"
     cd ${base_dir}/gpdb
-    { go run *.go d -v ${ver} & } &> /tmp/download_${ver}.out
+    { go run *.go d -v ${ver} & } &> ${filename}
     spinner $! "Downloading the version: ${ver}"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
@@ -31,8 +33,9 @@ function download_gpdb_version() {
 #Install the GPDB version and test
 function install_gpdb_version() {
     local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/install_${ver}.out"
     cd ${base_dir}/gpdb
-    { go run *.go i -v ${ver} --standby & } &> /tmp/install_${ver}.out
+    { go run *.go i -v ${ver} --standby & } &> ${filename}
     spinner $! "Install the version: ${ver}"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
@@ -40,8 +43,9 @@ function install_gpdb_version() {
 #Set env of the version and test
 function env_version() {
     local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/env_${ver}.out"
     cd ${base_dir}/gpdb
-    { go run *.go e -v ${ver} & } &> /tmp/env_${ver}.out
+    { go run *.go e -v ${ver} & } &> ${filename}
     spinner $! "Setting the environment of version: ${ver}"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
@@ -49,10 +53,11 @@ function env_version() {
 #Remove the version and test
 function remove_version() {
     local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/remove_${ver}.out"
     cd ${base_dir}/gpdb
-    { go run *.go r -v ${ver} & } &> /tmp/remove_${ver}.out
+    { go run *.go r -v ${ver} & } &> ${filename}
     spinner $! "Remove the version: ${ver}"
-    if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+    if [[ $? -ne 0 ]]; then wait $!; abort $? ${filename}; fi
 }
 
 #Network login

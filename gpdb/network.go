@@ -158,15 +158,15 @@ func (i *Installation) savePort() {
 }
 
 // Parse the IP and see if they are in the range
-var CoreIP = "192.0.0.0"
-func checkIP(found_ip string) bool {
-	var ip = net.ParseIP(CoreIP)
+
+func checkIP(foundIp, coreIP string) bool {
+	var ip = net.ParseIP(coreIP)
 
 	// Parse the IP
-	obtain_ip := net.ParseIP(found_ip)
+	obtainIp := net.ParseIP(foundIp)
 
 	// Get the local IP by comparing it.
-	if bytes.Compare(obtain_ip, ip) >= 0 {
+	if bytes.Compare(obtainIp, ip) >= 0 {
 		return true
 	}
 
@@ -177,6 +177,7 @@ func checkIP(found_ip string) bool {
 func GetLocalIP() (string){
 
 	Infof("Getting local IP address")
+	var CoreIP = "192.0.0.0"
 
 	// Get Interface address
 	addrs, err := net.InterfaceAddrs()
@@ -188,7 +189,7 @@ func GetLocalIP() (string){
 	for _, a := range addrs {
 		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
-				if checkIP(ipnet.IP.String()) {
+				if checkIP(ipnet.IP.String(), CoreIP) {
 					Infof("Found Local IP address: %s", ipnet.IP.String())
 					return ipnet.IP.String()
 				}
