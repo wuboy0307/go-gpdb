@@ -81,7 +81,7 @@ func startDBifNotStarted(envFile string)  {
 
 	// is the database running , then return
 	if isDbHealthy(envFile, "") { // Database is started and running
-		Infof("Database seems to be running, contining...")
+		Debugf("Database seems to be running, contining...")
 	} else { // database is not running, lets start it up
 
 		Warnf("Database is not started, attempting to start the database...")

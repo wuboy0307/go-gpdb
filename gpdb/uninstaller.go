@@ -38,6 +38,32 @@ select $$ssh $$ || c.hostname || $$ "rm -rf $$ || f.fselocation || $$"$$ from pg
 	return nil
 }
 
+// Uninstall gpcc
+func (i *Installation) uninstallGPCC() error {
+
+	Infof("Uninstalling the version of command center that is currently installed on this environment.")
+	uninstallFile := Config.CORE.TEMPDIR + "uninstall_gpcc.sh"
+	generateBashFileAndExecuteTheBashFile(uninstallFile, "/bin/sh", []string{
+		"source " + i.EnvFile,
+		"source " + i.GPCC.GpPerfmonHome + "/gpcc_path.sh",
+		"gpcmdr --stop " + i.GPCC.InstanceName + " &>/dev/null",
+		"rm -rf " + i.GPCC.GpPerfmonHome + "/instances/" + i.GPCC.InstanceName,
+		"gpconfig -c gp_enable_gpperfmon -v off &>/dev/null",
+		"cp $MASTER_DATA_DIRECTORY/pg_hba.conf $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp,
+		"grep -v gpmon $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp + " > $MASTER_DATA_DIRECTORY/pg_hba.conf",
+		"rm -rf $MASTER_DATA_DIRECTORY/pg_hba.conf." + i.Timestamp,
+		"psql -d template1 -p $PGPORT -Atc \"drop database gpperfmon\" &>/dev/null",
+		"psql -d template1 -p $PGPORT -Atc \"drop role gpmon\" &>/dev/null",
+		"rm -rf $MASTER_DATA_DIRECTORY/gpperfmon/*",
+		"cp " + i.EnvFile + " " + i.EnvFile + "." + i.Timestamp,
+		"egrep -v \"GPPERFMONHOME|GPCC_INSTANCE_NAME|GPCCPORT\" " + i.EnvFile + "." + i.Timestamp +" > " + i.EnvFile,
+		"rm -rf " + i.EnvFile + "." + i.Timestamp,
+	})
+
+	return nil
+}
+
+
 // Uninstall using gpdeletesystem
 func removeEnvGpDeleteSystem(envFile string) error {
 

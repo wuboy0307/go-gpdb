@@ -4,7 +4,58 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
+
+
+// Precheck before installing GPDB
+func (i *Installation) preGPDBChecks() {
+	Infof("Running precheck before installing the gpdb version: %s", cmdOptions.Version)
+	// Validate the master & segment exists and is readable
+	dirValidator()
+
+	// Check if there is already a version of GPDB installed
+	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
+}
+
+func (i *Installation) installGPDBProduct() {
+
+	Infof("Running Installation of gpdb version: %s", cmdOptions.Version)
+	// Start the installation procedure
+	i.installProduct()
+
+	// Check ssh to host is working and enable password less login
+	i.setUpHost()
+
+	// Build & Execute the gpinitsystem configuration
+	i.Timestamp = time.Now().Format("20060102150405")
+	i.buildGpInitSystem()
+
+	// Store the last used port for future use
+	i.savePort()
+}
+
+func (i *Installation) postGPDBInstall() {
+
+	Infof("Running post installation steps of the gpdb version: %s", cmdOptions.Version)
+	// Create EnvFile
+	i.createEnvFile()
+
+	// Initialize standby master
+	if i.StandbyHostAvailable && cmdOptions.Standby {
+		i.activateStandby()
+	} else if cmdOptions.Standby {
+		Errorf("Cannot activate standby, please activate the standby manually")
+	}
+
+	// Create uninstall script
+	i.createUninstallScript()
+
+	// Installation complete, print on the screen the env file to source and cleanup temp files
+	displayEnvFileToSource(i.EnvFile)
+	defer deleteFile(i.WorkingHostFileLocation)
+	defer deleteFile(i.SegmentHostLocation)
+}
 
 // Get and generate host file if doesn't exists the hostname
 func (i *Installation) generateHostFile() {

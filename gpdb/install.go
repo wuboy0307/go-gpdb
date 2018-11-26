@@ -2,8 +2,6 @@ package main
 
 import (
 	"os"
-	"time"
-	"fmt"
 )
 
 type Installation struct {
@@ -19,6 +17,7 @@ type Installation struct {
 	SingleORMulti string
 	StandbyHostAvailable bool
 	GPInitSystem GPInitSystemConfig
+	GPCC GPCCConfig
 }
 
 type GPInitSystemConfig struct {
@@ -34,6 +33,12 @@ type GPInitSystemConfig struct {
 	MirrorPort	   string
 	ReplicationPort string
 	MirrorReplicationPort string
+}
+
+type GPCCConfig struct {
+	InstanceName string
+	InstancePort string
+	GpPerfmonHome string
 }
 
 const (
@@ -71,7 +76,7 @@ func install() {
 		i.installGPDB(singleORmulti)
 	} else { // its a GPCC installation
 		i.PortFileName = "gpcc_ports.save"
-		installGPCC()
+		i.installGPCC()
 	}
 }
 
@@ -80,42 +85,14 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
-	// Validate the master & segment exists and is readable
-	dirValidator()
+	// Pre check
+	i.preGPDBChecks()
 
-	// Check if there is already a version of GPDB installed
-	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
+	// Install the product
+	i.installGPDBProduct()
 
-	// Start the installation procedure
-	i.installProduct()
-
-	// Check ssh to host is working and enable password less login
-	i.setUpHost()
-
-	// Build & Execute the gpinitsystem configuration
-	i.Timestamp = time.Now().Format("20060102150405")
-	i.buildGpInitSystem()
-
-	// Create EnvFile
-	i.createEnvFile()
-
-	// Initialize standby master
-	if i.StandbyHostAvailable && cmdOptions.Standby {
-		i.activateStandby()
-	} else if cmdOptions.Standby {
-		Errorf("Cannot activate standby, please activate the standby manually")
-	}
-
-	// Create uninstall script
-	i.createUninstallScript()
-
-	// Store the last used port for future use
-	i.savePort()
-
-	// Installation complete, print on the screen the env file to source
-	displayEnvFileToSource(i.EnvFile)
-	defer deleteFile(i.WorkingHostFileLocation)
-	defer deleteFile(i.SegmentHostLocation)
+	// run post steps
+	i.postGPDBInstall()
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 	Infof("exiting ....")
@@ -123,7 +100,18 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 
 // Install GPCC
-func installGPCC() {
+func (i *Installation) installGPCC() {
+
+	Infof("Starting the program to install GPCC version \"%s\" on the GPDB Version \"%s\"", cmdOptions.CCVersion, cmdOptions.Version)
+
+	// Run prechecks
+	i.preGPCCChecks()
+
+	// Install GPCC product
+	i.installGPCCProduct()
+
+	// run post steps
+	i.postGPCCInstall()
 
 	Infof("Installation of GPCC with version %s on GPDB with version %s is complete", cmdOptions.CCVersion, cmdOptions.Version)
 	Infof("exiting ....")
