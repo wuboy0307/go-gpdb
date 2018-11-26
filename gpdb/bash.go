@@ -97,3 +97,13 @@ func executeOsCommandOutput(command string, args ...string) ([]byte, error) {
 	}
 	return cmdOut, nil
 }
+
+// Generate the file and execute the command
+func generateBashFileAndExecuteTheBashFile(filename, command string, contents []string) {
+	Debugf("Generate the bash file \"%s\" and executing using the command \"%s\"", filename, command)
+	deleteFile(filename)
+	createFile(filename)
+	writeFile(filename, contents)
+	executeOsCommand(command, filename)
+	defer deleteFile(filename)
+}

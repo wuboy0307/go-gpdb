@@ -171,13 +171,10 @@ func (i *Installation) createSoftLink() {
 	contents := readFile(i.SegmentHostLocation)
 	for _, v := range strings.Split(removeBlanks(string(contents)), "\n") {
 		softLinkFile := Config.CORE.TEMPDIR + "soft_link.sh"
-		createFile(softLinkFile)
-		writeFile(softLinkFile, []string{
+		generateBashFileAndExecuteTheBashFile(softLinkFile, "/bin/sh", []string{
 			fmt.Sprintf("ssh %s \"rm -rf /usr/local/greenplum-db\"", v),
 			fmt.Sprintf("ssh %s \"ln -s %s /usr/local/greenplum-db\"", v, i.BinaryInstallationLocation),
 		})
-		executeOsCommand("/bin/sh", softLinkFile)
-		deleteFile(softLinkFile)
 	}
 }
 
@@ -185,14 +182,13 @@ func (i *Installation) createSoftLink() {
 func (i *Installation) activateStandby() {
 	Infof("Activating the master standby for this installation")
 	standbyHostLoc := Config.CORE.TEMPDIR + "activate_standby.sh"
-	deleteFile(standbyHostLoc)
-	createFile(standbyHostLoc)
-	writeFile(standbyHostLoc, []string{
+	// We use remove last 3 line rather than replace function to avoid situation where user have
+	// created a host with the name say host-standby and then we attach -s with it like host-standby-s
+	// replace -s would replace -s at two places and thus causing error , so we just worry about the last character
+	generateBashFileAndExecuteTheBashFile(standbyHostLoc, "/bin/sh", []string{
 		fmt.Sprintf("source %s", i.EnvFile),
-		fmt.Sprintf("gpinitstandby -s %s -a", strings.Replace(i.GPInitSystem.MasterHostname, "-m", "-s", -1)),
+		fmt.Sprintf("gpinitstandby -s %s -a", i.GPInitSystem.MasterHostname[0:len(i.GPInitSystem.MasterHostname)-2] + "-s"),
 	})
-	executeOsCommand("/bin/sh", standbyHostLoc)
-	defer deleteFile(standbyHostLoc)
 }
 
 // Source greenplum path

@@ -6,11 +6,11 @@ banner "OS Parameters"
 
 { echo "kernel.sem = 250 512000 100 2048" >> /etc/sysctl.conf & } &> /dev/null
 spinner $! "Upgrading the semaphore values"
-if [ $? -ne 0 ]; then wait $!; abort $?; fi
+if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 	
 { sysctl -p & } &> /dev/null
 spinner $! "Reloading sysctl"
-if [ $? -ne 0 ]; then wait $!; abort $?; fi
+if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 
 ## User Accounts
 banner "User Accounts"

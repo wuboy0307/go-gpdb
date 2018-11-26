@@ -23,15 +23,10 @@ func stopAllDb() {
 
 	// Execute the command
 	StopScriptLoc := Config.CORE.TEMPDIR + "stop_all_db.sh"
-	writeFile(StopScriptLoc, []string{
+	generateBashFileAndExecuteTheBashFile(StopScriptLoc, "/bin/sh", []string{
 		cleanupScript,
 		"ps -ef | egrep \"gpmon|gpmonws|lighttpd\" | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null; echo > /dev/null",
 	})
-	executeOsCommand("/bin/sh", StopScriptLoc)
-	areAllProcessDown()
-
-	// Cleanup temp files.
-	deleteFile(StopScriptLoc)
 }
 
 // Check if the process are all down
@@ -111,18 +106,16 @@ func startDB(envFile string) error {
 	Infof("Attempting to start the database as per the environment file: %s", envFile)
 
 	// BashScript
-	tempFile := Config.CORE.TEMPDIR + "start.sh"
-	createFile(tempFile)
-	writeFile(tempFile, []string{
+	startFile := Config.CORE.TEMPDIR + "start.sh"
+	generateBashFileAndExecuteTheBashFile(startFile, "/bin/sh", []string{
 		"source "+ envFile,
 		"gpstart -a",
 	})
-	executeOsCommand("/bin/sh", tempFile)
+
+	// Check if database is healthy
 	if !isDbHealthy(envFile, "") { // Check if the database is healthy after start
-		deleteFile(tempFile)
 		Fatalf("Can't seems to start the database in the environment file \"%s\" exiting...", envFile)
 	}
-	deleteFile(tempFile)
 
 	// Start Command Center WEB UI if available on this environment
 	//TODO: GPCC start
@@ -137,14 +130,11 @@ func startDB(envFile string) error {
 func stopDB(envFile string) {
 
 	Infof("Attempting to stop the database as per the environment file: %s", envFile)
-	tempFile := Config.CORE.TEMPDIR + "stop.sh"
-	createFile(tempFile)
-	writeFile(tempFile, []string{
+	stopFile := Config.CORE.TEMPDIR + "stop.sh"
+	generateBashFileAndExecuteTheBashFile(stopFile, "/bin/sh", []string{
 		"source " + envFile,
 		"gpstop -af",
 	})
-	executeOsCommand("/bin/sh", tempFile)
-	deleteFile(tempFile)
 
 	// Start Command Center WEB UI if available on this environment
 	// TODO: GPCC Stop
