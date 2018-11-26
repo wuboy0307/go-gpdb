@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -39,15 +40,18 @@ type GPCCConfig struct {
 	InstanceName string
 	InstancePort string
 	GpPerfmonHome string
+	WebSocketPort string
+	GPCCBinaryLoc string
 }
 
 const (
 	defaultMasterPort = 3000
-	defaultGpperfmonPort = 28000
 	defaultPrimaryPort = 30000
 	defaultMirrorPort = 35000
 	defaultReplicatePort = 40000
 	defaultMirrorReplicatePort = 45000
+	defaultGpccPort = 28000
+	defaultWebSocket = 8899
 )
 
 func install() {
@@ -115,5 +119,24 @@ func (i *Installation) installGPCC() {
 
 	Infof("Installation of GPCC with version %s on GPDB with version %s is complete", cmdOptions.CCVersion, cmdOptions.Version)
 	Infof("exiting ....")
+}
+
+// Get and generate host file if doesn't exists the hostname
+func (i *Installation) generateHostFile() {
+
+	i.HostFileLocation = fmt.Sprintf("%s/hostfile", os.Getenv("HOME"))
+	Debugf("Generating the hostfile at %s", i.HostFileLocation)
+
+	exists, _ := doesFileOrDirExists(i.HostFileLocation)
+	if !exists {
+		Infof("Host file doesn't exists, creating one: %s", i.HostFileLocation)
+		// Read the contents from the /etc/hosts and generate a hostfile.
+		hosts := contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
+		s := removeBlanks(hosts.String())
+		// write to the file
+		writeFile(i.HostFileLocation, []string{s})
+	} else {
+		Infof("Found host file at location: %s", i.HostFileLocation)
+	}
 }
 

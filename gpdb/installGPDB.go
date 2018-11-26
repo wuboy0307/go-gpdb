@@ -30,14 +30,15 @@ func (i *Installation) installGPDBProduct() {
 	// Build & Execute the gpinitsystem configuration
 	i.Timestamp = time.Now().Format("20060102150405")
 	i.buildGpInitSystem()
-
-	// Store the last used port for future use
-	i.savePort()
 }
 
 func (i *Installation) postGPDBInstall() {
 
 	Infof("Running post installation steps of the gpdb version: %s", cmdOptions.Version)
+
+	// Store the last used port for future use
+	i.savePort()
+
 	// Create EnvFile
 	i.createEnvFile()
 
@@ -56,26 +57,6 @@ func (i *Installation) postGPDBInstall() {
 	defer deleteFile(i.WorkingHostFileLocation)
 	defer deleteFile(i.SegmentHostLocation)
 }
-
-// Get and generate host file if doesn't exists the hostname
-func (i *Installation) generateHostFile() {
-
-	i.HostFileLocation = fmt.Sprintf("%s/hostfile", os.Getenv("HOME"))
-	Debugf("Generating the hostfile at %s", i.HostFileLocation)
-
-	exists, _ := doesFileOrDirExists(i.HostFileLocation)
-	if !exists {
-		Infof("Host file doesn't exists, creating one: %s", i.HostFileLocation)
-		// Read the contents from the /etc/hosts and generate a hostfile.
-		hosts := contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
-		s := removeBlanks(hosts.String())
-		// write to the file
-		writeFile(i.HostFileLocation, []string{s})
-	} else {
-		Infof("Found host file at location: %s", i.HostFileLocation)
-	}
-}
-
 // Check if the directory provided is readable and writeable
 func dirValidator() error {
 

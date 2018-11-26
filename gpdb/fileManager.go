@@ -67,7 +67,7 @@ func writeFile(path string, contents []string) {
 }
 
 // Append the file
-func appendFile(path string, args []string) error {
+func appendFile(path string, args []string) {
 
 	Debugf("Appending to the file: %s", path)
 
@@ -90,8 +90,6 @@ func appendFile(path string, args []string) error {
 	if err != nil {
 		Fatalf("Error in saving the append content to the file: %v", err)
 	}
-
-	return nil
 }
 
 // Read the file

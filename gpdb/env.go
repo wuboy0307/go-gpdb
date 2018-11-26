@@ -29,6 +29,23 @@ func (i *Installation) createEnvFile() {
 	})
 }
 
+// Update Environment file
+func (i *Installation) updateEnvFile() error {
+
+	Infof("Updating the environment file \"%s\" with the GPCC environment", i.EnvFile)
+
+	// Append to file
+	appendFile(i.EnvFile, []string{
+		"export GPPERFMONHOME=" + "sdafg",
+		"export PATH=$GPPERFMONHOME/bin:$PATH",
+		"export LD_LIBRARY_PATH=$GPPERFMONHOME/lib:$LD_LIBRARY_PATH",
+		"export GPCC_INSTANCE_NAME=" + i.GPCC.InstanceName,
+		"export GPCCPORT=" + i.GPCC.InstancePort,
+	})
+
+	return nil
+}
+
 // Read file and find the content that we are interested
 func readFileAndGatherInformation(file string) string {
 

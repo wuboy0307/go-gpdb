@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -49,18 +48,6 @@ func (i *Installation) generatePortRange() {
 		i.GPInitSystem.MirrorReplicationPort = i.validatePort("MIRROR_REPLICATION_PORT", defaultMirrorReplicatePort) // mirror replication port
 		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
 	}
-}
-
-// validate port
-func (i *Installation) validatePort(searchString string, defaultPort int) string {
-	Infof("Obtaining ports to be set for %s", searchString)
-	p, _ := doWeHavePortBase(Config.INSTALL.FUTUREREFDIR, i.PortFileName, searchString)
-	if p == "" {
-		Warnf("Didn't find %s in the file, setting it to default value: %d", searchString, defaultPort)
-		p = strconv.Itoa(defaultPort)
-	}
-	p = strconv.Itoa(i.checkPortIsUsable(p))
-	return p
 }
 
 // Building initsystem configuration
@@ -125,17 +112,6 @@ func generateSegmentDirectoryList(whichDir string) string {
 		dir = dir + " " + whichDir
 	}
 	return dir
-}
-
-// Check if the port is available or not
-func (i *Installation) checkPortIsUsable(port string) int {
-	Debugf("Checking for port \"%s\"is usable", port)
-	pb := strToInt(port)
-	pb, err := isPortUsed(pb, Config.INSTALL.TOTALSEGMENT, i.WorkingHostFileLocation)
-	if err != nil {
-		Fatalf("Error in checking the port usage, err: %v", err)
-	}
-	return pb
 }
 
 func (i *Installation) executeGpInitSystem() {
