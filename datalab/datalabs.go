@@ -1,8 +1,11 @@
 package main
 
+import "fmt"
+
 var (
 	programName = "datalab"
 	programVersion = "0.1"
+	configFileName = fmt.Sprintf(".%s.config", programName)
 )
 
 func main() {
