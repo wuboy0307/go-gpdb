@@ -82,17 +82,10 @@ func dirValidator() error {
 	return nil
 }
 
-
-// Check if the binaries exits and unzip the binaries.
-func (i *Installation) getBinaryFile() string {
-	Debugf("Finding and unziping the binaries for the version %s", cmdOptions.Version)
-	return unzip(fmt.Sprintf("*%s*", cmdOptions.Version))
-}
-
 // Installing the greenplum binaries
 func (i *Installation) installProduct() {
 	// Installing the binaries.
-	binFile := i.getBinaryFile()
+	binFile := getBinaryFile(cmdOptions.Version)
 
 	// Location and name of the binaries
 	Infof("Using the bin file to install the GPDB Product: %s", binFile)

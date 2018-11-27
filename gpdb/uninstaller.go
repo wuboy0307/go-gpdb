@@ -99,10 +99,7 @@ func removeEnvGpDeleteSystem(envFile string) error {
 // Uninstall GPCC
 func removeGPCC(envFile string) {
 	Infof("Uninstalling the version of command center that is currently installed on this environment.")
-	content := readFile(envFile)
-	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_UNINSTALL_LOC="), []string{"FS", "="})
-	uninstallFile := removeBlanks(c.String())
-	executeOsCommand("/bin/sh", uninstallFile)
+	executeOsCommand("/bin/sh", environment(envFile).GpccUninstallLoc)
 }
 
 // Uninstall using manual method

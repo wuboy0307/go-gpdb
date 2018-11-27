@@ -151,8 +151,8 @@ func (i *Installation) savePort() {
 		deleteFile(portFile)
 		createFile(portFile)
 		writeFile(portFile, []string{
-			"GPCC_PORT: " + strconv.Itoa(strToInt(i.GPCC.InstancePort) + 1),
-			"WEBSOCKET_PORT: " + strconv.Itoa(strToInt(i.GPCC.WebSocketPort) + 1),
+			"GPCC_PORT: " + strconv.Itoa(strToInt(i.GPCC.InstancePort) + 3),
+			"WEBSOCKET_PORT: " + strconv.Itoa(strToInt(i.GPCC.WebSocketPort) + 3),
 		})
 	}
 }

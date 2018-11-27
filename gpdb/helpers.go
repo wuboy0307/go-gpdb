@@ -128,8 +128,11 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 // Remove files if exists so that unarchiver can succeed.
 func removeOldBinFiles(search string) {
-	if cmdOptions.Product == "gpdb" || (cmdOptions.Product == "gpcc" && !isThis4x()) {
+	if cmdOptions.Product == "gpdb" {
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.Version))
+		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*README_INSTALL*")
+	} else if cmdOptions.Product == "gpcc" && !isThis4x() {
+		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.CCVersion))
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*README_INSTALL*")
 	} else { // GPCC 4.x has folder into folders
 		allfiles, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%s", search))
@@ -169,17 +172,21 @@ func unzip(search string) string {
 	return ""
 }
 
+// Find the binary file
+func findBinaryFile(search, version string) string {
+	binFile, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%s.bin", search))
+	if len(binFile) > 0 {
+		return binFile[0]
+	} else {
+		Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, version, Config.DOWNLOAD.DOWNLOADDIR)
+	}
+	return ""
+}
 
 // Get the execute file
 func obtainExecutableFilename(search string) string{
-	if cmdOptions.Product == "gpdb" {
-		// Get the binary file name
-		binFile, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%s.bin", search))
-		if len(binFile) > 0 {
-			return binFile[0]
-		} else {
-			Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
-		}
+	if cmdOptions.Product == "gpdb" { // Get the binary file name
+		return findBinaryFile(search, cmdOptions.Version)
 	} else if cmdOptions.Product == "gpcc" { // GPCC binaries
 		if isThis4x() {  // newer directory
 			// Get the binary file name
@@ -190,7 +197,7 @@ func obtainExecutableFilename(search string) string{
 				Fatalf("No binaries found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.CCVersion, Config.DOWNLOAD.DOWNLOADDIR)
 			}
 		} else { // older directory
-			Fatalf("Build the method here")
+			return findBinaryFile(search, cmdOptions.CCVersion)
 		}
 	} else { // Should never reach here since we only accept gpdb and gpcc only, if it does then print the error below
 		Fatalf("Don't know the installation tag for product provided: %s", cmdOptions.Product)
@@ -222,6 +229,12 @@ func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 	}
 
 	return buf
+}
+
+// Check if the binaries exits and unzip the binaries.
+func getBinaryFile(version string) string {
+	Debugf("Finding and unziping the binaries for the version %s", version)
+	return unzip(fmt.Sprintf("*%s*", version))
 }
 
 // Remove blank lines from the contentExtractor

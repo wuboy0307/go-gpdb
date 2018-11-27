@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -28,17 +30,12 @@ func (i *Installation) preGPCCChecks() {
 // Extract environment values from the env file
 func (i *Installation) extractEnvValues() {
 	Infof("Extracting the environment information from the file: %s", i.EnvFile)
-	content := readFile(i.EnvFile)
-	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export PGPORT="), []string{"FS", "="})
-	i.GPInitSystem.MasterPort = removeBlanks(c.String())
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export MASTER_DATA_DIRECTORY="), []string{"FS", "="})
-	i.GPInitSystem.MasterDir = removeBlanks(c.String())
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_INSTANCE_NAME="), []string{"FS", "="})
-	i.GPCC.InstanceName = removeBlanks(c.String())
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_INSTANCE_PORT="), []string{"FS", "="})
-	i.GPCC.InstancePort = removeBlanks(c.String())
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPPERFMONHOME="), []string{"FS", "="})
-	i.GPCC.GpPerfmonHome = removeBlanks(c.String())
+	envs := environment(i.EnvFile)
+	i.GPInitSystem.MasterPort = envs.PgPort
+	i.GPInitSystem.MasterDir = envs.MasterDir
+	i.GPCC.InstanceName = envs.GpccInstanceName
+	i.GPCC.InstancePort = envs.GpccPort
+	i.GPCC.GpPerfmonHome = envs.GpPerfmonHome
 }
 
 // Check if this version of database has GPCC installed.
@@ -101,12 +98,23 @@ func (i *Installation) installGPCC4xAndAbove() {
 	i.installGpperfmon()
 
 	// Install the gpcc binaries.
-	i.installGPCCbinaries4x()
+	i.installGPCCBinaries4x()
 }
 
 // Install GPCC less than 4.x
 func (i *Installation) installGPCCBelow4x() {
-	i.GPCC.GPCCBinaryLoc = unzip(fmt.Sprintf("*%s*", cmdOptions.CCVersion))
+
+	// Install the product
+	i.installGPCCBinariesBelow4x()
+
+	// If its a multi host deployment then install the gpcc on all the host
+	i.InstallGPCCBinariesIfMultiHost()
+
+	// Install the Gpperfmon database
+	i.installGpperfmon()
+
+	// Install the GPCC web Interface
+	i.InstallWebUIBelow4x()
 }
 
 // Install the product that is requested
@@ -188,11 +196,16 @@ func (i *Installation) verifyGpperfmon() {
 	}
 }
 
+// Generate command center instance name
+func commandCenterInstanceName() string {
+	return fmt.Sprintf("ccversion_%s_%s", strings.Replace(cmdOptions.Version,".", "", -1), strings.Replace(cmdOptions.CCVersion,".", "", -1))
+}
+
 // Create configuration file
 func (i *Installation) createGPCCCOnfigurationFile() string {
 	i.GPCC.InstancePort = i.validatePort( "GPCC_PORT", defaultGpccPort)
 	i.GPCC.WebSocketPort = i.validatePort( "WEBSOCKET_PORT", defaultWebSocket)
-	i.GPCC.InstanceName = fmt.Sprintf("ccversion_%s", cmdOptions.CCVersion)
+	i.GPCC.InstanceName = commandCenterInstanceName()
 	gpccInstallConfig := Config.CORE.TEMPDIR + fmt.Sprintf("gpcc_config_4x_%s.sh", i.Timestamp)
 	deleteFile(gpccInstallConfig)
 	createFile(gpccInstallConfig)
@@ -208,8 +221,8 @@ func (i *Installation) createGPCCCOnfigurationFile() string {
 	return gpccInstallConfig
 }
 
-// Installing gpcc instance
-func (i *Installation) installGPCCbinaries4x() {
+// Installing gpcc instance >= 4.x
+func (i *Installation) installGPCCBinaries4x() {
 	Infof("Installing gpcc binaries for the cc version: %s", cmdOptions.CCVersion)
 	executeGPPCFile := Config.CORE.TEMPDIR + "exectute_gpcc.sh"
 	generateBashFileAndExecuteTheBashFile(executeGPPCFile, "/bin/sh", []string{
@@ -220,7 +233,19 @@ func (i *Installation) installGPCCbinaries4x() {
 	i.extractGPPERFMON()
 }
 
-// Extract GPPERFHOME location
+// Installing gpcc instance < 4.x
+func (i *Installation) installGPCCBinariesBelow4x() {
+	Infof("Installing gpcc binaries for the cc version: %s", cmdOptions.CCVersion)
+	binFile := getBinaryFile(cmdOptions.CCVersion)
+	i.GPCC.GpPerfmonHome = fmt.Sprintf("/usr/local/greenplum-cc-web-dbv-%s-ccv-%s", cmdOptions.Version, cmdOptions.CCVersion)
+	var scriptOption = []string{"yes", i.GPCC.GpPerfmonHome, "yes", "yes"}
+	err := executeBinaries(binFile, "install_software.sh", scriptOption)
+	if err != nil {
+		Fatalf("Failed in installing the binaries, err: %v", err)
+	}
+}
+
+// Extract GPPERFMON location
 func (i *Installation) extractGPPERFMON() {
 	Debugf("Extracting the gpperfmon home location")
 	file, err := FilterDirsGlob("/usr/local", fmt.Sprintf("*%s*", cmdOptions.CCVersion))
@@ -228,4 +253,66 @@ func (i *Installation) extractGPPERFMON() {
 		Fatalf("Cannot find the gpcc installation or encountered err: %v", err)
 	}
 	i.GPCC.GpPerfmonHome = file[0]
+}
+
+// On Multi host we need to install the binaries on all the host using gpccinstall
+func (i *Installation) InstallGPCCBinariesIfMultiHost() {
+	if environment(i.EnvFile).SingleOrMulti == "multi" {
+		Infof("Running seginstall to install the gpcc on all the host")
+		gpccSegInstallFile := Config.CORE.TEMPDIR + "gpccseginstall.sh"
+		generateBashFileAndExecuteTheBashFile(gpccSegInstallFile, "/bin/sh", []string{
+			fmt.Sprintf("source %s/gpcc_path.sh", i.BinaryInstallationLocation),
+			fmt.Sprintf("gpccseginstall -f %s/hostfile", os.Getenv("HOME")),
+		})
+	} else {
+		Infof("Skipping gpccseginstall since this is a single machine installation")
+	}
+}
+
+// Install the web interface for GPCC below 4.x
+func (i *Installation) InstallWebUIBelow4x() {
+
+	Infof("Running the setup for installing GPCC WEB UI for command center version: %s", cmdOptions.CCVersion)
+	i.GPCC.InstancePort = i.validatePort( "GPCC_PORT", defaultGpccPort)
+	i.GPCC.WebSocketPort = i.validatePort( "WEBSOCKET_PORT", defaultWebSocket) // Safe Guard to prevent 4.x and below clash
+	i.GPCC.InstanceName = commandCenterInstanceName()
+	var scriptOption []string
+
+	// CC Option for different version of cc installer
+	// Not going to refactor this piece of code, since this is legacy and testing all the version option is a pain
+	// so we will leave this as it is
+	if strings.HasPrefix(cmdOptions.CCVersion, "1") { // CC Version 1.x
+		scriptOption = []string{i.GPCC.InstanceName, "n", i.GPCC.InstanceName, i.GPInitSystem.MasterPort, i.GPCC.InstancePort, "n", "n", "n", "n", "EOF"}
+	} else if strings.HasPrefix(cmdOptions.CCVersion, "2.5") || strings.HasPrefix(cmdOptions.CCVersion, "2.4")  { // Option of CC 2.5 & after
+		scriptOption = []string{i.GPCC.InstanceName, "n", i.GPCC.InstanceName, i.GPInitSystem.MasterPort, i.GPCC.InstancePort, strconv.Itoa(strToInt(i.GPCC.InstancePort) + 1), "n", "n", "n", "n", "EOF"}
+	} else if strings.HasPrefix(cmdOptions.CCVersion, "2.1") || strings.HasPrefix(cmdOptions.CCVersion, "2.0") { // Option of CC 2.0 & after
+		scriptOption = []string{i.GPCC.InstanceName, "n", i.GPCC.InstanceName, i.GPInitSystem.MasterPort, "n", i.GPCC.InstancePort, "n", "n", "n", "n", "EOF"}
+	} else if strings.HasPrefix(cmdOptions.CCVersion, "2") { // Option for other version of cc 2.x
+		scriptOption = []string{i.GPCC.InstanceName, "n", i.GPCC.InstanceName, i.GPInitSystem.MasterPort, "n", i.GPCC.InstancePort, strconv.Itoa(strToInt(i.GPCC.InstancePort) + 1), "n", "n", "n", "n", "EOF"}
+	} else if strings.HasPrefix(i.GPCC.InstanceName, "3.0") { // Option for CC version 3.0
+		scriptOption = []string{i.GPCC.InstanceName, i.GPCC.InstanceName, "n", i.GPInitSystem.MasterPort, i.GPCC.InstancePort, "n", "n", "EOF"}
+	} else { // All the newer version option unless changed.
+		scriptOption = []string{i.GPCC.InstanceName, i.GPCC.InstanceName, "n", i.GPInitSystem.MasterPort, "n", i.GPCC.InstancePort, "n", "n", "EOF"}
+	}
+	i.installGPCCUI(scriptOption)
+}
+
+
+// Install the Command Center Web UI
+func (i *Installation) installGPCCUI(args []string) error {
+
+	installGPCCWebFile := Config.CORE.TEMPDIR + "install_web_ui.sh"
+	options := []string{
+		"source " + i.EnvFile,
+		"source " + i.GPCC.GpPerfmonHome + "/gpcc_path.sh",
+		"echo",
+		"gpcmdr --setup << EOF",
+	}
+	for _, arg := range args {
+		options = append(options, arg)
+	}
+	options = append(options, "echo")
+	generateBashFileAndExecuteTheBashFile(installGPCCWebFile, "/bin/sh", options)
+
+	return nil
 }

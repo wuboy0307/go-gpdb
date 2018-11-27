@@ -7,6 +7,42 @@ import (
 	"strings"
 )
 
+type Environment struct {
+	GpHome 				string
+	MasterDir 			string
+	PgPort 				string
+	PgDatabase 			string
+	SingleOrMulti 		string
+	GpPerfmonHome 		string
+	GpccInstanceName 	string
+	GpccPort 			string
+	GpccVersion 		string
+	GpccUninstallLoc 	string
+}
+
+// Extract the data from the envFile
+func dataExtractor(envFile, search string) string {
+	content := readFile(envFile)
+	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", search), []string{"FS", "="})
+	return removeBlanks(c.String())
+}
+
+// Load all the environment information
+func environment(envFile string) Environment {
+	e := new(Environment)
+	e.GpHome = dataExtractor(envFile, "export GPHOME=")
+	e.MasterDir = dataExtractor(envFile, "export MASTER_DATA_DIRECTORY=")
+	e.PgPort = dataExtractor(envFile, "export PGPORT=")
+	e.PgDatabase = dataExtractor(envFile, "export PGDATABASE=")
+	e.SingleOrMulti = dataExtractor(envFile, "export singleOrMulti=")
+	e.GpPerfmonHome = dataExtractor(envFile, "export GPPERFMONHOME=")
+	e.GpccInstanceName = dataExtractor(envFile, "export GPCC_INSTANCE_NAME=")
+	e.GpccPort = dataExtractor(envFile, "export GPCCPORT=")
+	e.GpccVersion = dataExtractor(envFile, "export GPCCVersion=")
+	e.GpccUninstallLoc = dataExtractor(envFile, "export GPCC_UNINSTALL_LOC=")
+	return *e
+}
+
 // Create environment file of this installation
 func (i *Installation) createEnvFile() {
 
@@ -26,7 +62,7 @@ func (i *Installation) createEnvFile() {
 		"export MASTER_DATA_DIRECTORY="+ i.GPInitSystem.MasterDir + "/" + i.GPInitSystem.ArrayName + "-1",
 		"export PGPORT=" + i.GPInitSystem.MasterPort,
 		"export PGDATABASE=" + i.GPInitSystem.DBName,
-		"export GPDB_STANDBY=" + isStandbyAvailable(i.BinaryInstallationLocation, i.GPInitSystem.MasterPort),
+		"export singleOrMulti=" + i.SingleORMulti,
 	})
 }
 
@@ -56,17 +92,8 @@ func readFileAndGatherInformation(file string) string {
 
 	// Obtain the below information from env file
 	var output string
-
-	// From the file find the text detection information
-	content := readFile(file)
-
-	// DB PORT
-	c := contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export PGPORT="), []string{"FS", "="})
-	output = output + "|" + removeBlanks(c.String())
-
-	// Standby Available
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPDB_STANDBY="), []string{"FS", "="})
-	output = output + "|" + removeBlanks(c.String())
+	envs := environment(file)
+	output = output + "|" + envs.PgPort
 
 	// Is DB running
 	if isDbHealthy(file, "") {
@@ -75,14 +102,9 @@ func readFileAndGatherInformation(file string) string {
 		output = output + "| STOPPED"
 	}
 
-	// GPCC Instance
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCC_INSTANCE_NAME="), []string{"FS", "="})
-	output = output + "|" + removeBlanks(c.String())
-
-	// GPCC URL
-	c = contentExtractor(content, fmt.Sprintf("/%s/ {print $2}", "export GPCCPORT="), []string{"FS", "="})
-	if !IsValueEmpty(c.String()) {
-		output = output + "|" + fmt.Sprintf("http://%s:%s", GetLocalIP(), removeBlanks(c.String()))
+	output = output + "|" + envs.GpccInstanceName
+	if !IsValueEmpty(envs.GpccPort) {
+		output = output + "|" + fmt.Sprintf("http://%s:%s", GetLocalIP(), envs.GpccPort)
 	}
 
 	return output
@@ -93,8 +115,8 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 
 	Debugf("Searching for installed env file using the search string: %s", search)
 
-	var output = []string{`Index | Environment File | Master Port | GPDB Standby |Status | GPCC Instance Name | GPCC Instance URL`,
-		`------|-----------------------|-----------------|------------------|------------------|----------------------------------------|------------------------------------------`,
+	var output = []string{`Index | Environment File | Master Port | Status | GPCC Instance Name | GPCC Instance URL`,
+		`------|-----------------------|----------------- |------------------|----------------------------------------|------------------------------------------`,
 	}
 
 	// Search for environment files for that version
