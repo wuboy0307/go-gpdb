@@ -206,7 +206,7 @@ func envExample() string {
 var rootCmd = &cobra.Command{
 	Use:   fmt.Sprintf("%s [command]", programName),
 	Short: "Download / install / remove and manage the software of GPDB products",
-	Long: "This repo helps to download / install / remove and manage the software of GPDB products",
+	Long: "This program helps to download / install / remove and manage the software of GPDB products",
 	Version: programVersion,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Before running any command Setup the logger log level

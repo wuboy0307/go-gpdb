@@ -7,6 +7,7 @@
 .idea/
 .idea/vcs.xml
 gpdb/vendor/
+datalab/vendor/
 notes
 
 # Files
