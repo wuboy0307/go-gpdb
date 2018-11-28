@@ -69,10 +69,16 @@ brew update
 brew cask reinstall vagrant
 ```
 
+Once the vagrant is installed, install the vagrant plugin using the below command
+```
+vagrant plugin install vagrant-hosts
+```
+
 # Installation
 
 + Git clone this repository to the location of your choice
 ```
+cd /Users/xxxx/Document
 git clone https://github.com/pivotal-gss/go-gpdb.git 
 ```
 + Download the latest version of the datalab CLI from the [release link](https://github.com/pivotal-gss/go-gpdb/releases).
@@ -92,7 +98,7 @@ cp <location-to-where-you-downloaded-datalab>/datalab /usr/local/bin/
 + Now run the below command to setup up the network API and Repository location
 
 ```
-datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Users/xxx/Documents/Project/go-gpdb>
+datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Users/xxxx/Document/go-gpdb>
 ```
 
 To obtain the pivnet-token, Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (**PLEASE NOTE:** This token will change if you click on the “Request New API Token” again)
@@ -165,7 +171,7 @@ datalab create -n <name> -s 2 -c 2 -m 2048 --standby
 datalab help create
 ```
 
-### list
+### List
 
 + To list all the VM installed
 
@@ -185,7 +191,7 @@ datalab list -g
 datalab help list
 ```
 
-### ssh
+### Ssh
 
 + To ssh to the default VM (i.e gpdb)
 
