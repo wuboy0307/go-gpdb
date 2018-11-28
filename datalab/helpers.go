@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/ryanuber/columnize"
 	"strings"
 	"os/exec"
 	"os"
@@ -23,13 +25,13 @@ func isCommandAvailable(name string) {
 }
 
 // Check if we have the name already on our config
-func nameInConfig(a string) bool {
-	for _, b := range Config.Vagrants {
+func nameInConfig(a string) (int, bool) {
+	for index, b := range Config.Vagrants {
 		if b.Name == a {
-			return true
+			return index, true
 		}
 	}
-	return false
+	return -1, false
 }
 
 // Execute the OS command
@@ -43,6 +45,8 @@ func executeOsCommand(command string, env []string, args ...string) {
 	for _, e := range env {
 		cmd.Env = append(cmd.Env, e)
 	}
+	// Go to the directory
+	cmd.Dir = Config.GoGPDBPath
 	// Attach the stdout and std err
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
@@ -54,5 +58,43 @@ func executeOsCommand(command string, env []string, args ...string) {
 	err = cmd.Wait()
 	if err != nil {
 		Fatalf("Failed in waiting for the command %s, with arguments %s, err: %v", command, args, err)
+	}
+}
+
+// Print the data in tabular format
+func printOnScreen(message string, content []string) {
+
+	// Message before the table
+	fmt.Printf("\n%s\n\n", message)
+
+	// Print the table format
+	result := columnize.SimpleFormat(content)
+
+	// Print the results
+	fmt.Println(result + "\n")
+
+}
+
+// Get the element from the config
+func getVagrantKeyFromConfig(command string) VagrantKey {
+	index, exists := nameInConfig(cmdOptions.Hostname)
+	if !exists {
+		Fatalf(missingVMInOurConfig, command, cmdOptions.Hostname, programName)
+	}
+	return Config.Vagrants[index]
+}
+
+// Generate a env based on what key we got
+func generateEnvByVagrantKey(command string) []string {
+	vk := getVagrantKeyFromConfig(command)
+	return generateEnvArray(vk.CPU, vk.Memory, vk.Segment, vk.Os, vk.Subnet, vk.Name, vk.Standby)
+}
+
+// Remove slash at suffix
+func removeSlash(str string) string {
+	if strings.HasSuffix(str, "/") {
+		return str[0:len(str)-1]
+	} else {
+		return str
 	}
 }

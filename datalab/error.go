@@ -20,9 +20,11 @@ var (
 
 %s update-config -t <token>
 `
-	vagrantLocationMissing =
-`The Vagrant Location is not set, please run the below command to set it 
+	goGPDBLocationMissing =
+`The go-gpdb file location is not set, please run the below command to set it 
 
 %s update-config -l <vagrant file location>
 `
+	missingVMInOurConfig =
+`Cannot run "%s", since we don't know anything about the VM with the name "%s", maybe its a typo on the hostname if yes then try again with the correct name. You can also check all the provisioned VM's by the program %[3]s using the command "%[3]s list"`
 )

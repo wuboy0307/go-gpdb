@@ -34,6 +34,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:70537147f6ac44be08251f350024f3071969d39d4900d87d884d01f1c765f091"
+  name = "github.com/ryanuber/columnize"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "983d3a5fab1bf04d1b412465d2d9f8430e2e917e"
+  version = "v2.1.0"
+
+[[projects]]
   digest = "1:69b1cc331fca23d702bd72f860c6a647afd0aa9fcbc1d0659b1365e26546dd70"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -63,18 +71,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "e657309f52e71501f9934566ac06dc5c2f7f11a1"
+  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
 
 [[projects]]
   branch = "master"
-  digest = "1:f343f077a5b0bc3a3788b3a04e24dd417e3e25b2acb529c413e212d2c42416ef"
+  digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "62eef0e2fa9b2c385f7b2778e763486da6880d37"
+  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -89,6 +97,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/jinzhu/configor",
+    "github.com/ryanuber/columnize",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
   ]

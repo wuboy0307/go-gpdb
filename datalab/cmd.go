@@ -29,7 +29,7 @@ type Command struct {
 	Segments    int
 	Debug       bool
 	Token 		string
-	Location 	string
+	GoGPDBPath  string
 	GlobalStatus bool
 }
 
@@ -64,14 +64,13 @@ var sshCmd = &cobra.Command{
 	Short: "SSH to the vagrant environment",
 	Long: "SSH the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		sshVM()
 	},
 }
 
 // All the usage flags of the ssh command
 func sshFlags() {
 	sshCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
-	sshCmd.MarkFlagRequired("hostname")
 }
 
 // The stop command.
@@ -81,14 +80,13 @@ var stopCmd = &cobra.Command{
 	Short: "Stop the vagrant environment",
 	Long: "Stop the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		stopVM()
 	},
 }
 
 // All the usage flags of the stop command
 func stopFlags() {
 	stopCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
-	stopCmd.MarkFlagRequired("hostname")
 }
 
 // The up command.
@@ -98,14 +96,13 @@ var upCmd = &cobra.Command{
 	Short: "Bring up the vagrant environment",
 	Long: "Bring up the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		upVM()
 	},
 }
 
 // All the usage flags of the up command
 func upFlags() {
 	upCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
-	upCmd.MarkFlagRequired("hostname")
 }
 
 // The status command.
@@ -114,23 +111,23 @@ var statusCmd = &cobra.Command{
 	Short: "Status of the vagrant environment",
 	Long: "Status the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		statusVM()
 	},
 }
 
 // All the usage flags of the status command
 func statusFlags() {
 	statusCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
-	statusCmd.MarkFlagRequired("hostname")
 }
 
 // The destroy command.
 var destroyCmd = &cobra.Command{
 	Use:   "destroy",
+	Aliases: []string{`d`},
 	Short: "Destroy the vagrant environment",
 	Long: "Destroy the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		destroyVM()
 	},
 }
 
@@ -158,7 +155,7 @@ var updateCmd = &cobra.Command{
 // All the usage flags of the update config command
 func updateConfigFlags() {
 	updateCmd.Flags().StringVarP(&cmdOptions.Token, "token","t","","Pivotal Network API Token")
-	updateCmd.Flags().StringVarP(&cmdOptions.Location, "location","l","","Location of the vagrant file that should be used to provision the VM's")
+	updateCmd.Flags().StringVarP(&cmdOptions.GoGPDBPath, "location","l","","Location of the go-gpdb software that should be used to provision the VM's")
 }
 
 // The update configuration command.
@@ -167,11 +164,8 @@ var deleteCmd = &cobra.Command{
 	Aliases: []string{`dc`},
 	Short: fmt.Sprintf("delete the configuration from the %s config file", programName),
 	Long: fmt.Sprintf("delete the configuration from the %s config file", programName),
-	PostRun: func(cmd *cobra.Command, args []string) {
-
-	},
 	Run: func(cmd *cobra.Command, args []string) {
-
+		deleteConfigKey()
 	},
 }
 
@@ -188,7 +182,7 @@ var listCmd = &cobra.Command{
 	Short: fmt.Sprintf("list all the configuration from the %s config file", programName),
 	Long: fmt.Sprintf("list all the configuration from the %s config file", programName),
 	Run: func(cmd *cobra.Command, args []string) {
-
+		listVM()
 	},
 }
 
@@ -213,8 +207,8 @@ var rootCmd = &cobra.Command{
 			if IsValueEmpty(Config.APIToken) {
 				Fatalf(apiTokenMissing, programName)
 			}
-			if IsValueEmpty(Config.VagrantFile) {
-				Fatalf(vagrantLocationMissing, programName)
+			if IsValueEmpty(Config.GoGPDBPath) {
+				Fatalf(goGPDBLocationMissing, programName)
 			}
 		}
 	},
@@ -228,7 +222,7 @@ var rootCmd = &cobra.Command{
 // Initialize all the Cobra CLI
 func init ()  {
 	// root command flags
-	rootCmd.PersistentFlags().BoolVarP(&cmdOptions.Debug, "debug", "d", false, "Enable verbose or debug logging")
+	rootCmd.PersistentFlags().BoolVarP(&cmdOptions.Debug, "verbose", "v", false, "Enable verbose or debug logging")
 	// Attach the sub command to the root command.
 	rootCmd.AddCommand(createCmd)
 	createFlags()
@@ -238,12 +232,12 @@ func init ()  {
 	sshFlags()
 	rootCmd.AddCommand(stopCmd)
 	stopFlags()
-	rootCmd.AddCommand(updateCmd)
-	updateConfigFlags()
 	rootCmd.AddCommand(statusCmd)
 	statusFlags()
 	rootCmd.AddCommand(destroyCmd)
 	destroyFlags()
+	rootCmd.AddCommand(updateCmd)
+	updateConfigFlags()
 	rootCmd.AddCommand(deleteCmd)
 	deleteConfigFlags()
 	rootCmd.AddCommand(listCmd)

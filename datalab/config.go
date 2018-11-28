@@ -10,7 +10,7 @@ import (
 
 type ProgramConfig struct {
 	APIToken    string `json:"api_token"`
-	VagrantFile string `json:"vagrant_file"`
+	GoGPDBPath string `json:"go_gpdb_path"`
 	Vagrants    []VagrantKey `json:"vagrants,omitempty"`
 }
 
@@ -47,6 +47,7 @@ func createConfig() {
 
 // Save Configuration
 func saveConfig() {
+	Debugf("Saving the configuration information in the config file: %s", configFile)
 	// First lets clear all the old configuration
 	deleteConfig()
 	// Create a new file
@@ -64,13 +65,14 @@ func saveConfig() {
 
 // Update Configuration
 func updateConfig() {
+	Debugf("Updating the configuration information to be updated config file: %s", configFile)
 	// If user asked to update the toke
 	if !IsValueEmpty(cmdOptions.Token) {
 		Config.APIToken = cmdOptions.Token
 	}
-	// If user asks to update the vagrant location
-	if !IsValueEmpty(cmdOptions.Location) {
-		Config.VagrantFile = cmdOptions.Location
+	// If user asks to update the go-gpdb location
+	if !IsValueEmpty(cmdOptions.GoGPDBPath) {
+		Config.GoGPDBPath = cmdOptions.GoGPDBPath
 	}
 }
 
@@ -84,8 +86,20 @@ func deleteConfig() {
 	}
 }
 
+// Delete Configuration key is vm destroy'ed or if requested
+func deleteConfigKey() {
+	Debugf("Deleting the configuration with the VM name: %s", cmdOptions.Hostname)
+	index, exists := nameInConfig(cmdOptions.Hostname)
+	if !exists {
+		Fatalf(missingVMInOurConfig, "delete-config", cmdOptions.Hostname, programName)
+	}
+	Config.Vagrants = append(Config.Vagrants[:index], Config.Vagrants[index+1:]...)
+	saveConfig()
+}
+
 // Load all the configuration
 func config() {
+	Debugf("Loading all the configuration information")
 	createConfig() // will only create if not found
 	err := configor.Load(&Config, configFile)
 	if err != nil {
