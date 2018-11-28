@@ -123,7 +123,6 @@ func statusFlags() {
 // The destroy command.
 var destroyCmd = &cobra.Command{
 	Use:   "destroy",
-	Aliases: []string{`d`},
 	Short: "Destroy the vagrant environment",
 	Long: "Destroy the vagrant environment that is already created",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -162,8 +161,8 @@ func updateConfigFlags() {
 var deleteCmd = &cobra.Command{
 	Use:   "delete-config",
 	Aliases: []string{`dc`},
-	Short: fmt.Sprintf("delete the configuration from the %s config file", programName),
-	Long: fmt.Sprintf("delete the configuration from the %s config file", programName),
+	Short: fmt.Sprintf("Delete the configuration from the %s config file", programName),
+	Long: fmt.Sprintf("Delete the configuration from the %s config file", programName),
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteConfigKey()
 	},

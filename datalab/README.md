@@ -1,0 +1,294 @@
+Table of Contents
+=================
+
+   * [Introduction](#introduction)
+   * [Prerequisite](#prerequisite)
+        * [VirtualBox](#virtualbox)
+        * [Vagrant](#vagrant)
+   * [Installation](#installation)
+   * [Setup](#setup)
+   * [Usage](#usage)
+   * [Examples](#examples)
+        * [Create](#create)
+        * [list](#list)
+        * [ssh](#ssh)
+        * [Up](#up)
+        * [Stop](#stop)
+        * [Status](#status)
+        * [Destroy](#destroy)
+        * [Update Configuration](#update-configuration)
+
+# Introduction
+
+Datalab CLI is a wrapper to help you create and manage the vagrant VM with ease
+
+# Prerequisite
+
+The "go-gpdb" software needs the below two tools installed on your machine for it to work.
+
++ Vagrant
++ VirtualBox
+
+Please follow the below instruction on how to setup the prerequisite
+
+### VirtualBox
+
+If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
+
+```
+brew update
+brew cask install virtualbox
+```
+
+Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
+
+```
+IRFALI123:Vagrant fali$ ifconfig
+vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether 0a:00:27:00:00:00
+vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
+	ether 0a:00:27:00:00:01
+	inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
+```
+
+if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
+
+### Vagrant
+
+On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
+
+```
+brew update
+brew cask install vagrant
+```
+
+If you have already installed vagrant ensure you are running the latest version of vagrant, to update your vagrant run
+
+```
+brew update
+brew cask reinstall vagrant
+```
+
+# Installation
+
++ Git clone this repository to the location of your choice
+```
+git clone https://github.com/pivotal-gss/go-gpdb.git 
+```
++ Download the latest version of the datalab CLI from the [release link](https://github.com/pivotal-gss/go-gpdb/releases).
++ Run the setup as mentioned on the [setup](#setup) section and you are good to go.
+
+# Setup
+
+Run the below steps to start using the datalabs
+
++ Copy the datalab CLI to the bin location so that it can be accessed from anywhere
+
+```
+chmod +x <location-to-where-you-downloaded-datalab>/datalab
+cp <location-to-where-you-downloaded-datalab>/datalab /usr/local/bin/
+```
+
++ Now run the below command to setup up the network API and Repository location
+
+```
+datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Users/xxx/Documents/Project/go-gpdb>
+```
+
+To obtain the pivnet-token, Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (**PLEASE NOTE:** This token will change if you click on the “Request New API Token” again)
+
+# Usage
+The usage information of datalab software
+
+```
+Usage:
+  datalab [command] [flags]
+  datalab [command]
+
+Available Commands:
+  create        Create the vagrant environment
+  delete-config Delete the configuration from the datalab config file
+  destroy       Destroy the vagrant environment
+  help          Help about any command
+  list          list all the configuration from the datalab config file
+  ssh           SSH to the vagrant environment
+  status        Status of the vagrant environment
+  stop          Stop the vagrant environment
+  up            Bring up the vagrant environment
+  update-config Update the configuration of the datalab tool
+
+Flags:
+  -h, --help      help for datalab
+  -v, --verbose   Enable verbose or debug logging
+      --version   version for datalab
+
+Use "datalab [command] --help" for more information about a command.
+```
+
+# Examples
+
+### Create
+
++ To create a single node vagrant VM (the default vagrant name is "gpdb")
+
+```
+datalab create
+```
+
++ To create a single node vagrant VM with specific name
+
+```
+datalab create -n <name>
+```
+
++ To create a multi node vagrant VM with specific name
+
+```
+datalab create -n <name> -s 2
+```
+
++ To create a multi node vagrant VM & a standby host with specific name
+
+```
+datalab create -n <name> -s 2 --standby
+```
+
++ To create a multi node vagrant VM & a standby host with specific name and also configure cpu and memory ( i.e customize )
+
+```
+datalab create -n <name> -s 2 -c 2 -m 2048 --standby
+```
+
++ Run the below command to get all the help of create subcommand
+
+```
+datalab help create
+```
+
+### list
+
++ To list all the VM installed
+
+```
+datalab list
+```
+
++ To list all the VM installed along with the vagrant global-status
+
+```
+datalab list -g
+```
+
++ Run the below command to get all the help of list subcommand
+
+```
+datalab help list
+```
+
+### ssh
+
++ To ssh to the default VM (i.e gpdb)
+
+```
+datalab ssh
+```
+
++ To ssh to a VM with non default name 
+
+```
+datalab ssh -n <name>
+```
+
++ Run the below command to get all the help of ssh subcommand
+
+```
+datalab help ssh
+```
+
+### Up
+
++ To bring up the default VM (i.e gpdb)
+
+```
+datalab up
+```
+
++ To bring up a VM with non default name 
+
+```
+datalab up -n <name>
+```
+
++ Run the below command to get all the help of up subcommand
+
+```
+datalab help up
+```
+
+### Stop
+
++ To stop the default VM (i.e gpdb)
+
+```
+datalab stop
+```
+
++ To stop a VM with non default name 
+
+```
+datalab stop -n <name>
+```
+
++ Run the below command to get all the help of stop subcommand
+
+```
+datalab help stop
+```
+
+### Status
+
++ To get status of the default VM (i.e gpdb)
+
+```
+datalab status
+```
+
++ To get status of a VM with non default name 
+
+```
+datalab status -n <name>
+```
+
++ Run the below command to get all the help of stop subcommand
+
+```
+datalab help status
+```
+
+### Destroy
+
++ To destroy a VM with a name 
+
+```
+datalab destroy -n <name>
+```
+
++ Run the below command to get all the help of destroy subcommand
+
+```
+datalab help destroy
+```
+
+### Update Configuration
+
++ To update the datalab configuration of API token ( for eg.s if API token Change ) 
+
+```
+datalab update-config -t <new-token>
+```
+
++ To update the datalab configuration of go-gpdb repository 
+
+```
+datalab update-config -l <new-location>
+```

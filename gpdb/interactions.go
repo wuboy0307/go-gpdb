@@ -17,25 +17,30 @@ func PromptChoice(TotalOptions int) int {
 	var choiceEntered int
 	fmt.Print("\nEnter your choice from the above list (eg.s 1 or 2 etc): ")
 
-	// Start the new scanner to get the user input
-	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
+	// For unit test cases to work
+	if !IsValueEmpty(os.Getenv("TEST_PROMPT_CHOICE")) {
+		choiceEntered = strToInt(os.Getenv("TEST_PROMPT_CHOICE"))
+	} else {
+		// Start the new scanner to get the user input
+		input := bufio.NewScanner(os.Stdin)
+		for input.Scan() {
 
-		// The choice entered
-		choiceEntered, err := strconv.Atoi(input.Text())
+			// The choice entered
+			choiceEntered, err := strconv.Atoi(input.Text())
 
-		// If user enters a string instead of a integer then ask to re-enter
-		if err != nil {
-			fmt.Println("Incorrect value: Please choose a integer (eg.s 1 or 2 etc) from the above list")
-			return PromptChoice(TotalOptions)
-		}
+			// If user enters a string instead of a integer then ask to re-enter
+			if err != nil {
+				fmt.Println("Incorrect value: Please choose a integer (eg.s 1 or 2 etc) from the above list")
+				return PromptChoice(TotalOptions)
+			}
 
-		// If its a valid value move on
-		if choiceEntered > 0 && choiceEntered <= TotalOptions {
-			return choiceEntered
-		} else { // Else ask for re-entering the selection
-			fmt.Println("Invalid Choice: The choice you entered is not on the list above, try again.")
-			return PromptChoice(TotalOptions)
+			// If its a valid value move on
+			if choiceEntered > 0 && choiceEntered <= TotalOptions {
+				return choiceEntered
+			} else { // Else ask for re-entering the selection
+				fmt.Println("Invalid Choice: The choice you entered is not on the list above, try again.")
+				return PromptChoice(TotalOptions)
+			}
 		}
 	}
 
@@ -50,22 +55,27 @@ func YesOrNoConfirmation() string {
 
 	var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }
 
-	// Start the new scanner to get the user input
-	fmt.Print("You can use \"gpdb env -v <version>\" to set the env, do you wish to continue (Yy/Nn)?: ")
-	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
+	// For unit test cases to work
+	if !IsValueEmpty(os.Getenv("TEST_YES_CONFIRMATION")) {
+		return os.Getenv("TEST_YES_CONFIRMATION")
+	} else {
+		// Start the new scanner to get the user input
+		fmt.Print("You can use \"gpdb env -v <version>\" to set the env, do you wish to continue (Yy/Nn)?: ")
+		input := bufio.NewScanner(os.Stdin)
+		for input.Scan() {
 
-		// The choice entered
-		choiceEntered := input.Text()
+			// The choice entered
+			choiceEntered := input.Text()
 
-		// If its a valid value move on
-		if YesOrNo[strings.ToLower(choiceEntered)] == "y" {  // Is it Yes
-			return choiceEntered
-		} else if YesOrNo[strings.ToLower(choiceEntered)] == "n" { // Is it No
-			return choiceEntered
-		} else { // Invalid choice, ask to re-enter
-			fmt.Println("Invalid Choice: Please enter Yy/Nn, try again.")
-			return YesOrNoConfirmation()
+			// If its a valid value move on
+			if YesOrNo[strings.ToLower(choiceEntered)] == "y" {  // Is it Yes
+				return choiceEntered
+			} else if YesOrNo[strings.ToLower(choiceEntered)] == "n" { // Is it No
+				return choiceEntered
+			} else { // Invalid choice, ask to re-enter
+				fmt.Println("Invalid Choice: Please enter Yy/Nn, try again.")
+				return YesOrNoConfirmation()
+			}
 		}
 	}
 
