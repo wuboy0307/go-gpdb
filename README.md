@@ -2,13 +2,13 @@
 
 This reposistory is split into two parts
 
-+ gpdb CLI 
++ Gpdb cli 
 
-    The gpdb CLI helps to download, install, remove and manage the software of GPDB / GPCC.
+    The gpdb cli helps to download, install, remove and manage the software of GPDB / GPCC.
 
-+ datalab CLI
++ Datalab cli
     
-    The datalab CLI helps to create & manage vagrant VM's provisioning.
+    The datalab cli helps to create & manage vagrant VM's provisioning.
     
 Table of Contents
 =================
@@ -34,14 +34,14 @@ Please follow the below instruction on how to setup the prerequisite
 
 ### VirtualBox
 
-If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
++ If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
 
 ```
 brew update
 brew cask install virtualbox
 ```
 
-Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
++ Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
 
 ```
 IRFALI123:Vagrant fali$ ifconfig
@@ -56,7 +56,7 @@ if its not shown then refer to the [link](http://islandora.ca/content/fixing-mis
 
 ### Vagrant
 
-On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
++ On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
 brew update
@@ -70,28 +70,29 @@ brew update
 brew cask reinstall vagrant
 ```
 
-Once the vagrant is installed, install the vagrant plugin using the below command
++ Once the vagrant is installed, install the vagrant plugin using the below command
+
 ```
 vagrant plugin install vagrant-hosts
 ```
 
 # Tools
  
-### Gpdb CLI
+### Gpdb cli
 
-Please check the gpdb cli README for details on how to use the gpdb CLI.
++ Please check the gpdb cli README for details on how to install & use the gpdb cli.
 
-### Datalab CLI
+### Datalab cli
 
-Please check the datalab cli README for details on how to use the datalab CLI.
++ Please check the datalab cli README for details on how to install & use the datalab cli.
 
 ### UnitTest
 
-Please check the README on how to run the unit test case.
++ Please check the README on how to run the unit test case.
 
 ### Vagrant 
 
-If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab CLI, please follow the instruction mentioned here for all the options.
++ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned here for all the options.
 
 # Developers / Contributor's
 
