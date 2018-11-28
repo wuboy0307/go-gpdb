@@ -19,7 +19,7 @@ Table of Contents
    * [Tools](#tools)
         * [Gpdb CLI](#gpdb-cli)
         * [Datalab CLI](#datalab-cli)
-        * [Unit Test](#unit-test)
+        * [UnitTest](#unittest)
         * [Vagrant](#vagrant-1)
    * [Developers / Contributor's](#developers--contributors) 
 
