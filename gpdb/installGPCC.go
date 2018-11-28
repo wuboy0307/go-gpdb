@@ -224,7 +224,7 @@ func (i *Installation) createGPCCCOnfigurationFile() string {
 // Installing gpcc instance >= 4.x
 func (i *Installation) installGPCCBinaries4x() {
 	Infof("Installing gpcc binaries for the cc version: %s", cmdOptions.CCVersion)
-	executeGPPCFile := Config.CORE.TEMPDIR + "exectute_gpcc.sh"
+	executeGPPCFile := Config.CORE.TEMPDIR + "execute_gpcc.sh"
 	generateBashFileAndExecuteTheBashFile(executeGPPCFile, "/bin/sh", []string{
 		fmt.Sprintf("%s -c %s &>/dev/null << EOF", i.GPCC.GPCCBinaryLoc, i.createGPCCCOnfigurationFile()),
 		"y",
