@@ -3,8 +3,6 @@ Table of Contents
 
    * [Introduction](#introduction)
    * [Prerequisite](#prerequisite)
-        * [VirtualBox](#virtualbox)
-        * [Vagrant](#vagrant)
    * [Installation](#installation)
    * [Setup](#setup)
    * [Usage](#usage)
@@ -24,55 +22,7 @@ Datalab CLI is a wrapper to help you create and manage the vagrant VM with ease
 
 # Prerequisite
 
-The "go-gpdb" software needs the below two tools installed on your machine for it to work.
-
-+ Vagrant
-+ VirtualBox
-
-Please follow the below instruction on how to setup the prerequisite
-
-### VirtualBox
-
-If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
-
-```
-brew update
-brew cask install virtualbox
-```
-
-Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
-
-```
-IRFALI123:Vagrant fali$ ifconfig
-vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:00
-vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:01
-	inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
-```
-
-if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
-
-### Vagrant
-
-On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
-
-```
-brew update
-brew cask install vagrant
-```
-
-If you have already installed vagrant ensure you are running the latest version of vagrant, to update your vagrant run
-
-```
-brew update
-brew cask reinstall vagrant
-```
-
-Once the vagrant is installed, install the vagrant plugin using the below command
-```
-vagrant plugin install vagrant-hosts
-```
+Please follow the instruction and steps which are needed for the datalab cli to work.
 
 # Installation
 
