@@ -298,3 +298,23 @@ datalab update-config -t <new-token>
 ```
 datalab update-config -l <new-location>
 ```
+
++ Run the below command to get all the help of update config subcommand
+
+```
+datalab help update-config
+```
+
+### Delete Configuration
+
++ To delete the datalab configuration for example if VM is removed manually or some other reason 
+
+```
+datalab delete-config -n <vm-name>
+```
+
++ Run the below command to get all the help of delete config subcommand
+
+```
+datalab help delete-config
+```
