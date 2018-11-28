@@ -27,11 +27,7 @@ func createVM() {
 		cmdOptions.Segments,
 	}
 	if nameInConfig(cmdOptions.Hostname) {
-		Fatalf("The vagrant name \"%[1]s\" is already on our config file \n" +
-			"1. Sometime vagrant provision failed and we updated the configuration, try running \"%[2]s delete-config -n %[1]s\" to remove it from our configuration \n" +
-			"2. If this was removed using \"vagrant destroy\" or you removed the vm manually from virtual box, " +
-			"then try running \"%[2]s delete-config -n %[1]s\" to remove it from our configuration \n" +
-			"3. You can also change the name of the hostname while creating using \"%[2]s create -n <new-hostname> ....\"", cmdOptions.Hostname, programName)
+		Fatalf(alreadyExists, cmdOptions.Hostname, programName)
 	}
 	executeOsCommand("vagrant", generateEnvArray(), "up")
 	Config.Vagrants = append(Config.Vagrants, vk)

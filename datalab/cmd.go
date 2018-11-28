@@ -9,6 +9,14 @@ import (
 var (
 	cmdOptions Command
 )
+const (
+	defaultHostname = "gpdb"
+	defaultSegments = 0
+	defaultCpu = 2
+	defaultMemory = 4096
+	defaultOs = "bento/centos-7.5"
+	defaultSubnet = "192.168.99.100"
+)
 
 // Command line options
 type Command struct {
@@ -41,13 +49,13 @@ var createCmd = &cobra.Command{
 
 // All the usage flags of the create command
 func createFlags() {
-	createCmd.Flags().IntVarP(&cmdOptions.Cpu, "cpu", "c",2,  "Customize the CPU of the vagrant VM that is going to created")
-	createCmd.Flags().IntVarP(&cmdOptions.Memory, "memory", "m",4096,  "Customize the Memory of the vagrant VM that is going to created, units in MegaBytes")
-	createCmd.Flags().IntVarP(&cmdOptions.Segments, "segments", "s",0,  "Customize the number of segments host created during the vagrant provision")
+	createCmd.Flags().IntVarP(&cmdOptions.Cpu, "cpu", "c",defaultCpu,  "Customize the CPU of the vagrant VM that is going to created")
+	createCmd.Flags().IntVarP(&cmdOptions.Memory, "memory", "m",defaultMemory,  "Customize the Memory of the vagrant VM that is going to created, units in MegaBytes")
+	createCmd.Flags().IntVarP(&cmdOptions.Segments, "segments", "s",defaultSegments,  "Customize the number of segments host created during the vagrant provision")
 	createCmd.Flags().BoolVar(&cmdOptions.Standby, "standby",false,  "Do you need a standby host vagrants to be created?")
-	createCmd.Flags().StringVarP(&cmdOptions.Os, "os","o","bento/centos-7.5","The vagrant OS to be used when being provisioned")
-	createCmd.Flags().StringVarP(&cmdOptions.Subnet, "subnet","b","192.168.99.100","The vagrant subnet to be used when being provisioned")
-	createCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","go-gpdb","The name of the host that should be used when being provisioned")
+	createCmd.Flags().StringVarP(&cmdOptions.Os, "os","o",defaultOs,"The vagrant OS to be used when being provisioned")
+	createCmd.Flags().StringVarP(&cmdOptions.Subnet, "subnet","b", defaultSubnet,"The vagrant subnet to be used when being provisioned")
+	createCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 }
 
 // The ssh command.
@@ -62,7 +70,7 @@ var sshCmd = &cobra.Command{
 
 // All the usage flags of the ssh command
 func sshFlags() {
-	sshCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb","The name of the host that should be used when being provisioned")
+	sshCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 	sshCmd.MarkFlagRequired("hostname")
 }
 
@@ -79,7 +87,7 @@ var stopCmd = &cobra.Command{
 
 // All the usage flags of the stop command
 func stopFlags() {
-	stopCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb","The name of the host that should be used when being provisioned")
+	stopCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 	stopCmd.MarkFlagRequired("hostname")
 }
 
@@ -96,7 +104,7 @@ var upCmd = &cobra.Command{
 
 // All the usage flags of the up command
 func upFlags() {
-	upCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb","The name of the host that should be used when being provisioned")
+	upCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 	upCmd.MarkFlagRequired("hostname")
 }
 
@@ -112,7 +120,7 @@ var statusCmd = &cobra.Command{
 
 // All the usage flags of the status command
 func statusFlags() {
-	statusCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb","The name of the host that should be used when being provisioned")
+	statusCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 	statusCmd.MarkFlagRequired("hostname")
 }
 
@@ -128,7 +136,7 @@ var destroyCmd = &cobra.Command{
 
 // All the usage flags of the destroy command
 func destroyFlags() {
-	destroyCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb","The name of the host that should be used when being provisioned")
+	destroyCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
 	destroyCmd.MarkFlagRequired("hostname")
 }
 
@@ -169,7 +177,7 @@ var deleteCmd = &cobra.Command{
 
 // All the usage flags of the delete config command
 func deleteConfigFlags() {
-	deleteCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n","gpdb", "The name of the host that should be used when being provisioned")
+	deleteCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname, "The name of the host that should be used when being provisioned")
 	deleteCmd.MarkFlagRequired("hostname")
 }
 
@@ -203,10 +211,10 @@ var rootCmd = &cobra.Command{
 		// Check if the token and location of vagrant is set before running any command
 		if cmd.Use != "update-config" {
 			if IsValueEmpty(Config.APIToken) {
-				Fatalf("The API Token is not set, please run the \"%s update-config -t <token>\" to set it", programName)
+				Fatalf(apiTokenMissing, programName)
 			}
 			if IsValueEmpty(Config.VagrantFile) {
-				Fatalf("The Vagrant Location is not set, please run the \"%s update-config -l <vagrant file location>\" to set it", programName)
+				Fatalf(vagrantLocationMissing, programName)
 			}
 		}
 	},
