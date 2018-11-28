@@ -86,10 +86,10 @@ Vagrant.configure("2") do |config|
     build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
   end
 
-  # Provisioning 
-  config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
-
+  # Prepare the host that was provisioned
+  # Provisioning
+     config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
   # Developer Mode
-  config.vm.provision :shell, path: 'scripts/go.build.sh'
+     config.vm.provision :shell, path: 'scripts/go.build.sh'
 
 end
