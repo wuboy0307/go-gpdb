@@ -9,7 +9,6 @@ import (
 
 // Build executable shell script
 func buildExecutableBashScript(filename string, executableFilename string, args []string) error {
-
 	Debugf("Starting program to build executable script to install the binaries")
 
 	// Create the file
@@ -29,13 +28,11 @@ func buildExecutableBashScript(filename string, executableFilename string, args 
 
 	// Write to the file
 	writeFile(filename, passArgs)
-
 	return nil
 }
 
 // Execute shell script when called
 func executeBinaries(binaryFile string, bashfilename string, scriptOptions []string) error {
-
 	Debugf("Executing the binaries with contents in the file %s", binaryFile)
 	// Build a quick shell script to install binaries, Filename name
 	filename := Config.CORE.TEMPDIR + bashfilename
@@ -59,13 +56,11 @@ func executeBinaries(binaryFile string, bashfilename string, scriptOptions []str
 	// Cleanup the tempFile
 	Infof("Cleaning up the file \"%s\", if found", filename)
 	deleteFile(filename)
-
 	return nil
 }
 
 // Execute Os commands
 func executeOsCommand(command string, arguments ...string) {
-
 	Debugf("Executing the command \"%s\" using the arguments %s", command, arguments)
 	// Execute the command
 	cmd := exec.Command(command, arguments...)

@@ -7,7 +7,6 @@ import (
 
 // Build uninstall script
 func (i *Installation) createUninstallScript() error {
-
 	// Uninstall script location
 	uninstallFile := Config.INSTALL.UNINTSALLDIR + "uninstall_" + cmdOptions.Version + "_" + i.Timestamp
 	Infof("Creating Uninstall file for this installation at: " + uninstallFile)
@@ -62,14 +61,12 @@ func (i *Installation) uninstallGPCCScript() error {
 		"rm -rf " + i.EnvFile + "." + i.Timestamp,
 		"rm -rf " + i.GPCC.UninstallFile,
 	})
-
 	return nil
 }
 
 
 // Uninstall using gpdeletesystem
 func removeEnvGpDeleteSystem(envFile string) error {
-
 	Info("Starting the database if stopped to run the gpdeletesystem on the environment")
 
 	// Start the database if not started
@@ -119,7 +116,6 @@ func removeEnvManually(version, timestamp string) {
 
 // Main Remove method
 func remove() {
-
 	Infof("Starting program to uninstall the version: %s", cmdOptions.Version)
 
 	// Check if the envfile for that version exists
@@ -155,4 +151,3 @@ func remove() {
 	Infof("Uninstallation of environment \"%s\" was a success", chosenEnvFile)
 	Info("exiting ....")
 }
-

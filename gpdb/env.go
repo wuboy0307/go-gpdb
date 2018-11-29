@@ -45,7 +45,6 @@ func environment(envFile string) Environment {
 
 // Create environment file of this installation
 func (i *Installation) createEnvFile() {
-
 	// Environment file fully qualified path
 	i.EnvFile = Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp
 	Infof("Creating environment file for this installation at: " + i.EnvFile)
@@ -68,7 +67,6 @@ func (i *Installation) createEnvFile() {
 
 // Update Environment file
 func (i *Installation) updateEnvFile() error {
-
 	Infof("Updating the environment file \"%s\" with the GPCC environment", i.EnvFile)
 
 	// Append to file
@@ -87,7 +85,6 @@ func (i *Installation) updateEnvFile() error {
 
 // Read file and find the content that we are interested
 func readFileAndGatherInformation(file string) string {
-
 	Debugf("Reading and gathering information for the file: %s", file)
 
 	// Obtain the below information from env file
@@ -112,7 +109,6 @@ func readFileAndGatherInformation(file string) string {
 
 // List all the installed enviornment files.
 func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
-
 	Debugf("Searching for installed env file using the search string: %s", search)
 
 	var output = []string{`Index | Environment File | Master Port | Status | GPCC Instance Name | GPCC Instance URL`,

@@ -7,7 +7,6 @@ import (
 )
 
 func (i *Installation) buildGpInitSystem() {
-
 	Infof("Building and executing the gpinitsystem...")
 
 	// Set the values of the below parameters
@@ -36,7 +35,6 @@ func (i *Installation) buildGpInitSystem() {
 
 // Generate the port for master / segments / mirror & replication
 func (i *Installation) generatePortRange() {
-
 	Infof("Searching & Generating the port to be used for database installation")
 	// Check if we have the last used port base file and its usable
 	i.GPInitSystem.SegmentPort = i.validatePort( "PRIMARY_PORT", defaultPrimaryPort)  // segment
@@ -52,7 +50,6 @@ func (i *Installation) generatePortRange() {
 
 // Building initsystem configuration
 func (i *Installation) buildGpInitSystemConfig() {
-
 	// Build gpinitsystem config file
 	i.GpInitSystemConfigLocation = fmt.Sprintf("%s%s_%s_%s", Config.CORE.TEMPDIR, "gpinitsystemconfig", cmdOptions.Version, i.Timestamp)
 	Infof("Creating the gpinitsystem config file at: %s", i.GpInitSystemConfigLocation)

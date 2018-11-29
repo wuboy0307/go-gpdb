@@ -20,18 +20,25 @@ func stopAllDb() {
 		"source $GPHOME/greenplum_path.sh;" +
 		"gpstop -af;" +
 		"done"
-
-	// Execute the command
 	StopScriptLoc := Config.CORE.TEMPDIR + "stop_all_db.sh"
 	generateBashFileAndExecuteTheBashFile(StopScriptLoc, "/bin/sh", []string{
 		cleanupScript,
-		"ps -ef | egrep \"gpmon|gpmonws|lighttpd\" | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null; echo > /dev/null",
+	})
+	cleanupGpccProcess()
+	areAllProcessDown()
+}
+
+// Cleanup all the gpcc process
+func cleanupGpccProcess() {
+	Infof("Cleaning up gpcc process is found any")
+	cleanupGPCCLoc := Config.CORE.TEMPDIR + "clean_all_gpcc.sh"
+	generateBashFileAndExecuteTheBashFile(cleanupGPCCLoc, "/bin/sh", []string{
+		"ps -ef | egrep \"gpsmon|gpmon|gpmonws|lighttpd\" | grep -v grep | awk '{print $2}' | xargs -n1 /bin/kill -11 &>/dev/null",
 	})
 }
 
 // Check if the process are all down
 func areAllProcessDown() {
-
 	Debugf("Checking if the all the database process are down")
 	// Send a warning message if the process is not completely stopped.
 	cmdOut, _ := executeOsCommandOutput("pgrep", "postgres")
@@ -45,7 +52,6 @@ func areAllProcessDown() {
 
 // Check if the database is healthy
 func isDbHealthy(sourcePath, port string) bool {
-
 	Debugf("Checking if the database is healthy")
 	// Query string
 	queryString := "select 1"
@@ -76,7 +82,6 @@ func isDbHealthy(sourcePath, port string) bool {
 
 // Start the database if not started
 func startDBifNotStarted(envFile string)  {
-
 	// is the database running , then return
 	if isDbHealthy(envFile, "") { // Database is started and running
 		Debugf("Database seems to be running, contining...")
@@ -100,7 +105,6 @@ func startDBifNotStarted(envFile string)  {
 
 // Start database
 func startDB(envFile string) {
-
 	Infof("Attempting to start the database as per the environment file: %s", envFile)
 
 	// BashScript
@@ -123,7 +127,6 @@ func startDB(envFile string) {
 
 // Stop Database
 func stopDB(envFile string) {
-
 	Infof("Attempting to stop the database as per the environment file: %s", envFile)
 	stopFile := Config.CORE.TEMPDIR + "stop.sh"
 	generateBashFileAndExecuteTheBashFile(stopFile, "/bin/sh", []string{
@@ -135,6 +138,9 @@ func stopDB(envFile string) {
 	if isCommandCenterInstalled(envFile) {
 		stopGPCC(envFile)
 	}
+
+	// Check if all the process are down
+	areAllProcessDown()
 }
 
 // Start GPCC
@@ -152,7 +158,7 @@ func startGPCC(envFile string) {
 		generateBashFileAndExecuteTheBashFile(startGPCCFile, "/bin/sh", []string{
 			fmt.Sprintf("source %s", envFile),
 			"source $GPPERFMONHOME/gpcc_path.sh",
-			"gpcmdr --start ${GPCC_INSTANCE_NAME} &>/dev/null << EOF",
+			"gpcmdr --start ${GPCC_INSTANCE_NAME} << EOF",
 			"y",
 			"EOF",
 		})
@@ -177,6 +183,7 @@ func stopGPCC(envFile string) {
 			"gpcmdr --stop ${GPCC_INSTANCE_NAME}",
 		})
 	}
+	cleanupGpccProcess()
 }
 
 // Is command center installed on this version

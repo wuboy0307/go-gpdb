@@ -7,6 +7,7 @@ export script_dir=`dirname $script`/..
 cd $script_dir
 export base_dir=`pwd`
 source /vagrant/scripts/functions.h
+source <(parse_yaml /vagrant/gpdb/config.yml)
 
 #Parameters
 endpoint="https://network.pivotal.io"
@@ -17,7 +18,17 @@ access_token=""
 #Abort the script if found a failure
 abort() {
 	log "$FAIL Return Code: [$1]"
-	tail -20 $2
+}
+
+#Check if the database is accessible
+function check_db() {
+    local ver=`echo $1|sed 's/"//g'`
+    local env_loc=${BASE_DIR}/${APPLICATION_NAME}${ENV_DIR}
+    {
+        source ${env_loc}/env_${ver}_*; ${GPHOME}/bin/psql -d template1 -Atc "select 1" &
+    } &> /dev/null
+    spinner $! "Checking if the database with version ${ver} is healthy"
+    if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
 
 #Download the version and test
@@ -35,29 +46,9 @@ function install_gpdb_version() {
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/install_${ver}.out"
     cd ${base_dir}/gpdb
-    { go run *.go i -v ${ver} --standby & } &> ${filename}
+    { TEST_GPSSH_KEYS="changeme" go run *.go i -v ${ver} --standby & } &> ${filename}
     spinner $! "Install the version ${ver}"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
-}
-
-#Set env of the version and test
-function env_version() {
-    local ver=`echo $1|sed 's/"//g'`
-    local filename="/tmp/env_${ver}.out"
-    cd ${base_dir}/gpdb
-    { go run *.go e -v ${ver} & } &> ${filename}
-    spinner $! "Setting the environment of version ${ver}"
-    if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
-}
-
-#Remove the version and test
-function remove_version() {
-    local ver=`echo $1|sed 's/"//g'`
-    local filename="/tmp/remove_${ver}.out"
-    cd ${base_dir}/gpdb
-    { go run *.go r -v ${ver} & } &> ${filename}
-    spinner $! "Remove the version ${ver}"
-    if [[ $? -ne 0 ]]; then wait $!; abort $? ${filename}; fi
 }
 
 #Download and install command center
@@ -71,6 +62,7 @@ function download_n_install_command_center() {
         incr=$((${incr}+1))
         download_gpcc_version ${ver} ${j} ${incr}
         install_gpcc_version ${ver} ${j}
+        check_cc ${ver} ${j}
     done
 }
 
@@ -94,6 +86,47 @@ function install_gpcc_version() {
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
 
+#Check if command center is working
+function check_cc() {
+    local ccver=`echo $2|sed 's/"//g'`
+    local filename="/tmp/install_gpcc_$1_${ccver}.out"
+    local cc_url=`tail -10 ${filename} | grep "GPCC Web URL" | grep -Eo '(http|https)://[^,/"]+'`
+    { curl -s --head  --request GET ${cc_url} | grep 200 & } &>/dev/null
+    spinner $! "Checking if the CC Url ${ccver} on gpdb Version $1 is working"
+    if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+}
+
+#Set env of the version and test
+function env_version() {
+    local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/env_${ver}.out"
+    cd ${base_dir}/gpdb
+    { go run *.go e -v ${ver} & } &> ${filename}
+    spinner $! "Setting the environment of version ${ver}"
+    if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+}
+
+#Remove the version and test
+function remove_version() {
+    local ver=`echo $1|sed 's/"//g'`
+    local filename="/tmp/remove_${ver}.out"
+    cd ${base_dir}/gpdb
+    { go run *.go r -v ${ver} & } &> ${filename}
+    spinner $! "Remove the version ${ver}"
+    if [[ $? -ne 0 ]]; then wait $!; abort $? ${filename}; fi
+}
+
+#Cleanup the files for the next run to proceed
+function cleanup() {
+   local download_loc=${BASE_DIR}/${APPLICATION_NAME}${DOWNLOAD_DIR}
+   {
+        rm -rf /usr/local/greenplum* &
+        rm -rf ${download_loc}* &
+   } &> /dev/null
+   spinner $! "Cleaning the binaries in the /usr/local & ${download_loc}"
+   if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+}
+
 #Network login
 function authenticate() {
     access_token=`curl -s -X POST ${endpoint}/api/v2/authentication/access_tokens -d '{"refresh_token":"'${token}'"}' | jq .access_token`
@@ -108,7 +141,9 @@ do
     authenticate
     download_gpdb_version ${i}
     install_gpdb_version  ${i}
+    check_db ${i}
     download_n_install_command_center ${i}
     env_version      ${i}
     remove_version   ${i}
+    cleanup
 done

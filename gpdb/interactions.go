@@ -11,7 +11,6 @@ import (
 
 // Ask user what is the choice from the list provided.
 func PromptChoice(TotalOptions int) int {
-
 	Debugf("Promoting for choice from the total: %d", TotalOptions)
 
 	var choiceEntered int
@@ -43,14 +42,12 @@ func PromptChoice(TotalOptions int) int {
 			}
 		}
 	}
-
 	return choiceEntered
 }
 
 
 // Prompt for confirmation
 func YesOrNoConfirmation() string {
-
 	Debugf("Promoting for yes or no confirmation")
 
 	var YesOrNo = map[string]string{"y":"y", "ye":"y", "yes":"y", "n":"n", "no":"n" }
@@ -78,13 +75,11 @@ func YesOrNoConfirmation() string {
 			}
 		}
 	}
-
 	return ""
 }
 
 // provide choice of which version to download
 func (r *Responses) ShowAvailableVersion(token string) {
-
 	Info("Checking for the available version")
 
 	// Local storehouse
@@ -138,7 +133,6 @@ func (r *Responses) ShowAvailableVersion(token string) {
 // Ask user what file in that version are they interested in downloading
 // Default is to download GPDB, GPCC and other with a option from parser
 func (r *Responses) WhichProduct(token string)  {
-
 	Info("Checking for the version to download")
 
 	// Clearing up the buffer to ensure we are using a clean array and MAP

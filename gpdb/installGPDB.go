@@ -19,7 +19,6 @@ func (i *Installation) preGPDBChecks() {
 }
 
 func (i *Installation) installGPDBProduct() {
-
 	Infof("Running Installation of gpdb version: %s", cmdOptions.Version)
 	// Start the installation procedure
 	i.installProduct()
@@ -33,7 +32,6 @@ func (i *Installation) installGPDBProduct() {
 }
 
 func (i *Installation) postGPDBInstall() {
-
 	Infof("Running post installation steps of the gpdb version: %s", cmdOptions.Version)
 
 	// Store the last used port for future use
@@ -57,9 +55,9 @@ func (i *Installation) postGPDBInstall() {
 	defer deleteFile(i.WorkingHostFileLocation)
 	defer deleteFile(i.SegmentHostLocation)
 }
+
 // Check if the directory provided is readable and writeable
 func dirValidator() error {
-
 	Debugf("Checking for the existences of master and segment directory")
 
 	// Check if the master & segment location is readable and writable
@@ -78,7 +76,6 @@ func dirValidator() error {
 		CreateDir(Config.INSTALL.MASTERDATADIRECTORY)
 		CreateDir(Config.INSTALL.SEGMENTDATADIRECTORY)
 	}
-
 	return nil
 }
 
@@ -107,7 +104,6 @@ func (i *Installation) installProduct() {
 
 // Check if the provided hostnames are valid
 func (i *Installation) setUpHost() {
-
 	Infof("Setting up & Checking if the host is reachable")
 
 	// Get the hostname of the master
@@ -130,7 +126,6 @@ func (i *Installation) setUpHost() {
 
 // Check if all the host are working from the hostfile
 func (i *Installation) isHostReachable() {
-
 	// Get all the hostname from the hostfile and check if the host if reachable
 	var saveReachableHost []string
 	var segmentHost []string
@@ -169,13 +164,11 @@ func (i *Installation) isHostReachable() {
 
 	// Create hostfile based on the what we have collected so far
 	i.hostfileCreator(saveReachableHost, segmentHost)
-
 }
 
 
 // Generate hostname file based on installation.
 func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) {
-
 	// Save the working host on a separate file
 	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
 	deleteFile(i.WorkingHostFileLocation)
@@ -193,13 +186,22 @@ func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) 
 		segmentHost = append(segmentHost, buildStandbyHostName(i.GPInitSystem.MasterHostname))
 	}
 	writeFile(i.SegInstallHostLocation, segmentHost)
-
 }
 
 // Run keyless access to the server
 func (i *Installation) executeGpsshExkey() {
 	Infof("Running gpssh-exkeys to enable keyless access on this server")
-	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
+	// When running unit test pass the password as variable
+	if !IsValueEmpty(os.Getenv("TEST_GPSSH_KEYS")) {
+		generateSSHKeyFile := Config.CORE.TEMPDIR + "generate_ssh_key.sh"
+		generateBashFileAndExecuteTheBashFile(generateSSHKeyFile, "/bin/sh", []string{
+			fmt.Sprintf("%s/bin/gpssh-exkeys -f %s  << EOF", os.Getenv("GPHOME"), i.WorkingHostFileLocation),
+			os.Getenv("TEST_GPSSH_KEYS"),
+			"EOF",
+		})
+	} else {
+		executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f")
+	}
 }
 
 
@@ -244,7 +246,6 @@ func buildStandbyHostName(masterHostname string) string {
 
 // Source greenplum path
 func sourceGPDBPath(binLoc string) error {
-
 	Debugf("Sourcing the greenplum binary location")
 
 	// Setting up greenplum path
@@ -272,6 +273,5 @@ func sourceGPDBPath(binLoc string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

@@ -56,7 +56,6 @@ const (
 )
 
 func install() {
-
 	Infof("Running the installation for the product: %s", cmdOptions.Product)
 
 	// Initialize the struct
@@ -87,7 +86,6 @@ func install() {
 
 // Install GPDB
 func (i *Installation) installGPDB(singleOrMutli string) {
-
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
 	// Pre check
@@ -106,7 +104,6 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 // Install GPCC
 func (i *Installation) installGPCC() {
-
 	Infof("Starting the program to install GPCC version \"%s\" on the GPDB Version \"%s\"", cmdOptions.CCVersion, cmdOptions.Version)
 
 	// Run prechecks
@@ -124,7 +121,6 @@ func (i *Installation) installGPCC() {
 
 // Get and generate host file if doesn't exists the hostname
 func (i *Installation) generateHostFile() {
-
 	i.HostFileLocation = fmt.Sprintf("%s/hostfile", os.Getenv("HOME"))
 	Debugf("Generating the hostfile at %s", i.HostFileLocation)
 

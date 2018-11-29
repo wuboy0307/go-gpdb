@@ -8,7 +8,6 @@ import (
 
 // Create the file
 func createFile(path string) {
-
 	Debugf("Creating the file: %s", path)
 
 	// detect if file exists
@@ -26,7 +25,6 @@ func createFile(path string) {
 
 // Open the file
 func openFile(path string, openType int ,permission os.FileMode) *os.File {
-
 	Debugf("Opening the file: %s", path)
 
 	// re-open file
@@ -40,7 +38,6 @@ func openFile(path string, openType int ,permission os.FileMode) *os.File {
 
 // write to the file
 func writeFile(path string, contents []string) {
-
 	Debugf("Writing to the file: %s", path)
 
 	// Create file is not exists
@@ -68,7 +65,6 @@ func writeFile(path string, contents []string) {
 
 // Append the file
 func appendFile(path string, args []string) {
-
 	Debugf("Appending to the file: %s", path)
 
 	// Create file is not exists
@@ -94,7 +90,6 @@ func appendFile(path string, args []string) {
 
 // Read the file
 func readFile(path string) []byte {
-
 	Debugf("Reading to the file: %s", path)
 
 	content, err := ioutil.ReadFile(path)
@@ -107,7 +102,6 @@ func readFile(path string) []byte {
 
 // Delete the file
 func deleteFile(path string) {
-
 	Debugf("Deleting the file: %s", path)
 
 	// delete file

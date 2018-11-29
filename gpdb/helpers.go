@@ -64,7 +64,6 @@ func CreateDir(path string) {
 
 // Print the data in tabular format
 func printOnScreen(message string, content []string) {
-
 	// Message before the table
 	fmt.Printf("\n%s\n\n", message)
 
@@ -73,12 +72,10 @@ func printOnScreen(message string, content []string) {
 
 	// Print the results
 	fmt.Println(result + "\n")
-
 }
 
 // Progress of download
 func PrintDownloadPercent(done chan int64, path string, total int64) {
-
 	var stop bool = false
 
 	for {
@@ -207,7 +204,6 @@ func obtainExecutableFilename(search string) string{
 
 // Extract the contents that we are interested
 func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
-
 	// Create a parser
 	prog, err := parser.ParseProgram([]byte(src), nil)
 	if err != nil {
@@ -227,7 +223,6 @@ func contentExtractor(contents []byte, src string, vars []string) bytes.Buffer {
 	if err != nil {
 		Fatalf("Failure in executing the goawk script: %v", err)
 	}
-
 	return buf
 }
 

@@ -51,7 +51,6 @@ func checkHostReachability(address string, errorType bool) bool {
 
 // Check if the port is used, if yes then what is the next sequence program can use
 func isPortUsed(port int, iteration int, hostfileLoc string) (int, error) {
-
 	Debugf("Checking for the port usage %d", port)
 
 	// Storing the base port
@@ -78,15 +77,12 @@ func isPortUsed(port int, iteration int, hostfileLoc string) (int, error) {
 		// Iterate
 		port = port + i
 	}
-
 	// Return the collected information
 	return BASE, nil
-
 }
 
 // Check if we have the last used ports
 func doWeHavePortBase(file string, name string, whichPort string) (string, error) {
-
 	// the port base file
 	portBaseFile := file + name
 	Debugf("Checking for the port for \"%s\" from the file: %s", whichPort, portBaseFile)
@@ -103,13 +99,11 @@ func doWeHavePortBase(file string, name string, whichPort string) (string, error
 	} else {
 		createFile(portBaseFile)
 	}
-
 	return "", nil
 }
 
 // Save the last used port number
 func (i *Installation) savePort() {
-
 	if cmdOptions.Product == "gpdb" {
 		// Check if the port is not greater than 63000, since unix limit is 64000
 		if outOfRangePort(i.GPInitSystem.SegmentPort) || outOfRangePort(i.GPInitSystem.MasterPort) || outOfRangePort(i.GPInitSystem.ReplicationPort) || outOfRangePort(i.GPInitSystem.MirrorPort) || outOfRangePort(i.GPInitSystem.MirrorReplicationPort) {
@@ -169,14 +163,12 @@ func checkIP(foundIp, coreIP string) bool {
 	if bytes.Compare(obtainIp, ip) >= 0 {
 		return true
 	}
-
 	return false
 }
 
 // Get the IP address
 func GetLocalIP() (string){
-
-	Infof("Getting local IP address")
+	Debugf("Getting local IP address")
 	var CoreIP = "192.0.0.0"
 
 	// Get Interface address
@@ -190,13 +182,12 @@ func GetLocalIP() (string){
 		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
 				if checkIP(ipnet.IP.String(), CoreIP) {
-					Infof("Found Local IP address: %s", ipnet.IP.String())
+					Debugf("Found Local IP address: %s", ipnet.IP.String())
 					return ipnet.IP.String()
 				}
 			}
 		}
 	}
-
 	// If nothing found then produce a warning message
 	Warnf("Cannot find local IP address in the range \"%s\", ignoring the IP....", CoreIP)
 	return ""

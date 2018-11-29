@@ -178,7 +178,6 @@ func (r *Responses) extractProduct(token string) {
 
 // Extract all the Releases of the product with slug : pivotal-gpdb
 func (r *Responses) extractRelease(token string) {
-
 	var ReleaseURL string
 	var PivotalProduct string
 
@@ -217,7 +216,6 @@ func (r *Responses) extractRelease(token string) {
 
 // From the user choice extract all the files available on that version
 func (r *Responses) ExtractDownloadURL(token string) {
-
 	Infof("Obtaining the files under the greenplum version: %s", r.UserRequest.versionChoosen)
 
 	// Extract all the files from the API
@@ -240,7 +238,6 @@ func (r *Responses) ExtractDownloadURL(token string) {
 
 // extract the filename and the size of the product that the user has choosen
 func (r *Responses) ExtractFileNamePlusSize (token string) {
-
 	Info("Extracting the filename and the size of the product file.")
 
 	// Obtain the JSON response of the product file API
@@ -262,7 +259,6 @@ func (r *Responses) ExtractFileNamePlusSize (token string) {
 
 // Download the the product from PivNet
 func Download() {
-
 	Info("Starting the program to download the product")
 
 	// Get the authentication token

@@ -77,7 +77,6 @@ func validateToken() {
 // Read the configuration file and create directory if not exists
 // or set default values if values are missing
 func validateConfiguration() {
-
 	Debug("Checking if the directories needed for the program exists")
 
 	// Default parameter
@@ -110,7 +109,6 @@ func validateConfiguration() {
 
 // Setup the directory location
 func setupPath() {
-
 	// Check if the directory exists, else create one.
 	base_dir := Config.CORE.BASEDIR + Config.CORE.APPLICATIONNAME
 
@@ -137,7 +135,6 @@ func setupPath() {
 
 // Load the configuration file to the memory
 func config() {
-
 	// Load the configuration
 	configFile := "config.yml"
 	Debugf("Reading the configuration file and loading to the memory: %s", configFile)

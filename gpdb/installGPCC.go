@@ -82,7 +82,7 @@ func (i *Installation) installGPCCProduct() {
 // Is it a 4.x to <4.x version
 func isThis4x() bool {
 	v := extractVersion(cmdOptions.CCVersion)
-	if v > 4.0 { // newer GPCC code
+	if v >= 4.0 { // newer GPCC code
 		return true
 	} else { // legacy GPCC code
 		return false
@@ -153,6 +153,7 @@ func (i *Installation) installGpperfmon() error {
 		"gpperfmon_install --enable --password " + Config.INSTALL.GPMONPASS + " --port $PGPORT",
 		"echo \"local    gpperfmon   gpmon         md5\" >> $MASTER_DATA_DIRECTORY/pg_hba.conf",
 		"echo \"host      all     gpmon    0.0.0.0/0    md5\" >> $MASTER_DATA_DIRECTORY/pg_hba.conf",
+		"echo \"host      all     gpmon    127.0.0.1/28    md5\" >> $MASTER_DATA_DIRECTORY/pg_hba.conf",
 		"echo \"host     all         gpmon         ::1/128       md5\" >> $MASTER_DATA_DIRECTORY/pg_hba.conf",
 	})
 
@@ -206,7 +207,7 @@ func (i *Installation) createGPCCCOnfigurationFile() string {
 	i.GPCC.InstancePort = i.validatePort( "GPCC_PORT", defaultGpccPort)
 	i.GPCC.WebSocketPort = i.validatePort( "WEBSOCKET_PORT", defaultWebSocket)
 	i.GPCC.InstanceName = commandCenterInstanceName()
-	gpccInstallConfig := Config.CORE.TEMPDIR + fmt.Sprintf("gpcc_config_4x_%s.sh", i.Timestamp)
+	gpccInstallConfig := Config.CORE.TEMPDIR + fmt.Sprintf("gpcc_config_4x_%s", i.Timestamp)
 	deleteFile(gpccInstallConfig)
 	createFile(gpccInstallConfig)
 	writeFile(gpccInstallConfig, []string{
@@ -226,6 +227,7 @@ func (i *Installation) installGPCCBinaries4x() {
 	Infof("Installing gpcc binaries for the cc version: %s", cmdOptions.CCVersion)
 	executeGPPCFile := Config.CORE.TEMPDIR + "execute_gpcc.sh"
 	generateBashFileAndExecuteTheBashFile(executeGPPCFile, "/bin/sh", []string{
+		fmt.Sprintf("source %s", i.EnvFile),
 		fmt.Sprintf("%s -c %s &>/dev/null << EOF", i.GPCC.GPCCBinaryLoc, i.createGPCCCOnfigurationFile()),
 		"y",
 		"EOF",
@@ -261,17 +263,17 @@ func (i *Installation) InstallGPCCBinariesIfMultiHost() {
 		Infof("Running seginstall to install the gpcc on all the host")
 		gpccSegInstallFile := Config.CORE.TEMPDIR + "gpccseginstall.sh"
 		generateBashFileAndExecuteTheBashFile(gpccSegInstallFile, "/bin/sh", []string{
-			fmt.Sprintf("source %s/gpcc_path.sh", i.BinaryInstallationLocation),
-			fmt.Sprintf("gpccseginstall -f %s/hostfile", os.Getenv("HOME")),
+			fmt.Sprintf("source %s", i.EnvFile),
+			fmt.Sprintf("source %s/gpcc_path.sh", i.GPCC.GpPerfmonHome),
+			fmt.Sprintf("gpccinstall -f %s/hostfile", os.Getenv("HOME")),
 		})
 	} else {
-		Infof("Skipping gpccseginstall since this is a single machine installation")
+		Infof("Skipping gpccinstall since this is a single machine installation")
 	}
 }
 
 // Install the web interface for GPCC below 4.x
 func (i *Installation) InstallWebUIBelow4x() {
-
 	Infof("Running the setup for installing GPCC WEB UI for command center version: %s", cmdOptions.CCVersion)
 	i.GPCC.InstancePort = i.validatePort( "GPCC_PORT", defaultGpccPort)
 	i.GPCC.WebSocketPort = i.validatePort( "WEBSOCKET_PORT", defaultWebSocket) // Safe Guard to prevent 4.x and below clash
@@ -300,7 +302,6 @@ func (i *Installation) InstallWebUIBelow4x() {
 
 // Install the Command Center Web UI
 func (i *Installation) installGPCCUI(args []string) error {
-
 	installGPCCWebFile := Config.CORE.TEMPDIR + "install_web_ui.sh"
 	options := []string{
 		"source " + i.EnvFile,
