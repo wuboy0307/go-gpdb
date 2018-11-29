@@ -192,16 +192,7 @@ func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) 
 func (i *Installation) executeGpsshExkey() {
 	Infof("Running gpssh-exkeys to enable keyless access on this server")
 	// When running unit test pass the password as variable
-	if !IsValueEmpty(os.Getenv("TEST_GPSSH_KEYS")) {
-		generateSSHKeyFile := Config.CORE.TEMPDIR + "generate_ssh_key.sh"
-		generateBashFileAndExecuteTheBashFile(generateSSHKeyFile, "/bin/sh", []string{
-			fmt.Sprintf("%s/bin/gpssh-exkeys -f %s  << EOF", os.Getenv("GPHOME"), i.WorkingHostFileLocation),
-			os.Getenv("TEST_GPSSH_KEYS"),
-			"EOF",
-		})
-	} else {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f")
-	}
+	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f")
 }
 
 

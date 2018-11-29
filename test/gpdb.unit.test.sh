@@ -46,7 +46,7 @@ function install_gpdb_version() {
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/install_${ver}.out"
     cd ${base_dir}/gpdb
-    { TEST_GPSSH_KEYS="changeme" go run *.go i -v ${ver} --standby & } &> ${filename}
+    { go run *.go i -v ${ver} --standby & } &> ${filename}
     spinner $! "Install the version ${ver}"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 }
