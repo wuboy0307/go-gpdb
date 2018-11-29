@@ -75,6 +75,12 @@ func stopVM() {
 	executeOsCommand("vagrant", generateEnvByVagrantKey("stop"), "suspend")
 }
 
+// restart the VM
+func restartVM() {
+	Debugf("Restart the vagrant VM with the name: %s", cmdOptions.Hostname)
+	executeOsCommand("vagrant", generateEnvByVagrantKey("reload"), "reload")
+}
+
 // list the vms
 func listVM() {
 	Debugf("Listing all the vagrant VM which has been provisioned")

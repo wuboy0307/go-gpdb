@@ -13,6 +13,7 @@ Table of Contents
         * [Up](#up)
         * [Stop](#stop)
         * [Status](#status)
+        * [Restart](#restart)
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
 
@@ -215,10 +216,30 @@ datalab status
 datalab status -n <name>
 ```
 
-+ Run the below command to get all the help of stop subcommand
++ Run the below command to get all the help of status subcommand
 
 ```
 datalab help status
+```
+
+### Restart
+
++ To restart the default VM (i.e gpdb)
+
+```
+datalab restart
+```
+
++ To restart a VM with non default name 
+
+```
+datalab restart -n <name>
+```
+
++ Run the below command to get all the help of restart subcommand
+
+```
+datalab help restart
 ```
 
 ### Destroy
