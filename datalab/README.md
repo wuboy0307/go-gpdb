@@ -16,6 +16,7 @@ Table of Contents
         * [Restart](#restart)
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
+   * [Developers / Contributors](#developers--contributors)
 
 # Introduction
 
@@ -55,6 +56,7 @@ datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Use
 To obtain the pivnet-token, Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (**PLEASE NOTE:** This token will change if you click on the “Request New API Token” again)
 
 # Usage
+
 The usage information of datalab software
 
 ```
@@ -289,3 +291,27 @@ datalab delete-config -n <vm-name>
 ```
 datalab help delete-config
 ```
+
+# Developers / Contributors
+
+1. Clone the git repository
+2. Export the GOPATH
+    ```
+    export GOPATH=<path to the clone repository>
+    ```
+3. cd to project folder
+    ```
+    cd $GOPATH/src/github.com/pivotal-gss/go-gpdb/datalab
+    ```
+4. Install all the dependencies. If you don't have dep installed, follow the instruction from [here](https://github.com/golang/dep)
+    ```
+    dep ensure
+    ```
+5. You are all set, you can run it locally using
+    ```
+    go run *.go <commands>
+    ```
+6. To build the package use
+    ```
+    go build -o datalab
+    ```

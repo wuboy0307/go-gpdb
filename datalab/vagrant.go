@@ -78,7 +78,7 @@ func stopVM() {
 // restart the VM
 func restartVM() {
 	Debugf("Restart the vagrant VM with the name: %s", cmdOptions.Hostname)
-	executeOsCommand("vagrant", generateEnvByVagrantKey("reload"), "reload")
+	executeOsCommand("vagrant", generateEnvByVagrantKey("restart"), "reload")
 }
 
 // list the vms

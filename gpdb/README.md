@@ -9,6 +9,7 @@ Table of Contents
         * [Install](#install)
         * [Env](#env)
         * [Remove](#remove)
+   * [Developers / Contributors](#developers--contributors)
 
 # Introduction
 
@@ -167,3 +168,26 @@ gpdb remove -v <GPDB VERSION> -f
 gpdb help remove
 ```
 
+# Developers / Contributors
+
+1. Clone the git repository
+2. Export the GOPATH
+    ```
+    export GOPATH=<path to the clone repository>
+    ```
+3. cd to project folder
+    ```
+    cd $GOPATH/src/github.com/pivotal-gss/go-gpdb/gpdb
+    ```
+4. Install all the dependencies. If you don't have dep installed, follow the instruction from [here](https://github.com/golang/dep)
+    ```
+    dep ensure
+    ```
+5. You are all set, you can run it locally using
+    ```
+    go run *.go <commands>
+    ```
+6. To build the package use
+    ```
+    env GOOS=linux GOARCH=amd64 go build -o gpdb
+    ```
