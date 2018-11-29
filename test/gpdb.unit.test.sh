@@ -20,8 +20,14 @@ abort() {
 	log "$FAIL Return Code: [$1]"
 }
 
+# Set Path
+function set_path(){
+    export PATH="/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/go/bin:/usr/local/src/bin:/home/gpadmin/.local/bin:/home/gpadmin/bin:/home/gpadmin/.local/bin:/home/gpadmin/bin:/usr/local/go/bin"
+}
+
 #Check if the database is accessible
 function check_db() {
+    set_path
     local ver=`echo $1|sed 's/"//g'`
     local env_loc=${BASE_DIR}/${APPLICATION_NAME}${ENV_DIR}
     {
@@ -33,6 +39,7 @@ function check_db() {
 
 #Download the version and test
 function download_gpdb_version() {
+    set_path
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/download_${ver}.out"
     cd ${base_dir}/gpdb
@@ -43,6 +50,7 @@ function download_gpdb_version() {
 
 #Install the GPDB version and test
 function install_gpdb_version() {
+    set_path
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/install_${ver}.out"
     cd ${base_dir}/gpdb
@@ -62,6 +70,7 @@ function download_n_install_command_center() {
     IFS=","
     echo ${cc_products} | while read -r line
     do
+        set_path
         type=`echo ${line}| awk '{print $2}'`
         cc_version=`echo ${line}| awk '{print $1}'`
         if [[ ${type} == "Documentation" ]]; then
@@ -78,6 +87,7 @@ function download_n_install_command_center() {
 
 #Download the gpcc version for the database version
 function download_gpcc_version() {
+    set_path
     local ccver=`echo $2|sed 's/"//g'`
     local filename="/tmp/download_gpcc_$1_${ccver}.out"
     cd ${base_dir}/gpdb
@@ -88,6 +98,7 @@ function download_gpcc_version() {
 
 # Install the gpcc on the database version
 function install_gpcc_version() {
+    set_path
     local ccver=`echo $2|sed 's/"//g'`
     local filename="/tmp/install_gpcc_$1_${ccver}.out"
     cd ${base_dir}/gpdb
@@ -98,6 +109,7 @@ function install_gpcc_version() {
 
 #Check if command center is working
 function check_cc() {
+    set_path
     local ccver=`echo $2|sed 's/"//g'`
     local filename="/tmp/install_gpcc_$1_${ccver}.out"
     local cc_url=`tail -10 ${filename} | grep "GPCC Web URL" | grep -Eo '(http|https)://[^,/"]+'`
@@ -108,6 +120,7 @@ function check_cc() {
 
 #Set env of the version and test
 function env_version() {
+    set_path
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/env_${ver}.out"
     cd ${base_dir}/gpdb
@@ -118,6 +131,7 @@ function env_version() {
 
 #Remove the version and test
 function remove_version() {
+    set_path
     local ver=`echo $1|sed 's/"//g'`
     local filename="/tmp/remove_${ver}.out"
     cd ${base_dir}/gpdb
@@ -128,6 +142,7 @@ function remove_version() {
 
 #Cleanup the files for the next run to proceed
 function cleanup() {
+   set_path
    local download_loc=${BASE_DIR}/${APPLICATION_NAME}${DOWNLOAD_DIR}
    {
         rm -rf /usr/local/greenplum* &
