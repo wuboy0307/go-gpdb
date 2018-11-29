@@ -97,7 +97,7 @@ TEST: GO GPDB Version: "5.13.0"
 [.....]
 ```
 
-a cross [X] indicated that checks didn't pass and you will need to check the logs to understand the reason. the logs are available on the location "/tmp"
+a cross [X] indicated that checks didn't pass 
 
 for eg.s
 
@@ -110,3 +110,5 @@ for eg.s
 [X] Checking if the CC Url 2.1.0 on gpdb Version 4.3.1.0 is working...
 [X] Return Code: [1]...
 ```
+
+and you will need to check the logs to understand the reason, the logs are available on the location "/tmp"
