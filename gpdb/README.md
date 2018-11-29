@@ -49,124 +49,90 @@ Use "gpdb [command] --help" for more information about a command.
 ### Download
 
 + To download product interactively
-
-```
-gpdb download
-```
-
+    ```
+    gpdb download
+    ```
 + To download a specific version
-
-```
-gpdb download -v <GPDB VERSION>
-```
-
+    ```
+    gpdb download -v <GPDB VERSION>
+    ```
 + To download and install a specific version
-
-```
-gpdb download -v <GPDB VERSION> --install
-```
-
+    ```
+    gpdb download -v <GPDB VERSION> --install
+    ```
 + To download GPCC software in interactive mode.
-
-```
-gpdb download -p gpcc
-```
-
+    ```
+    gpdb download -p gpcc
+    ```
 + To download GPCC software of specific version.
-
-```
-gpdb download -p gpcc -v <GPDB VERSION>
-```
-
+    ```
+    gpdb download -p gpcc -v <GPDB VERSION>
+    ```
 + To download all GPDB products in interactive mode
-
-```
-gpdb download -p gpextras
-```
-
+    ```
+    gpdb download -p gpextras
+    ```
 + To download all products of specific version.
-
-```
-gpdb download -p gpextras -v <GPDB VERSION>
-```
-
+    ```
+    gpdb download -p gpextras -v <GPDB VERSION>
+    ```
 + To obtain help menu of the download command
-
-```
-gpdb help download
-```
+    ```
+    gpdb help download
+    ```
 
 ### Install
 
 + To install gpdb
-
-```
-gpdb install -v <GPDB VERSION>
-```
-
+    ```
+    gpdb install -v <GPDB VERSION>
+    ```
 + To install gpdb & standby
-
-```
-gpdb install -v <GPDB VERSION> --standby
-```
-
+    ```
+    gpdb install -v <GPDB VERSION> --standby
+    ```
 + To install gpcc
-
-```
-gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
-```
-
+    ```
+    gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
+    ```
 + To obtain help menu of the install command
-
-```
-gpdb help install
-```
+    ```
+    gpdb help install
+    ```
 
 ### Env
 
 + To list all environment that has been installed and choose env in interactive mode.
-
-```
-gpdb env
-```
-
+    ```
+    gpdb env
+    ```
 +  To start and use a specific installation.
-
-```
-gpdb env -v <GPDB VERSION>
-```
-
+    ```
+    gpdb env -v <GPDB VERSION>
+    ```
 + To prevent stopping other environment when the environment is set.
-
-```
-gpdb env -v <GPDB VERSION> --dont-stop
-```
-
+    ```
+    gpdb env -v <GPDB VERSION> --dont-stop
+    ```
 + To obtain help menu of the env command
-
-```
-gpdb help env
-```
-
+    ```
+    gpdb help env
+    ```
+    
 ### Remove
 
 + To remove a particular installation.
-
-```
-gpdb remove -v <GPDB VERSION>
-```
-
+    ```
+    gpdb remove -v <GPDB VERSION>
+    ```
 + To remove a particular installation forcefully.
-
-```
-gpdb remove -v <GPDB VERSION> -f
-```
-
+    ```
+    gpdb remove -v <GPDB VERSION> -f
+    ```
 + To obtain help menu of the remove command
-
-```
-gpdb help remove
-```
+    ```
+    gpdb help remove
+    ```
 
 # Developers / Contributors
 

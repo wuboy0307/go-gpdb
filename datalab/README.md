@@ -29,10 +29,10 @@ Please follow the instruction and steps which are needed for the datalab cli to 
 # Installation
 
 + Git clone this repository to the location of your choice
-```
-cd /Users/xxxx/Document
-git clone https://github.com/pivotal-gss/go-gpdb.git 
-```
+    ```
+    cd /Users/xxxx/Document
+    git clone https://github.com/pivotal-gss/go-gpdb.git 
+    ```
 + Download the latest version of the datalab CLI from the [release link](https://github.com/pivotal-gss/go-gpdb/releases).
 + Run the setup as mentioned on the [setup](#setup) section and you are good to go.
 
@@ -41,18 +41,14 @@ git clone https://github.com/pivotal-gss/go-gpdb.git
 Run the below steps to start using the datalabs
 
 + Copy the datalab CLI to the bin location so that it can be accessed from anywhere
-
-```
-chmod +x <location-to-where-you-downloaded-datalab>/datalab
-cp <location-to-where-you-downloaded-datalab>/datalab /usr/local/bin/
-```
-
+    ```
+    chmod +x <location-to-where-you-downloaded-datalab>/datalab
+    cp <location-to-where-you-downloaded-datalab>/datalab /usr/local/bin/
+    ```
 + Now run the below command to setup up the network API and Repository location
-
-```
-datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Users/xxxx/Document/go-gpdb>
-```
-
+    ```
+    datalab update-config -t <pivnet-token> -l <location-to-the-repository eg.s /Users/xxxx/Document/go-gpdb>
+    ```
 To obtain the pivnet-token, Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (**PLEASE NOTE:** This token will change if you click on the “Request New API Token” again)
 
 # Usage
@@ -89,208 +85,156 @@ Use "datalab [command] --help" for more information about a command.
 ### Create
 
 + To create a single node vagrant VM (the default vagrant name is "gpdb")
-
-```
-datalab create
-```
-
+    ```
+    datalab create
+    ```
 + To create a single node vagrant VM with specific name
-
-```
-datalab create -n <name>
-```
-
+    ```
+    datalab create -n <name>
+    ```
 + To create a multi node vagrant VM with specific name
-
-```
-datalab create -n <name> -s 2
-```
-
+    ```
+    datalab create -n <name> -s 2
+    ```
 + To create a multi node vagrant VM & a standby host with specific name
-
-```
-datalab create -n <name> -s 2 --standby
-```
-
+    ```
+    datalab create -n <name> -s 2 --standby
+    ```
 + To create a multi node vagrant VM & a standby host with specific name and also configure cpu and memory ( i.e customize )
-
-```
-datalab create -n <name> -s 2 -c 2 -m 2048 --standby
-```
-
+    ```
+    datalab create -n <name> -s 2 -c 2 -m 2048 --standby
+    ```
 + Run the below command to get all the help of create subcommand
-
-```
-datalab help create
-```
+    ```
+    datalab help create
+    ```
 
 ### List
 
 + To list all the VM installed
-
-```
-datalab list
-```
-
+    ```
+    datalab list
+    ```
 + To list all the VM installed along with the vagrant global-status
-
-```
-datalab list -g
-```
-
+    ```
+    datalab list -g
+    ```
 + Run the below command to get all the help of list subcommand
-
-```
-datalab help list
-```
+    ```
+    datalab help list
+    ```
 
 ### Ssh
 
 + To ssh to the default VM (i.e gpdb)
-
-```
-datalab ssh
-```
-
+    ```
+    datalab ssh
+    ```
 + To ssh to a VM with non default name 
-
-```
-datalab ssh -n <name>
-```
-
+    ```
+    datalab ssh -n <name>
+    ```
 + Run the below command to get all the help of ssh subcommand
-
-```
-datalab help ssh
-```
+    ```
+    datalab help ssh
+    ```
 
 ### Up
 
 + To bring up the default VM (i.e gpdb)
-
-```
-datalab up
-```
-
+    ```
+    datalab up
+    ```
 + To bring up a VM with non default name 
-
-```
-datalab up -n <name>
-```
-
+    ```
+    datalab up -n <name>
+    ```
 + Run the below command to get all the help of up subcommand
-
-```
-datalab help up
-```
+    ```
+    datalab help up
+    ```
 
 ### Stop
 
 + To stop the default VM (i.e gpdb)
-
-```
-datalab stop
-```
-
+    ```
+    datalab stop
+    ```
 + To stop a VM with non default name 
-
-```
-datalab stop -n <name>
-```
-
+    ```
+    datalab stop -n <name>
+    ```
 + Run the below command to get all the help of stop subcommand
-
-```
-datalab help stop
-```
+    ```
+    datalab help stop
+    ```
 
 ### Status
 
 + To get status of the default VM (i.e gpdb)
-
-```
-datalab status
-```
-
+    ```
+    datalab status
+    ```
 + To get status of a VM with non default name 
-
-```
-datalab status -n <name>
-```
-
+    ```
+    datalab status -n <name>
+    ```
 + Run the below command to get all the help of status subcommand
-
-```
-datalab help status
-```
+    ```
+    datalab help status
+    ```
 
 ### Restart
 
 + To restart the default VM (i.e gpdb)
-
-```
-datalab restart
-```
-
+    ```
+    datalab restart
+    ```
 + To restart a VM with non default name 
-
-```
-datalab restart -n <name>
-```
-
+    ```
+    datalab restart -n <name>
+    ```
 + Run the below command to get all the help of restart subcommand
-
-```
-datalab help restart
-```
+    ```
+    datalab help restart
+    ```
 
 ### Destroy
 
 + To destroy a VM with a name 
-
-```
-datalab destroy -n <name>
-```
-
+    ```
+    datalab destroy -n <name>
+    ```
 + Run the below command to get all the help of destroy subcommand
-
-```
-datalab help destroy
-```
+    ```
+    datalab help destroy
+    ```
 
 ### Update Configuration
 
 + To update the datalab configuration of API token ( for eg.s if API token Change ) 
-
-```
-datalab update-config -t <new-token>
-```
-
+    ```
+    datalab update-config -t <new-token>
+    ```
 + To update the datalab configuration of go-gpdb repository 
-
-```
-datalab update-config -l <new-location>
-```
-
+    ```
+    datalab update-config -l <new-location>
+    ```
 + Run the below command to get all the help of update config subcommand
-
-```
-datalab help update-config
-```
+    ```
+    datalab help update-config
+    ```
 
 ### Delete Configuration
 
 + To delete the datalab configuration for example if VM is removed manually or some other reason 
-
-```
-datalab delete-config -n <vm-name>
-```
-
+    ```
+    datalab delete-config -n <vm-name>
+    ```
 + Run the below command to get all the help of delete config subcommand
-
-```
-datalab help delete-config
-```
+    ```
+    datalab help delete-config
+    ```
 
 # Developers / Contributors
 

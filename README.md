@@ -35,23 +35,19 @@ Please follow the below instruction on how to setup the prerequisite
 ### VirtualBox
 
 + If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
-
-```
-brew update
-brew cask install virtualbox
-```
-
+    ```
+    brew update
+    brew cask install virtualbox
+    ```
 + Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
-
-```
-IRFALI123:Vagrant fali$ ifconfig
-vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:00
-vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:01
-	inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
-```
-
+    ```
+    IRFALI123:Vagrant fali$ ifconfig
+    vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        ether 0a:00:27:00:00:00
+    vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
+        ether 0a:00:27:00:00:01
+        inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
+    ```
 if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
 
 ### Vagrant
