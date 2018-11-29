@@ -32,10 +32,20 @@ datalab create -s 2 --standby
 
 for more information on the datalab cli refer to the documentation here
 
-+ Once provision navigate to the directory 
++ Once provision connect and navigate to the directory 
 
 ```
+datalab ssh
 cd /gpdb/src/github.com/pivotal-gss/go-gpdb/gpdb
+```
+
++ Setup the path 
+
+```
+PATH=$PATH:$HOME/.local/bin:$HOME/bin:/usr/local/go/bin
+export GOROOT=/usr/local/go
+export GOPATH=/gpdb/
+export PATH
 ```
 
 + And download & install binaries
@@ -53,7 +63,7 @@ The reason why we need this step is to ensure we have a password less access so 
 go run *.go remove -v 5.13.0
 ```
 
-+ And go the test directory
++ And now go to the test directory
 
 ```
 cd /gpdb/src/github.com/pivotal-gss/go-gpdb/test
@@ -88,3 +98,15 @@ TEST: GO GPDB Version: "5.13.0"
 ```
 
 a cross [X] indicated that checks didn't pass and you will need to check the logs to understand the reason. the logs are available on the location "/tmp"
+
+for eg.s
+
+```
+[X] Checking if the CC Url 2.0 on gpdb Version 4.3.1.0 is working...
+[X] Return Code: [1]...
+[√] Downloading the cc version 2.1.0 for gpdb version 4.3.1.0...
+[X] Install the cc version 2.1.0 on gpdb Version 4.3.1.0...
+[X] Return Code: [1]...
+[X] Checking if the CC Url 2.1.0 on gpdb Version 4.3.1.0 is working...
+[X] Return Code: [1]...
+```

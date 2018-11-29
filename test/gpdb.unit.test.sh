@@ -57,13 +57,23 @@ function download_n_install_command_center() {
     local releaseID=`echo ${releases} | jq .releases[] | jq 'select(.version == "'${ver}'")' | jq .id`
     local incr=0
     products=`curl -s ${endpoint}/api/v2/products/${slug}/releases/${releaseID} -H "Authorization: Bearer ${access_token}" | jq '.'`
-    for j in `echo ${products} | jq .file_groups[] | jq 'select(.name == "Greenplum Command Center")' | jq .product_files[] | jq 'select(.file_type == "Software")' | jq .file_version`
+    cc_products=`echo ${products} | jq .file_groups[] | jq 'select(.name == "Greenplum Command Center")' | jq -r '.product_files[] | "\(.file_version) \(.file_type),"'`
+    OIFS=$IFS
+    IFS=","
+    echo ${cc_products} | while read -r line
     do
-        incr=$((${incr}+1))
-        download_gpcc_version ${ver} ${j} ${incr}
-        install_gpcc_version ${ver} ${j}
-        check_cc ${ver} ${j}
+        type=`echo ${line}| awk '{print $2}'`
+        cc_version=`echo ${line}| awk '{print $1}'`
+        if [[ ${type} == "Documentation" ]]; then
+            incr=$((${incr}+1))
+        else
+            incr=$((${incr}+1))
+            download_gpcc_version ${ver} ${cc_version} ${incr}
+            install_gpcc_version ${ver} ${cc_version}
+            check_cc ${ver} ${cc_version}
+        fi
     done
+    IFS=$OIFS
 }
 
 #Download the gpcc version for the database version
