@@ -75,6 +75,7 @@ func updateConfig() {
 	if !IsValueEmpty(cmdOptions.GoGPDBPath) {
 		Config.GoGPDBPath = cmdOptions.GoGPDBPath
 	}
+	saveConfig()
 }
 
 // Delete Configuration

@@ -136,7 +136,7 @@ func setupPath() {
 // Load the configuration file to the memory
 func config() {
 	// Load the configuration
-	configFile := "config.yml"
+	configFile := os.Getenv("HOME") + "/config.yml"
 	Debugf("Reading the configuration file and loading to the memory: %s", configFile)
 	configor.Load(&Config, configFile)
 

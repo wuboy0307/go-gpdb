@@ -32,6 +32,38 @@ cleanup() {
 
 trap cleanup EXIT
 
+env_go_lang() {
+    # Update Environment Variables if it doesn't exist
+	if ! ( grep -q "# GOLANG" /etc/profile.d/gpdb.profile.sh &>/dev/null ); then
+	    {
+	        sudo echo '# GOLANG'
+	        sudo echo 'export GOROOT=/usr/local/go'
+	        sudo echo 'export GOPATH=$BASE_DIR'
+	        sudo echo 'export GOBIN=/usr/local/bin'
+	        sudo echo 'export PATH=$PATH:$GOROOT/bin:$GOBIN/bin'
+	    } >> /etc/profile.d/gpdb.profile.sh
+		spinner $! "Update Environment Variables"
+		if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+
+	fi
+}
+
+## Install developer packages
+developer_packages() {
+    {
+      sudo yum install epel-release -y
+      sudo yum install jq -y
+    } &>> /tmp/yum.out
+    spinner $! "Installing Developer Packages"
+
+    {
+      source /etc/profile.d/gpdb.profile.sh
+      export GOBIN="/usr/local/bin"
+      sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh &
+    } &>> /tmp/yum.out
+    spinner $! "Installing Go package manager"
+}
+
 go_install() {	
 	# Download GO
 	{ wget -q https://storage.googleapis.com/golang/go$GO_BUILD.$OS-$ARCH.tar.gz -O $BASE_DIR/go.tar.gz & } &>/dev/null
@@ -49,18 +81,41 @@ go_install() {
 	# Notify	
 	log "$PASS GO Binary Version Installed: $GO_BUILD"
 
-	# Update Environment Variables if it doesn't exist
-	if ! ( grep -q "# GOLANG" /etc/profile.d/gpdb.profile.sh &>/dev/null ); then
-	    {
-	        echo '# GOLANG'
-	        echo 'export GOROOT=/usr/local/go'
-	        echo 'export GOPATH='$BASE_DIR
-	        echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'
-	    } >> /etc/profile.d/gpdb.profile.sh
-		spinner $! "Update Environment Variables"
-		if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
+	env_go_lang
+	developer_packages
+}
 
-	fi 	
+download_latest_gpdb_cli() {
+    env_go_lang
+
+    # Set the environment
+    source /etc/profile.d/gpdb.profile.sh
+
+    # cleanup old release if found any
+    { rm -rf $GOBIN/gpdb & } &>/dev/null
+    spinner $! "Cleaning up old gpdb releases"
+
+    # Download the latest build or release of gpdb cli
+    { curl -s https://api.github.com/repos/pivotal-gss/go-gpdb/releases/latest \
+      | grep "browser_download_url.*gpdb" \
+      | cut -d : -f 2,3 \
+      | tr -d \" \
+      | wget -qi - -O $GOBIN/gpdb &
+    } &> /dev/null
+    spinner $! "Downloading the latest release of the gpdb cli"
+
+    # Setting up the permission to execute of the gpdb CLI
+    {
+      chmod +x $GOBIN/gpdb &
+    } &> /dev/null
+    spinner $! "Setting the execute permission to the gpdb cli"
+
+    # Copy the config file to the home directory
+    {
+      cp /vagrant/gpdb/config.yml /home/gpadmin/
+      chown gpadmin:gpadmin /home/gpadmin/config.yml
+    } &> /dev/null
+    spinner $! "Copying the config file to the directory: /home/gpadmin"
 }
 
 banner "Configuration"
@@ -107,8 +162,9 @@ if [[ $1 == "true" ]]; then
     fi
 fi
 
+# Download the latest build of the gpdb cli
+banner "Download gpdb cli"
+download_latest_gpdb_cli
 source /etc/profile.d/gpdb.profile.sh
-
 build_complete=true
-
 exit 0

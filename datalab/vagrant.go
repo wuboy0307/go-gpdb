@@ -37,6 +37,7 @@ func createVM() {
 	Config.Vagrants = append(Config.Vagrants, vk)
 	env := generateEnvArray(cmdOptions.Cpu, cmdOptions.Memory, cmdOptions.Segments, cmdOptions.Os, cmdOptions.Subnet, cmdOptions.Hostname, cmdOptions.Standby, cmdOptions.Developer)
 	executeOsCommand("vagrant", env, "up")
+	saveConfig()
 }
 
 // ssh the VM
@@ -47,7 +48,7 @@ func sshVM() {
 		Fatalf(missingVMInOurConfig, "ssh", cmdOptions.Hostname, programName)
 	}
 	sshInfo := []string{
-		fmt.Sprintf("VAGRANT_DOTFILE_PATH=%[1]s/.vagrant VAGRANT_VAGRANTFILE=%[1]s/Vagrantfile vagrant ssh %s-m", removeSlash(Config.GoGPDBPath), cmdOptions.Hostname),
+		fmt.Sprintf("VAGRANT_DOTFILE_PATH=%[1]s/.vagrant VAGRANT_VAGRANTFILE=%[1]s/Vagrantfile GO_GPDB_HOSTNAME=\"%[2]s\" vagrant ssh %[2]s-m", removeSlash(Config.GoGPDBPath), cmdOptions.Hostname),
 	}
 	printOnScreen("Copy & Paste the below information on the terminal to connect to the VM", sshInfo)
 }

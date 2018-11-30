@@ -11,69 +11,56 @@ After the modification is done, it always better to test the basic functionality
 
 # Setup 
 
-+ Add the below line on the Vagrantfile, to mount the local drive to the VM that is provisioned by vagrant
-
-```
-# All Vagrant configuration is done below. 
-Vagrant.configure("2") do |config|
-
-  config.vm.synced_folder "/Users/xxxx/Documents/Project/go-gpdb/", "/gpdb"
-
-  @ip = IPAddr.new @subnet
-
-  config.vm.box = @vm_os
-```
++ Ensure that you have the GOPATH variable set so that vagrant can mount the local drive to the VM that is provisioned by vagrant
+    ```
+    # All Vagrant configuration is done below. 
+    Vagrant.configure("2") do |config|
+    
+       # Share the project folder if the developer mode is on
+        if (@developer_mode == 'true')
+          config.vm.synced_folder "#{@go_path}", "/gpdb"
+        end
+    ```
 
 + Now create a brand new VM with the below configuration
-
-```
-datalab create -s 2 --standby
-```
-
+    ```
+    datalab create -s 2 --standby --developer
+    ```
 for more information on the datalab cli refer to the documentation here
 
 + Once provision connect and navigate to the directory 
-
-```
-datalab ssh
-cd /gpdb/src/github.com/pivotal-gss/go-gpdb/gpdb
-```
-
+    ```
+    datalab ssh
+    cd /gpdb/src/github.com/pivotal-gss/go-gpdb/gpdb
+    ```
 + Setup the path 
-
-```
-PATH=$PATH:$HOME/.local/bin:$HOME/bin:/usr/local/go/bin
-export GOROOT=/usr/local/go
-export GOPATH=/gpdb/
-export PATH
-```
-
+    ```
+    PATH=$PATH:$HOME/.local/bin:$HOME/bin:/usr/local/go/bin
+    export GOROOT=/usr/local/go
+    export GOPATH=/gpdb/
+    export PATH
+    ```
 + And download & install binaries
-
-```
-go run *.go download -v 5.13.0
-go run *.go install -v 5.13.0
-```
-
+    ```
+    go run *.go download -v 5.13.0
+    go run *.go install -v 5.13.0
+    ```
 The reason why we need this step is to ensure we have a password less access so that the test can run without our intervention
 
-+ Now remove the installation 
-
-```
-go run *.go remove -v 5.13.0
-```
++ Now remove the installation  
+    ```
+    go run *.go remove -v 5.13.0
+    ```
 
 + And now go to the test directory
-
-```
-cd /gpdb/src/github.com/pivotal-gss/go-gpdb/test
-```
+    ```
+    cd /gpdb/src/github.com/pivotal-gss/go-gpdb/test
+    ```
 
 + Now run the test and wait for it to succeed in all the steps
-
-```
-/bin/bash gpdb.unit.test.sh
-```
+    ```
+    /bin/bash gpdb.unit.test.sh
+    ```
 
 # Understanding the output
 
@@ -97,9 +84,7 @@ TEST: GO GPDB Version: "5.13.0"
 [.....]
 ```
 
-a cross [X] indicated that checks didn't pass 
-
-for eg.s
+a cross [X] indicated that checks didn't pass for eg.s
 
 ```
 [X] Checking if the CC Url 2.0 on gpdb Version 4.3.1.0 is working...

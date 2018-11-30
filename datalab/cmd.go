@@ -40,9 +40,6 @@ var createCmd = &cobra.Command{
 	Aliases: []string{`c`},
 	Short: "Create the vagrant environment",
 	Long: "Create the vagrant environment and customize the environment",
-	PostRun: func(cmd *cobra.Command, args []string) {
-		saveConfig()
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		createVM()
 	},
@@ -159,9 +156,6 @@ var updateCmd = &cobra.Command{
 	Aliases: []string{`uc`},
 	Short: fmt.Sprintf("Update the configuration of the %s tool", programName),
 	Long:  fmt.Sprintf("Update the configuration of the %s tool", programName),
-	PostRun: func(cmd *cobra.Command, args []string) {
-		saveConfig()
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		updateConfig()
 	},
@@ -238,7 +232,7 @@ var rootCmd = &cobra.Command{
 func init ()  {
 	// root command flags
 	rootCmd.PersistentFlags().BoolVarP(&cmdOptions.Debug, "verbose", "v", false, "Enable verbose or debug logging")
-	rootCmd.PersistentFlags().BoolVar(&cmdOptions.Developer, "developer", false, "Enable verbose or debug logging")
+	rootCmd.PersistentFlags().BoolVar(&cmdOptions.Developer, "developer", false, "Setup the virtual machine with developer tools to build the go-gpdb binaries")
 	// Attach the sub command to the root command.
 	rootCmd.AddCommand(createCmd)
 	createFlags()
