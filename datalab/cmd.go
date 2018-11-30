@@ -71,7 +71,7 @@ var sshCmd = &cobra.Command{
 
 // All the usage flags of the ssh command
 func sshFlags() {
-	sshCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
+	sshCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to ssh to")
 }
 
 // The stop command.
@@ -87,7 +87,7 @@ var stopCmd = &cobra.Command{
 
 // All the usage flags of the stop command
 func stopFlags() {
-	stopCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
+	stopCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to stop")
 }
 
 // The up command.
@@ -103,7 +103,7 @@ var upCmd = &cobra.Command{
 
 // All the usage flags of the up command
 func upFlags() {
-	upCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
+	upCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to bring up")
 }
 
 // The status command.
@@ -118,7 +118,22 @@ var statusCmd = &cobra.Command{
 
 // All the usage flags of the status command
 func statusFlags() {
-	statusCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
+	statusCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to attain the status")
+}
+
+// The status command.
+var restartCmd = &cobra.Command{
+	Use:   "restart",
+	Short: "Restart / Reload of the vagrant environment",
+	Long: "Restart / Reload the vagrant environment that is already created",
+	Run: func(cmd *cobra.Command, args []string) {
+		restartVM()
+	},
+}
+
+// All the usage flags of the status command
+func restartFlags() {
+	restartCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to reload & restart")
 }
 
 // The destroy command.
@@ -133,7 +148,7 @@ var destroyCmd = &cobra.Command{
 
 // All the usage flags of the destroy command
 func destroyFlags() {
-	destroyCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that should be used when being provisioned")
+	destroyCmd.Flags().StringVarP(&cmdOptions.Hostname, "hostname","n",defaultHostname,"The name of the host that you want to destroy")
 	destroyCmd.MarkFlagRequired("hostname")
 }
 
@@ -235,6 +250,8 @@ func init ()  {
 	stopFlags()
 	rootCmd.AddCommand(statusCmd)
 	statusFlags()
+	rootCmd.AddCommand(restartCmd)
+	restartFlags()
 	rootCmd.AddCommand(destroyCmd)
 	destroyFlags()
 	rootCmd.AddCommand(updateCmd)
