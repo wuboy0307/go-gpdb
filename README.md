@@ -46,7 +46,7 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
         ether 0a:00:27:00:00:01
         inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
     ```
-if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
+    if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
 
 ### Vagrant
 
@@ -71,7 +71,7 @@ if its not shown then refer to the [link](http://islandora.ca/content/fixing-mis
 + Ensure you have completed all the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) as mentioned on the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) section above.
 + Download the latest version of the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/releases/latest) and follow the steps mentioned on the [installation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#installation) and [setup](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#setup) section to setup the datalab CLI
 + Provision the VM's using the steps mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create)
-+ Once successfully provisioned, you can now start using the gpdb cli to download, install & manage gpdb softwares, refer the [example](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#example) for more information
++ Once successfully provisioned, you can now start using the gpdb cli to download, install & manage gpdb software, refer the [example](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#example) for more information. **NOTE:** gpdb cli is automaticalled installed on the provision VM's
 
 # Tools
  

@@ -25,7 +25,7 @@ Datalab CLI is a wrapper to help you create and manage the vagrant VM with ease
 
 # Prerequisite
 
-Please follow the instruction and steps which are needed for the datalab cli to work.
+Please follow the [instruction and prerequisite steps](https://github.com/pivotal-gss/go-gpdb#prerequisite) which are needed for the datalab cli to work.
 
 # Installation
 
@@ -57,6 +57,8 @@ Run the below steps to start using the datalabs
 The usage information of datalab software
 
 ```
+The program manages like create / destroy / stop / list and helps to login to vagrant installation
+
 Usage:
   datalab [command] [flags]
   datalab [command]
@@ -67,6 +69,7 @@ Available Commands:
   destroy       Destroy the vagrant environment
   help          Help about any command
   list          list all the configuration from the datalab config file
+  restart       Restart / Reload of the vagrant environment
   ssh           SSH to the vagrant environment
   status        Status of the vagrant environment
   stop          Stop the vagrant environment
@@ -74,9 +77,10 @@ Available Commands:
   update-config Update the configuration of the datalab tool
 
 Flags:
-  -h, --help      help for datalab
-  -v, --verbose   Enable verbose or debug logging
-      --version   version for datalab
+      --developer   Setup the virtual machine with developer tools to build the go-gpdb binaries
+  -h, --help        help for datalab
+  -v, --verbose     Enable verbose or debug logging
+      --version     version for datalab
 
 Use "datalab [command] --help" for more information about a command.
 ```

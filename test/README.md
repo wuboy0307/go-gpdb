@@ -11,7 +11,7 @@ After the modification is done, it always better to test the basic functionality
 
 # Setup 
 
-+ Ensure that you have the GOPATH variable set so that vagrant can mount the local drive to the VM that is provisioned by vagrant
++ Ensure that you have the GOPATH variable set on your local machine so that vagrant can mount the local drive to the VM that is provisioned by vagrant
     ```
     # All Vagrant configuration is done below. 
     Vagrant.configure("2") do |config|

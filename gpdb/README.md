@@ -13,12 +13,12 @@ Table of Contents
 
 # Introduction
 
-This repo helps to download, install, remove and manage the software of GPDB / GPCC, either as single node installation or multi node installation.
+Gpdb CLI helps to download, install, remove and manage the software of GPDB / GPCC, either as single node installation or multi node installation.
 
 # Prerequisite
 
-+ You will need to first provision the vagrant VM, please follow the instruction as described on the datalab documentation to provision a vagrant VM.
-+ Make sure you are connected to internet to download the products and install packages on the provisioned VM's.
++ You will need to first provision the vagrant VM, please follow the instruction as described on the [datalab documentation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create) to provision a vagrant VM.
++ Make sure your provisioned can access the internet.
 
 # Usage 
 
