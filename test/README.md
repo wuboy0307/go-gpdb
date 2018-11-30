@@ -26,7 +26,7 @@ After the modification is done, it always better to test the basic functionality
     ```
     datalab create -s 2 --standby --developer
     ```
-for more information on the datalab cli refer to the documentation here
+    for more information on the datalab cli refer to the documentation here
 
 + Once provision connect and navigate to the directory 
     ```
@@ -45,7 +45,7 @@ for more information on the datalab cli refer to the documentation here
     go run *.go download -v 5.13.0
     go run *.go install -v 5.13.0
     ```
-The reason why we need this step is to ensure we have a password less access so that the test can run without our intervention
+    The reason why we need this step is to ensure we have a password less access so that the test can run without our intervention
 
 + Now remove the installation  
     ```
