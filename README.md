@@ -1,64 +1,58 @@
-# Introduction [![Go Version](https://img.shields.io/badge/go-v1.7.4-green.svg?style=flat-square)](https://golang.org/dl/) [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://github.com/ielizaga/piv-go-gpdb/blob/master/LICENSE)
+# Introduction [![Go Version](https://img.shields.io/badge/go-v1.11.1-green.svg?style=flat-square)](https://golang.org/dl/) [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://github.com/ielizaga/piv-go-gpdb/blob/master/LICENSE)
 
-This repo helps to download, install, remove and manage the software of GPDB / GPCC. This scripts is designed for a single node installation ( only primary ) and not for multipe node ( i.e primary / mirror )
+This reposistory is split into two parts
 
-# Table of Contents
++ Gpdb cli 
 
-- [System Requirements](#system-requirements)
-- [Setup](#setup)
-    - [Using Vagrant](#using-vagrant)
-    - [Manual method](#manual-method)
-- [Usage](#usage)
-- [Command Reference](#command-reference)
-     - [Download](#download)
-     - [Install](#install)
-     - [Environment](#environment)
-     - [Uninstall / Remove](#remove)
-- [Upgrade](#upgrade)
-     - [Vagrant](#vagrant)
-     - [Manual](#manual)
-- [Troubleshooting](#troubleshooting)
+    The gpdb cli helps to download, install, remove and manage the software of GPDB / GPCC.
 
-# System Requirements
++ Datalab cli
+    
+    The datalab cli helps to create & manage vagrant VM's provisioning.
+    
+Table of Contents
+=================
 
-+ CentOS 7
-+ RAM: 6 to 8 GM
-+ Hard Disk: 40GB
-+ Internet connection to download the product from PivNet.
-+ Vagrant version: 2.0.0 or above (if using vagrant)
+   * [Prerequisite](#prerequisite)
+        * [VirtualBox](#virtualbox)
+        * [Vagrant](#vagrant)
+   * [Tools](#tools)
+        * [Gpdb CLI](#gpdb-cli)
+        * [Datalab CLI](#datalab-cli)
+        * [UnitTest](#unittest)
+        * [Vagrant](#vagrant-1)
+   * [Developers / Contributor's](#developers--contributors) 
 
-# Setup
+# Prerequisite
 
-You can use either of the two method "using vagrant" or "manual" to install the gpdb auto installer, below is the step to install using the two methods.
+The "go-gpdb" software needs the below two tools pre-installed on your machine for it to work.
 
-### Using Vagrant
++ Vagrant
++ VirtualBox
 
-> ##### Vagrant Setup (PRE STEPS)
+Please follow the below instruction on how to setup the prerequisite
 
+### VirtualBox
 
-1. Install HomeBrew on your Mac OS if not already installed, click on this [link](https://brew.sh/) for instruction on how to install brew.
-2. If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
-
-```
-brew update
-brew cask install virtualbox
-```
-
-Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
-
-```
-IRFALI123:Vagrant fali$ ifconfig
-vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:00
-vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
-	ether 0a:00:27:00:00:01
-	inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
-
-```
-
++ If not already installed, [download](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-OSX.dmg) and install VirtualBox or you can use brew to install virtual box using the command
+    ```
+    brew update
+    brew cask install virtualbox
+    ```
++ Once you virtualbox installation is complete ensure you have two interfaces (namely vboxnet0/1 is seen) on your MAC,
+    ```
+    IRFALI123:Vagrant fali$ ifconfig
+    vboxnet0: flags=8842<BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+        ether 0a:00:27:00:00:00
+    vboxnet1: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
+        ether 0a:00:27:00:00:01
+        inet 192.168.11.1 netmask 0xffffff00 broadcast 192.168.11.255
+    ```
 if its not shown then refer to the [link](http://islandora.ca/content/fixing-missing-vboxnet0) for Virtualbox version lower than 5 and if your virtualbox version is 5 and above follow this [link](https://luppeng.wordpress.com/2017/07/17/enabling-virtualbox-host-only-adapter-on-mac-os-x/) on how to set those two interfaces up
 
-3. On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
+### Vagrant
+
++ On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
 
 ```
 brew update
@@ -72,301 +66,30 @@ brew update
 brew cask reinstall vagrant
 ```
 
-> ##### Repo Installation Steps (With Vagrant)
-
-1. Clone the repo
++ Once the vagrant is installed, install the vagrant plugin using the below command
 
 ```
-git clone https://github.com/ielizaga/piv-go-gpdb.git
+vagrant plugin install vagrant-hosts
 ```
 
-2. Go to the vagrant folder
+# Tools
+ 
+### Gpdb cli
 
-```
-cd piv-go-gpdb/Vagrant
-```
++ Please check the gpdb cli README for details on how to install & use the gpdb cli.
 
-3. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and scroll to the bottom of the page near “UAA API TOKEN” & click on the button “Request New API Token”, copy the token (PLEASE NOTE: This token will change if you click on the “Request New API Token” again)
-4. Open the **Vagrantfile** and update your API KEY.
+### Datalab cli
 
-```
-api_key = "APIKEY"
-```
++ Please check the datalab cli README for details on how to install & use the datalab cli.
 
-5. While in the vagrantfile, update the IP that is subnet of your virtualbox (needed to access command center locally on your mac).
+### UnitTest
 
-For eg.s
++ Please check the README on how to run the unit test case.
 
-As shown above (Vagrant Setup Section) my interface vboxnet1 is on the subnet 192.168.11.x, so a IP within that subnet range should work fine for accessing the VM within my MAC, so we have choosen an IP 192.168.11.10.
+### Vagrant 
 
-If your IP subnet is not "192.168.11.x" then replace "192.168.11.10" with IP that matches your IP subnet for your virtual box.
++ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned here for all the options.
 
-```
-node.vm.network "private_network", ip: "192.168.11.10", name: "vboxnet1"
-```
+# Developers / Contributor's
 
-6. Now execute the below command to bring the system up ```vagrant up```
-7. Once the setup is complete, Login to vagrant box using ```vagrant ssh```
-
-> **IMPORTANT:**
-
-If you shutdown vagrant using `vagrant halt` or reboot of your computer without suspending your vagrant VM, when attempting to start using `vagrant up` you might see the vagrant hung at the stage
-
-```
-Configuring and enabling network interfaces...
-```
-
-this is due to couple of [Issue 1](https://github.com/hashicorp/vagrant/issues/7876), [issue 2](https://github.com/hashicorp/vagrant/issues/8295) etc with vagrant software, so its best to suspending the VM using `vagrant suspend` rather than shutting down.
-
-if you do end up at the hung situtation, please destroy and recreate the VM.
-
-```
-vagrant destory
-vagrant up
-```
-
-> **OPTIONAL:**
-
-You can create alias like the one below for easy access (or shortcuts) to start / ssh to vagrant box, copy paste the below content on your MAC Terminal after updating the value of parameter `"VAGRANT_FILE_LOCATION"`.
-
-"VAGRANT_FILE_LOCATION" is the full path directory location where vagrant file is located i.e full path of directory "piv-go-gpdb/Vagrant".
-
-```
-{
-	echo
-	echo '# Vagrant specific alias ( shortcuts )'
-	echo 'export VAGRANT_FILE_LOCATION="< FULL DIRECTORY PATH OF YOUR VAGRANT FILE >"'
-	echo 'alias vdown="cd $VAGRANT_FILE_LOCATION; vagrant suspend; cd - 1>/dev/null"'
-	echo 'alias vup="cd $VAGRANT_FILE_LOCATION; vagrant up; cd - 1>/dev/null"'
-	echo 'alias vssh="cd $VAGRANT_FILE_LOCATION; vagrant ssh; cd - 1>/dev/null"'
-	echo 'alias vstatus="cd $VAGRANT_FILE_LOCATION; vagrant status; cd - 1>/dev/null"'
-	echo 'alias vdestroy="cd $VAGRANT_FILE_LOCATION; vagrant destroy -f; cd - 1>/dev/null"'
-	echo
-} >> $HOME/.profile
-```
-
-Once done source the ".profile" using ``` source $HOME/.profile ``` and start using the above shortcuts anywhere or in any directory on terminal.
-
-### Manual method
-
-1. Download the CentOS 7 ISO image from the [download site](http://isoredirect.centos.org/centos/7/isos/x86_64/)
-2. Install it on VMWare Fusion or VirtualBox
-3. When installing make sure you create a user called "gpadmin"
-4. Make sure the internet connection works (needed for downloading the product from PivNet)
-5. Once installed, login as root and
-6. Update the YUM repository
-
-```
-yum update
-```
-
-8. Install git
-
-```
-yum install git -y
-```
-
-9. Connect as "gpadmin"
-10. Clone the repo
-
-```
-git clone https://github.com/ielizaga/piv-go-gpdb.git
-```
-
-11. Navigate to [PivNet Edit Profile](https://network.pivotal.io/users/dashboard/edit-profile) and copy the API TOKEN
-12. Open the config.yml and update API TOKEN, and update the other configuration based on your environment like where to download , install etc.
-
-```
-API_TOKEN: <API TOKEN>                         # You can get it after login to PivNet
-```
-
-13. Now run the "setup.sh" file found in the "piv-go-gpdb" file.
-14. Open new terminal to use the software.
-
-# Usage
-
-The usage of software
-
-```
-Usage: gpdb [COMMAND]
-
-COMMAND:
-	download        Download software from PivNet
-	install         Install GPDB software on the host
-	remove          Remove a perticular Installation
-	env             Show all the environment of installed version
-	version         Show version of the script
-	help            Show help
-```
-
-# Command Reference
-
-### Download
-
-+ To download product in interactive mode, run
-
-```
-gpdb download
-```
-
-![gpdb download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download.gif)
-
-+ To download a specific version
-
-```
-gpdb download -v <GPDB VERSION>
-```
-
-![gpdb download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download_with_version.gif)
-
-+ To download and install a specific version
-
-```
-gpdb download -v <GPDB VERSION> -install
-```
-
-![gpdb download with install](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_download_and_install.gif)
-
-+ To download GPCC software in interactive mode.
-
-```
-gpdb download -p gpcc
-```
-
-![gpcc download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_download.gif)
-
-+ To download GPCC software of specific version.
-
-```
-gpdb download -p gpcc -v <GPDB VERSION>
-```
-
-![gpcc download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_download_with_version.gif)
-
-
-+ To download all products in interactive mode
-
-```
-gpdb download -p gpextras
-```
-![gpextras download](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/download_gp_extras.gif)
-
-+ To download all products of specific version.
-
-```
-gpdb download -p gpextras -v <GPDB VERSION>
-```
-
-![gpextras download with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/extras_download_with_version.gif)
-
-### Install
-
-+ To install gpdb
-
-```
-gpdb install -v <GPDB VERSION>
-```
-
-![gpdb install](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_install.gif)
-
-+ To install gpcc
-
-```
-gpdb install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>
-```
-
-![gpdb install with gpcc](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpcc_install.gif)
-
-### Environment
-
-+ To list all environment that has been installed and choose env in interactive mode.
-
-```
-gpdb env
-```
-
-![gpdb env](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/env_set.gif)
-
-+ To start and use a specific installation.
-
-```
-gpdb env -v <GPDB VERSION>
-```
-
-![gpdb env with version](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/env_with_version.gif)
-
-### Remove
-
-+ To remove a particular installation.
-
-```
-gpdb remove -v <GPDB VERSION>
-```
-
-![gpdb remove](https://github.com/faisaltheparttimecoder/piv-go-gpdb-images/blob/master/gifs/gpdb_remove.gif)
-
-# Upgrade
-
-To upgrade the piv-go-gpdb binaries.
-
-### Vagrant
-
-If you are using vagrant
-
-+ Navigate onto your local machine where your have cloned the repo
-+ run the below command to update your files
-
-```
-git pull
-```
-
-this will update all the files with the newer version of the code.
-
-+ Navigate to your Vagrantfile directory
-
-```
-cd Vagrant
-```
-
-+ Check if the APIKEY and the IP Address subnet in the Vagrantfile and ensure its matches to your environment, and if its not matching make appropriate changes as per your environment (check setup section on how to find your API KEY and what subnet the IP should be).
-+ destroy your vagrant env either using
-
-```
-vagrant destroy
-```
-
-+ and recreate it again using
-
-```
-vagrant up
-```
-
-### Manually
-
-If you have used your own VM for the piv-go-gpdb
-
-+ Connect to you VM via ssh
-+ Navigate to the folder where you have cloned the repo
-+ run the below command to pull the newer version of the code.
-
-```
-git pull
-```
-
-+ Check if the APIKEY in the config.yml is set as per your profile, and if not set make appropriate changes.
-+ and then run the setup.sh script to update your binaries.
-
-```
-/bin/sh setup.sh
-```
-
-# Troubleshooting
-
-+ When downloading the product, the script ends up with error 451.
-
-```
-user with email 'xxx@xxx.com' has not accepted the current EULA for release with 'id'=5349. Please manually accept the EULA via this URL: https://network.pivotal.io/products/60/releases/5349/eulas/120","links":{"eula":{"href":"https://network.pivotal.io/products/60/releases/5349/eulas/120"}}}
-2017-05-27 18:51:47:-FATAL:-API ERROR: HTTP Status code expected (200) / received (451), URL (https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/5349/product_files/21200/download)
-```
-
-As per the pivotal legal policy if you have never downloaded the product before then you are requested to manually login to the website and accept the EULA, this particular steps cannot be avoided. Once accepted it will never prompt you to accept the EULA again for that product.
+Please read the section on how to setup the environment to test and hack this tool
