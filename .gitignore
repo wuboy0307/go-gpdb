@@ -13,3 +13,7 @@ notes
 # Files
 .DS_Store
 UAA.token
+
+# Ignore binaries
+gpdb/gpdb
+datalab/datalab

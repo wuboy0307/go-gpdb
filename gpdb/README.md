@@ -24,7 +24,7 @@ Gpdb CLI helps to download, install, remove and manage the software of GPDB / GP
 # Installation
 
 + The gpdb cli is automatically downloaded and installed on the provisioned VM, there is no additional step needed.
-+ connect to the provisioned VM using [datalab ssh](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#ssh) and start using the gpdb cli using the [examples](#example) mentioned below
++ Connect to the provisioned VM using [datalab ssh](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#ssh) and start using the gpdb cli using the [examples](#example) mentioned below
 
 # Usage 
 
