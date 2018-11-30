@@ -3,6 +3,7 @@ Table of Contents
 
    * [Introduction](#introduction)
    * [Prerequisite](#prerequisite)
+   * [Installation](#installation)
    * [Usage](#usage)
    * [Example](#example)
         * [Download](#download)
