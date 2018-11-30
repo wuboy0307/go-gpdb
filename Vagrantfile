@@ -4,6 +4,10 @@
 # Includes
 require "ipaddr"
 
+# Developer options
+@developer_mode = ENV['DEVELOPER_MODE'] || false
+@go_path = ENV['GOPATH'] ||""
+
 # EVN PIVNET DEFAULTS
 @pivnet_token = ENV['UAA_API_TOKEN'] || ""
 
@@ -41,6 +45,11 @@ end
 
 # All Vagrant configuration is done below. 
 Vagrant.configure("2") do |config|
+
+  # Share the project folder if the developer mode is on
+  if (@developer_mode == 'true')
+    config.vm.synced_folder "#{@go_path}", "/gpdb"
+  end
 
   @ip = IPAddr.new @subnet
 
@@ -88,8 +97,8 @@ Vagrant.configure("2") do |config|
 
   # Prepare the host that was provisioned
   # Provisioning
-     config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
+     config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments, @developer_mode]
   # Developer Mode
-     config.vm.provision :shell, path: 'scripts/go.build.sh'
+     config.vm.provision :shell, path: 'scripts/go.build.sh', :args => [@developer_mode]
 
 end

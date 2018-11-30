@@ -87,7 +87,7 @@ func getVagrantKeyFromConfig(command string) VagrantKey {
 // Generate a env based on what key we got
 func generateEnvByVagrantKey(command string) []string {
 	vk := getVagrantKeyFromConfig(command)
-	return generateEnvArray(vk.CPU, vk.Memory, vk.Segment, vk.Os, vk.Subnet, vk.Name, vk.Standby)
+	return generateEnvArray(vk.CPU, vk.Memory, vk.Segment, vk.Os, vk.Subnet, vk.Name, vk.Standby, vk.Developer)
 }
 
 // Remove slash at suffix

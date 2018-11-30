@@ -31,6 +31,7 @@ type Command struct {
 	Token 		string
 	GoGPDBPath  string
 	GlobalStatus bool
+	Developer 	bool
 }
 
 // The create command.
@@ -222,6 +223,7 @@ var rootCmd = &cobra.Command{
 func init ()  {
 	// root command flags
 	rootCmd.PersistentFlags().BoolVarP(&cmdOptions.Debug, "verbose", "v", false, "Enable verbose or debug logging")
+	rootCmd.PersistentFlags().BoolVar(&cmdOptions.Developer, "developer", false, "Enable verbose or debug logging")
 	// Attach the sub command to the root command.
 	rootCmd.AddCommand(createCmd)
 	createFlags()

@@ -60,15 +60,17 @@ spinner $! "Cleaning RPM cache"
 { sudo yum -y -q -e 0 install bc ed gdb git m4 strace tar unzip vim-enhanced wget & } &> /tmp/yum.out
 spinner $! "Installing RPMs"
 
-{ sudo yum install epel-release -y
-  sudo yum install jq -y
-  sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-} &> /tmp/yum.out
-spinner $! "Installing Developer tools"
+## Install developer packages
+if [[ $3 == "true" ]]; then
+    { sudo yum install epel-release -y
+      sudo yum install jq -y
+      sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    } &> /tmp/yum.out
+    spinner $! "Installing Developer tools"
+fi
 
 ## Default Directories & Permissions
 banner "Default Directories & Permissions"
-#TODO: Fix the permission issues at very end of the refactor of the code (this fails after vagrant provision)
 { 
   sudo chmod 777 /usr/local
   sudo chmod 777 /usr/local/src

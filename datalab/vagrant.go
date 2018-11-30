@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 // Generate the environment
-func generateEnvArray(cpu, memory, segments int, os, subnet, hostname string, standby bool) []string {
+func generateEnvArray(cpu, memory, segments int, os, subnet, hostname string, standby, developer bool) []string {
 	return []string{
 		fmt.Sprintf("UAA_API_TOKEN=%s", Config.APIToken),
 		fmt.Sprintf("VM_OS=%s", os),
@@ -13,6 +13,7 @@ func generateEnvArray(cpu, memory, segments int, os, subnet, hostname string, st
 		fmt.Sprintf("GO_GPDB_HOSTNAME=%s", hostname),
 		fmt.Sprintf("GO_GPDB_SEGMENTS=%d", segments),
 		fmt.Sprintf("GO_GPDB_STANDBY=%t", standby),
+		fmt.Sprintf("DEVELOPER_MODE=%t", developer),
 	}
 }
 
@@ -27,13 +28,14 @@ func createVM() {
 		cmdOptions.Os,
 		cmdOptions.Subnet,
 		cmdOptions.Segments,
+		cmdOptions.Developer,
 	}
 	_, exists := nameInConfig(cmdOptions.Hostname)
 	if exists {
 		Fatalf(alreadyExists, cmdOptions.Hostname, programName)
 	}
 	Config.Vagrants = append(Config.Vagrants, vk)
-	env := generateEnvArray(cmdOptions.Cpu, cmdOptions.Memory, cmdOptions.Segments, cmdOptions.Os, cmdOptions.Subnet, cmdOptions.Hostname, cmdOptions.Standby)
+	env := generateEnvArray(cmdOptions.Cpu, cmdOptions.Memory, cmdOptions.Segments, cmdOptions.Os, cmdOptions.Subnet, cmdOptions.Hostname, cmdOptions.Standby, cmdOptions.Developer)
 	executeOsCommand("vagrant", env, "up")
 }
 

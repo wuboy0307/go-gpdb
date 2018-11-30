@@ -22,6 +22,7 @@ type VagrantKey struct {
 	Os       string `json:"os,omitempty"`
 	Subnet   string `json:"subnet,omitempty"`
 	Segment  int    `json:"segment"`
+	Developer bool 	`json:"developer"`
 }
 
 var (
