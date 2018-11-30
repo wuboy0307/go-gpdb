@@ -13,7 +13,6 @@ This repository is split into two parts
 Table of Contents
 =================
 
-   * [Table of Contents](#table-of-contents)
    * [Prerequisite](#prerequisite)
         * [VirtualBox](#virtualbox)
         * [Vagrant](#vagrant)

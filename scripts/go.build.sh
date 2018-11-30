@@ -6,11 +6,13 @@ source /vagrant/scripts/functions.h
 source <(parse_yaml /vagrant/gpdb/config.yml)
 set +e
 
+## abort information
 abort() {
 	log "$FAIL Return Code: [$1]"
 	exit $1
 }
 
+## cleanup
 cleanup() {
 	banner "Cleanup"
 	
@@ -64,6 +66,7 @@ developer_packages() {
     spinner $! "Installing Go package manager"
 }
 
+## Install the go binaries if requested
 go_install() {	
 	# Download GO
 	{ wget -q https://storage.googleapis.com/golang/go$GO_BUILD.$OS-$ARCH.tar.gz -O $BASE_DIR/go.tar.gz & } &>/dev/null
@@ -85,6 +88,7 @@ go_install() {
 	developer_packages
 }
 
+## Download the latest version of the gpdb cli from the github release link
 download_latest_gpdb_cli() {
     env_go_lang
 
@@ -121,7 +125,7 @@ download_latest_gpdb_cli() {
 
 banner "Configuration"
 
-# Internet Connetivity
+##  Internet Connetivity
 { wget -q --tries=2 --timeout=5 --spider http://google.com & } &>/dev/null
 spinner $! "Internet Connection"
 if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
@@ -163,7 +167,7 @@ if [[ $1 == "true" ]]; then
     fi
 fi
 
-# Download the latest build of the gpdb cli
+##  Download the latest build of the gpdb cli
 banner "Download gpdb cli"
 download_latest_gpdb_cli
 source /etc/profile.d/gpdb.profile.sh
