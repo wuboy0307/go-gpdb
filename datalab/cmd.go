@@ -40,6 +40,7 @@ var createCmd = &cobra.Command{
 	Aliases: []string{`c`},
 	Short: "Create the vagrant environment",
 	Long: "Create the vagrant environment and customize the environment",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create",
 	Run: func(cmd *cobra.Command, args []string) {
 		createVM()
 	},
@@ -61,6 +62,7 @@ var sshCmd = &cobra.Command{
 	Use:   "ssh",
 	Short: "SSH to the vagrant environment",
 	Long: "SSH the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#ssh",
 	Run: func(cmd *cobra.Command, args []string) {
 		sshVM()
 	},
@@ -77,6 +79,7 @@ var stopCmd = &cobra.Command{
 	Aliases: []string{`s`},
 	Short: "Stop the vagrant environment",
 	Long: "Stop the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#stop",
 	Run: func(cmd *cobra.Command, args []string) {
 		stopVM()
 	},
@@ -93,6 +96,7 @@ var upCmd = &cobra.Command{
 	Aliases: []string{`u`},
 	Short: "Bring up the vagrant environment",
 	Long: "Bring up the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#up",
 	Run: func(cmd *cobra.Command, args []string) {
 		upVM()
 	},
@@ -108,6 +112,7 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Status of the vagrant environment",
 	Long: "Status the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#status",
 	Run: func(cmd *cobra.Command, args []string) {
 		statusVM()
 	},
@@ -123,6 +128,7 @@ var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Restart / Reload of the vagrant environment",
 	Long: "Restart / Reload the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#restart",
 	Run: func(cmd *cobra.Command, args []string) {
 		restartVM()
 	},
@@ -138,6 +144,7 @@ var destroyCmd = &cobra.Command{
 	Use:   "destroy",
 	Short: "Destroy the vagrant environment",
 	Long: "Destroy the vagrant environment that is already created",
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#destroy",
 	Run: func(cmd *cobra.Command, args []string) {
 		destroyVM()
 	},
@@ -156,6 +163,7 @@ var updateCmd = &cobra.Command{
 	Aliases: []string{`uc`},
 	Short: fmt.Sprintf("Update the configuration of the %s tool", programName),
 	Long:  fmt.Sprintf("Update the configuration of the %s tool", programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#update-configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		updateConfig()
 	},
@@ -173,6 +181,7 @@ var deleteCmd = &cobra.Command{
 	Aliases: []string{`dc`},
 	Short: fmt.Sprintf("Delete the configuration from the %s config file", programName),
 	Long: fmt.Sprintf("Delete the configuration from the %s config file", programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#delete-configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteConfigKey()
 	},
@@ -190,6 +199,7 @@ var listCmd = &cobra.Command{
 	Aliases: []string{`l`},
 	Short: fmt.Sprintf("list all the configuration from the %s config file", programName),
 	Long: fmt.Sprintf("list all the configuration from the %s config file", programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#list",
 	Run: func(cmd *cobra.Command, args []string) {
 		listVM()
 	},

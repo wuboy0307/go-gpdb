@@ -16,6 +16,7 @@ Table of Contents
         * [Restart](#restart)
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
+        * [Delete Configuration](#delete-configuration)
    * [Developers / Contributors](#developers--contributors)
 
 # Introduction

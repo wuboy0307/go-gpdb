@@ -31,7 +31,7 @@ var downloadCmd = &cobra.Command{
 	Aliases: []string{`d`},
 	Short: "Download the product from pivotal network",
 	Long:  "Download sub-command helps to download the products that are greenplum related from pivotal network",
-	Example: fmt.Sprintf(downloadExample(), programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#download",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Accept only the options that we care about
 		if !Contains(AcceptedDownloadProduct, cmdOptions.Product) {
@@ -51,37 +51,6 @@ func downloadFlags() {
 	downloadCmd.Flags().BoolVar(&cmdOptions.Install, "install", false, "OPTIONAL: Install after downloaded (Only works with \"gpdb\")?")
 }
 
-// download examples
-func downloadExample() string {
-	return `=> To download product interactively
-
-%[1]s download
-
-=> To download a specific version
-
-%[1]s download -v <GPDB VERSION>
-
-=> To download and install a specific version
-
-%[1]s download -v <GPDB VERSION> --install
-
-=> To download GPCC software in interactive mode.
-
-%[1]s download -p gpcc
-
-=> To download GPCC software of specific version.
-
-%[1]s download -p gpcc -v <GPDB VERSION>
-
-=> To download all GPDB products in interactive mode
-
-%[1]s download -p gpextras
-
-=> To download all products of specific version.
-
-%[1]s download -p gpextras -v <GPDB VERSION>`
-}
-
 // Sub Command: Install
 // When this command is used it goes and install the product that was downloaded from above
 var installCmd = &cobra.Command{
@@ -89,7 +58,7 @@ var installCmd = &cobra.Command{
 	Aliases: []string{`i`},
 	Short: "Install the product downloaded from download command",
 	Long:  "Install sub-command helps to install the products that was downloaded using the download command",
-	Example: fmt.Sprintf(installExample(), programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#install",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Accept only the options that we care about
 		if !Contains(AcceptedInstallProduct, cmdOptions.Product) {
@@ -119,21 +88,6 @@ func installFlags() {
 	installCmd.Flags().BoolVar(&cmdOptions.Standby, "standby", false, "OPTIONAL: Install standby if the standby host is available")
 }
 
-// Install example
-func installExample() string {
-	return `=> To install gpdb
-
-%[1]s install -v <GPDB VERSION>
-
-=> To install gpdb & standby
-
-%[1]s install -v <GPDB VERSION> --standby
-
-=> To install gpcc
-
-%[1]s install -p gpcc -v <GPDB VERSION> -c <GPCC VERSION>`
-}
-
 // Sub Command: Remove
 // When this command is used it goes and remove the product that was installed by this program
 var removeCmd = &cobra.Command{
@@ -141,7 +95,7 @@ var removeCmd = &cobra.Command{
 	Aliases: []string{`r`},
 	Short: "Removes the product installed using the install command",
 	Long:  "Remove sub-command helps to remove the products that was installed using the install command",
-	Example: fmt.Sprintf(removeExample(), programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#remove",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Remove the installation
 		remove()
@@ -155,17 +109,6 @@ func removeFlags() {
 	removeCmd.Flags().BoolVarP(&cmdOptions.Force, "force", "f",false, "OPTIONAL: If the database start fails, use force to force manual removal")
 }
 
-// Remove example
-func removeExample() string {
-	return `=> To remove a particular installation.
-
-%[1]s remove -v <GPDB VERSION>
-
-=> To remove a particular installation forcefully.
-
-%[1]s remove -v <GPDB VERSION> -f`
-}
-
 // Sub Command: Environment
 // When this command is used it goes and remove the product that was installed by this program
 var envCmd = &cobra.Command{
@@ -173,7 +116,7 @@ var envCmd = &cobra.Command{
 	Aliases: []string{`e`},
 	Short: "Show all the environment installed",
 	Long:  "Env sub-command helps to show all the products version installed",
-	Example: fmt.Sprintf(envExample(), programName),
+	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#env",
 	Run: func(cmd *cobra.Command, args []string) {
 		// search the env directory for the environment files
 		// and broadcast to the user
@@ -185,21 +128,6 @@ var envCmd = &cobra.Command{
 func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
 	envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
-}
-
-// Env example
-func envExample() string {
-	return `=> To list all environment that has been installed and choose env in interactive mode.
-
-%[1]s env
-
-=> To start and use a specific installation.
-
-%[1]s env -v <GPDB VERSION>
-
-=> To prevent stopping other environment when the environment is set.
-
-%[1]s env -v <GPDB VERSION> --dont-stop`
 }
 
 // The root CLI.

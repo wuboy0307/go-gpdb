@@ -1,36 +1,34 @@
 # Introduction [![Go Version](https://img.shields.io/badge/go-v1.11.1-green.svg?style=flat-square)](https://golang.org/dl/) [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://github.com/ielizaga/piv-go-gpdb/blob/master/LICENSE)
 
-This reposistory is split into two parts
+This repo helps in making it ease to setup greenplum database on your local environment. You can provision single node deployment or multi node deployment cluster and test the functionality of the product
 
-+ Gpdb cli 
+This repository is split into two parts
 
-    The gpdb cli helps to download, install, remove and manage the software of GPDB / GPCC.
++ Datalab cli 
+    > The datalab cli helps to create & manage vagrant VM's provisioning.
++ Gpdb cli
+    > The gpdb cli helps to download, install, remove and manage the software of GPDB / GPCC.)
 
-+ Datalab cli
-    
-    The datalab cli helps to create & manage vagrant VM's provisioning.
     
 Table of Contents
 =================
 
+   * [Table of Contents](#table-of-contents)
    * [Prerequisite](#prerequisite)
         * [VirtualBox](#virtualbox)
         * [Vagrant](#vagrant)
+   * [Installation](#installation)
    * [Tools](#tools)
-        * [Gpdb CLI](#gpdb-cli)
-        * [Datalab CLI](#datalab-cli)
+        * [Gpdb cli](#gpdb-cli)
+        * [Datalab cli](#datalab-cli)
         * [UnitTest](#unittest)
         * [Vagrant](#vagrant-1)
-   * [Developers / Contributor's](#developers--contributors) 
+   * [Developers / Contributor's](#developers--contributors)
+
 
 # Prerequisite
 
-The "go-gpdb" software needs the below two tools pre-installed on your machine for it to work.
-
-+ Vagrant
-+ VirtualBox
-
-Please follow the below instruction on how to setup the prerequisite
+The "go-gpdb" software needs the below two tools pre-installed on your machine for it to work. Please follow the below instruction on how to setup the prerequisite
 
 ### VirtualBox
 
@@ -53,42 +51,45 @@ if its not shown then refer to the [link](http://islandora.ca/content/fixing-mis
 ### Vagrant
 
 + On your MAC install vagrant using the below command ( if vagrant executable is not already installed )
-
-```
-brew update
-brew cask install vagrant
-```
-
-If you have already installed vagrant ensure you are running the latest version of vagrant, to update your vagrant run
-
-```
-brew update
-brew cask reinstall vagrant
-```
-
+    ```
+    brew update
+    brew cask install vagrant
+    ```
+    If you have already installed vagrant ensure you are running the latest version of vagrant, to update your vagrant run
+    ```
+    brew update
+    brew cask reinstall vagrant
+    ```
 + Once the vagrant is installed, install the vagrant plugin using the below command
 
-```
-vagrant plugin install vagrant-hosts
-```
+    ```
+    vagrant plugin install vagrant-hosts
+    ```
+
+# Installation
+
++ Ensure you have completed all the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) as mentioned on the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) section above.
++ Download the latest version of the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/releases/latest) and follow the steps mentioned on the [installation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#installation) and [setup](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#setup) section to setup the datalab CLI
++ Provision the VM's using the steps mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create)
++ Once successfully provisioned, you can now start using the gpdb cli to download, install & manage gpdb softwares, refer the [example](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#example) for more information
 
 # Tools
  
 ### Gpdb cli
 
-+ Please check the gpdb cli README for details on how to install & use the gpdb cli.
++ Please check the gpdb cli [README](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/README.md) for details on how to install & use the gpdb cli.
 
 ### Datalab cli
 
-+ Please check the datalab cli README for details on how to install & use the datalab cli.
++ Please check the datalab cli [README](https://github.com/pivotal-gss/go-gpdb/blob/master/datalab/README.md) for details on how to install & use the datalab cli.
 
 ### UnitTest
 
-+ Please check the README on how to run the unit test case.
++ Please check the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) on how to run the unit test case.
 
 ### Vagrant 
 
-+ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned here for all the options.
++ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/scripts/README.md) for all the options.
 
 # Developers / Contributor's
 
