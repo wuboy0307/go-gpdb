@@ -23,7 +23,7 @@ This folder contains a set of bash script that helps to make sure the OS contain
 If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/blob/master/datalab/README.md), here are few steps.
 + The vagrant file is located [here](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfile)
 + The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/README.md#environment)
-+ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/README.md##vms-setup-files))
++ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/README.md#vms-setup-files))
 
 # Environment
 
@@ -90,16 +90,16 @@ Here are the details of the files found on the [script](https://github.com/pivot
 
 ### functions.h
 
-Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://github.com/pivotal-gss/go-gpdb/tree/master/test) to work perfectly
++ Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://github.com/pivotal-gss/go-gpdb/tree/master/test) to work perfectly
 
 ### os.prep.sh
 
-Install basic packages / setup users & set proper permission for the default user to use the provisioned VM
++ Install basic packages / setup users & set proper permission for the default user to use the provisioned VM
 
 ### go.build.sh
 
-Install the go binaries & basic dev packages if in developers mode and also download and sets up the gpdb cli so that the user can start using the VM without any extra work
++ Install the go binaries & basic dev packages if in developers mode and also download and sets up the gpdb cli so that the user can start using the VM without any extra work
 
 # Developer Mode VM
 
-To understand more on the developer mode VM, refer to the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) of the test
++ To understand more on the developer mode VM, refer to the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) of the test

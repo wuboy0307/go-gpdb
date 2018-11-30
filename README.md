@@ -93,4 +93,4 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 # Developers / Contributor's
 
-Please read the section on how to setup the environment to test and hack this tool
+Please read the [section](https://github.com/pivotal-gss/go-gpdb/blob/master/DEVLEOPER.md) on how to setup the environment to test and hack this tool
