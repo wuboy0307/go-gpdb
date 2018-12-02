@@ -17,6 +17,7 @@ Table of Contents
         * [VirtualBox](#virtualbox)
         * [Vagrant](#vagrant)
    * [Installation](#installation)
+   * [Installation Demo](#installation-demo)
    * [Tools](#tools)
         * [Gpdb cli](#gpdb-cli)
         * [Datalab cli](#datalab-cli)
