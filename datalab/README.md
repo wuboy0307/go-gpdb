@@ -17,6 +17,7 @@ Table of Contents
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
         * [Delete Configuration](#delete-configuration)
+   * [Demo](#demo)
    * [Developers / Contributors](#developers--contributors)
 
 # Introduction
@@ -240,6 +241,9 @@ Use "datalab [command] --help" for more information about a command.
     ```
     datalab help delete-config
     ```
+# Demo
+
+[![asciicast](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd.svg)](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd)
 
 # Developers / Contributors
 

@@ -4,12 +4,14 @@ Table of Contents
    * [Introduction](#introduction)
    * [Prerequisite](#prerequisite)
    * [Installation](#installation)
+   * [Installation Demo](#installation-demo)
    * [Usage](#usage)
    * [Example](#example)
         * [Download](#download)
         * [Install](#install)
         * [Env](#env)
         * [Remove](#remove)
+   * [Demo](#demo)
    * [Developers / Contributors](#developers--contributors)
 
 # Introduction
@@ -139,6 +141,10 @@ Use "gpdb [command] --help" for more information about a command.
     ```
     gpdb help remove
     ```
+
+# Demo
+
+[![asciicast](https://asciinema.org/a/HqncgdNd3CmuexNSHbXmtrL4w.svg)](https://asciinema.org/a/HqncgdNd3CmuexNSHbXmtrL4w)
 
 # Developers / Contributors
 
