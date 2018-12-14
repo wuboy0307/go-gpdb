@@ -14,14 +14,16 @@ abort() {
 
 ## cleanup
 cleanup() {
-	banner "Cleanup"
-	
-	for package in "${src[@]}"
-	do
-		{ rm -rf $package & } &>/dev/null
-		spinner $! "Removing Temporary File: $package"
-	done
-	
+
+	if [[ ${#src} -gt 0 ]]; then
+		banner "Cleanup"
+		for package in "${src[@]}"
+		do
+			{ rm -rf $package & } &>/dev/null
+			spinner $! "Removing Temporary File: $package"
+		done
+	fi
+
 	if [[ -z "${build_complete}" ]]; then
 		banner "Failed"
 		log "$FAIL /vagrant/scripts/go.build.sh"
@@ -42,7 +44,7 @@ env_go_lang() {
 	        sudo echo 'export GOROOT=/usr/local/go'
 	        sudo echo 'export GOPATH=$BASE_DIR'
 	        sudo echo 'export GOBIN=/usr/local/bin'
-	        sudo echo 'export PATH=$PATH:$GOROOT/bin:$GOBIN/bin'
+	        sudo echo 'export PATH=$PATH:$GOROOT/bin:$GOBIN'
 	    } >> /etc/profile.d/gpdb.profile.sh
 		spinner $! "Update Environment Variables"
 		if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
@@ -50,24 +52,8 @@ env_go_lang() {
 	fi
 }
 
-## Install developer packages
-developer_packages() {
-    {
-      sudo yum install epel-release -y
-      sudo yum install jq -y
-    } &>> /tmp/yum.out
-    spinner $! "Installing Developer Packages"
-
-    {
-      source /etc/profile.d/gpdb.profile.sh
-      export GOBIN="/usr/local/bin"
-      sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh &
-    } &>> /tmp/yum.out
-    spinner $! "Installing Go package manager"
-}
-
 ## Install the go binaries if requested
-go_install() {	
+go_install() {
 	# Download GO
 	{ wget -q https://storage.googleapis.com/golang/go$GO_BUILD.$OS-$ARCH.tar.gz -O $BASE_DIR/go.tar.gz & } &>/dev/null
 	spinner $! "Downloading GO Binary: $GO_BUILD"
@@ -77,15 +63,13 @@ go_install() {
 	{ tar -C "/usr/local" -xzf $BASE_DIR/go.tar.gz & } &>/dev/null
 	spinner $! "Extracting: $GO_BUILD"
 	if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
-		
+
 	{ rm -rf "$BASE_DIR/go.tar.gz" & } &>/dev/null
 	spinner $! "Removing Temporary File: $BASE_DIR/go.tar.gz"
-	
-	# Notify	
+
+	# Notify
 	log "$PASS GO Binary Version Installed: $GO_BUILD"
 
-	env_go_lang
-	developer_packages
 }
 
 ## Download the latest version of the gpdb cli from the github release link
@@ -142,9 +126,7 @@ if [[ $1 == "true" ]]; then
     spinner $! "YAML: HOSTNAME: `hostname`"
     if [[ $? -ne 0 ]]; then wait $!; abort $?; fi
 
-    banner "GOLANG Installation"
-
-    # GO Binaries
+    banner "GO Binary Installation"
     if ! [[ -d "/usr/local/go" ]]; then
         go_install
     else
@@ -165,11 +147,31 @@ if [[ $1 == "true" ]]; then
             go_install
         fi
     fi
+
+		# env_go_lang # Should already be sourced from profile
+		banner "GO Developer Packages"
+		{
+			if ! [ -x "$(command -v dep)" ]; then
+				sudo curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh &
+			fi
+    } &>> /tmp/go.build.out
+    spinner $! "GO: Package Manager"
+
+		{ go get github.com/pivotal-gss/go-gpdb/gpdb & } &>/dev/null
+		spinner $! "GO: GPDB Project Files"
+
+		{
+			cd $GOPATH/src/github.com/pivotal-gss/go-gpdb/gpdb
+			dep init
+		} &>> /tmp/go.build.out
+		spinner $! "GO: Downloading Dependencies"
+
+else
+	banner "Download gpdb CLI"
+	download_latest_gpdb_cli
 fi
 
 ##  Download the latest build of the gpdb cli
-banner "Download gpdb cli"
-download_latest_gpdb_cli
-source /etc/profile.d/gpdb.profile.sh
+# source /etc/profile.d/gpdb.profile.sh
 build_complete=true
 exit 0

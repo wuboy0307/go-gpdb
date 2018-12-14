@@ -43,7 +43,7 @@ def build_vm( config, hostname, ip )
     end
 end
 
-# All Vagrant configuration is done below. 
+# All Vagrant configuration is done below.
 Vagrant.configure("2") do |config|
 
   # Share the project folder if the developer mode is on
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
   @ip = IPAddr.new @subnet
 
   config.vm.box = @vm_os
-  
+
   # If "vagrant ssh", login As gpadmin, without hacking the vagrant profile
   if ARGV[0] == "ssh"
     config.ssh.username = 'gpadmin'
@@ -83,22 +83,21 @@ Vagrant.configure("2") do |config|
     build_vm( config, "#{@hostname}-s", "#{@ip}")
   end
 
-  if (ARGV[0] == 'up')
+  if (@segments > 0)
     puts "Segments Hosts: #{@segments}"
-  end
-
-  # Segment Nodes:
-  (1..@segments).each do |i|
-    @ip = @ip.succ
-    puts "[#{i}] Segment Hostname: #{@hostname}-#{i}"
-    puts "[#{i}] Segment IP: #{@ip}",""
-    build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
+    # Segment Nodes:
+    (1..@segments).each do |i|
+      @ip = @ip.succ
+      puts "[#{i}] Segment Hostname: #{@hostname}-#{i}"
+      puts "[#{i}] Segment IP: #{@ip}",""
+      build_vm( config, "#{@hostname}-#{i}", "#{@ip}")
+    end
   end
 
   # Prepare the host that was provisioned
   # Provisioning
-     config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
+  config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => ["#{@pivnet_token}", "#{@segments}"]
   # Developer Mode
-     config.vm.provision :shell, path: 'scripts/go.build.sh', :args => [@developer_mode]
+  config.vm.provision :shell, path: 'scripts/go.build.sh', :args => ["#{@developer_mode}"]
 
 end

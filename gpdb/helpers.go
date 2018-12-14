@@ -106,15 +106,13 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 
 			var percent float64 = float64(size) / float64(total) * 100
 			var bytesToMB float64 = 1024 * 1024
-
-			fmt.Printf("Downloading file %.2f MB of %.2f MB: %.0f", float64(size)/bytesToMB, float64(total)/bytesToMB, percent)
-			fmt.Println("% completed")
+			fmt.Printf("\rDownload: %.2f MB of %.2f MB: %.0f%%", float64(size)/bytesToMB, float64(total)/bytesToMB, percent)
 		}
 
 		// Download is completed, time to terminate
 		if stop {
-			Info("Downloading completed ....")
-			Infof("Downloaded file available at: %s", path)
+			fmt.Println("\nDownload: Complete")
+			Infof("Download: %s", path)
 			break
 		}
 
