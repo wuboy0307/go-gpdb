@@ -166,6 +166,10 @@ if [[ $1 == "true" ]]; then
 		} &>> /tmp/go.build.out
 		spinner $! "GO: Downloading Dependencies"
 
+		{ go install } &>> /tmp/go.build.out
+		spinner $! "GO: Build and Install"
+
+
 else
 	banner "Download gpdb CLI"
 	download_latest_gpdb_cli
