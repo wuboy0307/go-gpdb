@@ -96,9 +96,6 @@ Vagrant.configure("2") do |config|
   end
 
   # Prepare the host that was provisioned
-  # Provisioning
-     config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => [@pivnet_token, @segments]
-  # Developer Mode
-     config.vm.provision :shell, path: 'scripts/go.build.sh', :args => [@developer_mode]
-
+   config.vm.provision :shell, path: 'scripts/os.prep.sh', :args => ["#{@pivnet_token}", "#{@segments}"]
+   config.vm.provision :shell, path: 'scripts/go.build.sh', :args => ["#{@developer_mode}"]
 end
