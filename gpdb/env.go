@@ -46,7 +46,7 @@ func environment(envFile string) Environment {
 // Create environment file of this installation
 func (i *Installation) createEnvFile() {
 	// Environment file fully qualified path
-	i.EnvFile = Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp
+	i.EnvFile = Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp + "_" + cmdOptions.Username
 	Infof("Creating environment file for this installation at: " + i.EnvFile)
 
 	// Create the file

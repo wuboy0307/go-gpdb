@@ -16,6 +16,7 @@ var (
 type Command struct {
 	Product 	string
 	Version 	string
+	Username	string
 	CCVersion 	string
 	Debug		bool
 	Install 	bool
@@ -37,6 +38,10 @@ var downloadCmd = &cobra.Command{
 		if !Contains(AcceptedDownloadProduct, cmdOptions.Product) {
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedDownloadProduct)
 		}
+		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
+			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install" )
+		}
+
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// Run download to download the binaries
@@ -48,6 +53,7 @@ var downloadCmd = &cobra.Command{
 func downloadFlags() {
 	downloadCmd.Flags().StringVarP(&cmdOptions.Product, "product", "p", "gpdb", "What product do you want to download? [OPTIONS: gpdb, gpcc, gpextras]")
 	downloadCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to download ?")
+	downloadCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "What is your Pivotal ID, this will be used to name the environmental file for this installation ?")
 	downloadCmd.Flags().BoolVar(&cmdOptions.Install, "install", false, "OPTIONAL: Install after downloaded (Only works with \"gpdb\")?")
 }
 
@@ -79,11 +85,13 @@ var installCmd = &cobra.Command{
 	},
 }
 
-// All the usage flags of the download command
+// All the usage flags of the Install command
 func installFlags() {
 	installCmd.Flags().StringVarP(&cmdOptions.Product, "product", "p", "gpdb", "What product do you want to Install? [OPTIONS: gpdb, gpcc, gpextras]")
 	installCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to install?")
+	installCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "What is your PivotalID, this will be used to name your enviromental file?")
 	installCmd.MarkFlagRequired("version")
+	installCmd.MarkFlagRequired("username")
 	installCmd.Flags().StringVarP(&cmdOptions.CCVersion, "ccversion", "c", "", "What is the version of GPCC that you can to install (for only -p gpcc)?")
 	installCmd.Flags().BoolVar(&cmdOptions.Standby, "standby", false, "OPTIONAL: Install standby if the standby host is available")
 }
@@ -102,7 +110,7 @@ var removeCmd = &cobra.Command{
 	},
 }
 
-// All the usage flags of the download command
+// All the usage flags of the remove command
 func removeFlags() {
 	removeCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "Which GPDB version software do you want to remove?")
 	removeCmd.MarkFlagRequired("version")
@@ -124,7 +132,7 @@ var envCmd = &cobra.Command{
 	},
 }
 
-// All the usage flags of the download command
+// All the usage flags of the env command
 func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
 	envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")

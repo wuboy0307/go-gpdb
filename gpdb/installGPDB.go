@@ -139,7 +139,7 @@ func (i *Installation) isHostReachable() {
 				segmentHost = append(segmentHost, host)
 			}
 			// If we detect a standby host then record that we have one
-			if strings.HasSuffix(host, "-s") {
+			if cmdOptions.Standby {
 				i.StandbyHostAvailable = true
 			}
 		}
@@ -232,7 +232,8 @@ func (i *Installation) activateStandby() {
 
 // Build standby hostname
 func buildStandbyHostName(masterHostname string) string {
-	return masterHostname[0:len(masterHostname)-2] + "-s"
+
+	return "s" + masterHostname
 }
 
 // Source greenplum path

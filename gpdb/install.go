@@ -128,7 +128,7 @@ func (i *Installation) generateHostFile() {
 	if !exists {
 		Infof("Host file doesn't exists, creating one: %s", i.HostFileLocation)
 		// Read the contents from the /etc/hosts and generate a hostfile.
-		hosts := contentExtractor(readFile("/etc/hosts"), "{if (NR!=1) {print $2}}", []string{})
+		hosts := contentExtractor(readFile("/etc/hosts"), "{if (NR!=4) {print $2}}", []string{})
 		s := removeBlanks(hosts.String())
 		// write to the file
 		writeFile(i.HostFileLocation, []string{s})
