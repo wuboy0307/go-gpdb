@@ -221,7 +221,7 @@ func (i *Installation) createSoftLink() {
 func (i *Installation) activateStandby() {
 	Infof("Activating the master standby for this installation")
 	standbyHostLoc := Config.CORE.TEMPDIR + "activate_standby.sh"
-	// We use remove last 3 line rather than replace function to avoid situation where user have
+	// We remove last 3 line rather than replace function to avoid situation where user have
 	// created a host with the name say host-standby and then we attach -s with it like host-standby-s
 	// replace -s would replace -s at two places and thus causing error , so we just worry about the last character
 	generateBashFileAndExecuteTheBashFile(standbyHostLoc, "/bin/sh", []string{

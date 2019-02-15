@@ -5,28 +5,28 @@ import (
 	"fmt"
 )
 
-func stopAllDb() {
-
-	Infof("Stopping all the database running on this host, to free up semaphore for this installation")
-
-	// Can't seems to find a simple way to stop all database, so we will built the below
-	// simple shell script to execute the stop database command
-	cleanupScript := "ps -ef | grep silent | grep master | while read line; " +
-		"do " +
-		"GPHOME=`echo $line|awk '{print $8}'| rev | cut -d'/' -f3- | rev`;" +
-		"export MASTER_DATA_DIRECTORY=`echo $line|awk '{print $10}'`;" +
-		"export PGPORT=`echo $line|awk '{print $12}'`;" +
-		"export PGDATABASE=template1;" +
-		"source $GPHOME/greenplum_path.sh;" +
-		"gpstop -af;" +
-		"done"
-	StopScriptLoc := Config.CORE.TEMPDIR + "stop_all_db.sh"
-	generateBashFileAndExecuteTheBashFile(StopScriptLoc, "/bin/sh", []string{
-		cleanupScript,
-	})
-	cleanupGpccProcess()
-	areAllProcessDown()
-}
+//func stopAllDb() {
+//
+//	Infof("Stopping all the database running on this host, to free up semaphore for this installation")
+//
+//	// Can't seems to find a simple way to stop all database, so we will built the below
+//	// simple shell script to execute the stop database command
+//	cleanupScript := "ps -ef | grep silent | grep master | while read line; " +
+//		"do " +
+//		"GPHOME=`echo $line|awk '{print $8}'| rev | cut -d'/' -f3- | rev`;" +
+//		"export MASTER_DATA_DIRECTORY=`echo $line|awk '{print $10}'`;" +
+//		"export PGPORT=`echo $line|awk '{print $12}'`;" +
+//		"export PGDATABASE=template1;" +
+//		"source $GPHOME/greenplum_path.sh;" +
+//		"gpstop -af;" +
+//		"done"
+//	StopScriptLoc := Config.CORE.TEMPDIR + "stop_all_db.sh"
+//	generateBashFileAndExecuteTheBashFile(StopScriptLoc, "/bin/sh", []string{
+//		cleanupScript,
+//	})
+//	cleanupGpccProcess()
+//	areAllProcessDown()
+//}
 
 // Cleanup all the gpcc process
 func cleanupGpccProcess() {
@@ -88,10 +88,10 @@ func startDBifNotStarted(envFile string)  {
 	} else { // database is not running, lets start it up
 
 		Warnf("Database is not started, attempting to start the database...")
-		// Stop all database is not stopped unless asked not to stop it
-		if !cmdOptions.Stop {
-			stopAllDb()
-		}
+		//// Stop all database is not stopped unless asked not to stop it
+		//if !cmdOptions.Stop {
+		//	stopAllDb()
+		//}
 
 		// Start the database of concern
 		startDB(envFile)

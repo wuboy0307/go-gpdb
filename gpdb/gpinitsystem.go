@@ -24,7 +24,7 @@ func (i *Installation) buildGpInitSystem() {
 	i.buildGpInitSystemConfig()
 
 	// Stop all the database before execution
-	stopAllDb()
+	//stopAllDb()
 
 	// Execute gpinitsystem
 	i.executeGpInitSystem()

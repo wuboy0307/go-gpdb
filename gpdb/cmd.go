@@ -20,7 +20,7 @@ type Command struct {
 	CCVersion 	string
 	Debug		bool
 	Install 	bool
-	Stop        bool
+	//Stop        bool
 	Force	    bool
 	Standby	    bool
 }
@@ -41,11 +41,28 @@ var downloadCmd = &cobra.Command{
 		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
 			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install" )
 		}
+		//if cmdOptions.Username == "-u " {
+		//	Fatalf("Usage :- You have to use -u option ")
+		//}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// Run download to download the binaries
-		Download()
+
+		if cmdOptions.Username == "sername"{
+
+		Fatalf("Usage :- You have to use -u option ")
+
+		} else
+		{
+			//Run download to download the binaries
+			Download()
+		}
+
+
+
+
+
+
 	},
 }
 
@@ -125,6 +142,13 @@ var envCmd = &cobra.Command{
 	Short: "Show all the environment installed",
 	Long:  "Env sub-command helps to show all the products version installed",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#env",
+	////Adding an if statement here forcing the user to use the --dont-stop option
+	//PreRun: func(cmd *cobra.Command, args []string) {
+	//
+	//	if (cmdOptions.Stop == false) {
+	//		Fatalf("YOu need to specify the --dont-stop flag to avoid shutting down other peoples enviroments")
+	//	}
+	//},
 	Run: func(cmd *cobra.Command, args []string) {
 		// search the env directory for the environment files
 		// and broadcast to the user
@@ -135,7 +159,7 @@ var envCmd = &cobra.Command{
 // All the usage flags of the env command
 func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
-	envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
+	//envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
 }
 
 // The root CLI.
