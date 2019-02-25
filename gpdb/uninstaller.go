@@ -13,7 +13,7 @@ func (i *Installation) createUninstallScript() error {
 
 	// Query
 	queryString := `
-select $$ssh $$ || hostname || $$ "ps -ef|grep postgres|grep -v grep|grep $$ ||  port || $$ | awk '{print $2}'| xargs -n1 /bin/kill -11 &>/dev/null" $$ from gp_segment_configuration 
+select $$ssh $$ || hostname || $$ "ps -ef|grep postgres|grep -v grep|grep $$ ||  port || $$ | awk '{print \$2}'| xargs -n1 /bin/kill -11 &>/dev/null" $$ from gp_segment_configuration 
 union
 select $$ssh $$ || hostname || $$ "rm -rf /tmp/.s.PGSQL.$$ || port || $$*"$$ from gp_segment_configuration
 union
