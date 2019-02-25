@@ -100,7 +100,7 @@ func removeGPCC(envFile string) {
 	Infof("Uninstalling the version of command center that is currently installed on this environment.")
 	gpccEnvFile := environment(envFile).GpccUninstallLoc
 	if !IsValueEmpty(gpccEnvFile) {
-		executeOsCommand("/bin/sh", environment(envFile).GpccUninstallLoc)
+		executeOsCommand("/bin/sh", gpccEnvFile)
 	}
 }
 
