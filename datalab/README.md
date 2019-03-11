@@ -17,7 +17,6 @@ Table of Contents
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
         * [Delete Configuration](#delete-configuration)
-   * [Demo (vm provisioning)](#demo-vm-provisioning)
    * [Developers / Contributors](#developers--contributors)
 
 # Introduction
@@ -26,7 +25,7 @@ Datalab CLI is a wrapper to help you create and manage the vagrant VM with ease
 
 # Prerequisite
 
-Please follow the [instruction and prerequisite steps](https://pivotal-gss.github.io/go-gpdb#prerequisite) which are needed for the datalab cli to work.
+Please follow the [instruction and prerequisite steps](https://github.com/pivotal-gss/go-gpdb#prerequisite) which are needed for the datalab cli to work.
 
 # Installation
 
@@ -241,9 +240,6 @@ Use "datalab [command] --help" for more information about a command.
     ```
     datalab help delete-config
     ```
-# Demo (vm provisioning)
-
-[![asciicast](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd.svg)](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd)
 
 # Developers / Contributors
 

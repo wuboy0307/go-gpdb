@@ -20,13 +20,13 @@ Gpdb CLI helps to download, install, remove and manage the software of GPDB / GP
 
 # Prerequisite
 
-+ You will need to first provision the vagrant VM, please follow the instruction as described on the [datalab documentation](https://pivotal-gss.github.io/go-gpdb/datalab#create) to provision a vagrant VM.
++ You will need to first provision the vagrant VM, please follow the instruction as described on the [datalab documentation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create) to provision a vagrant VM.
 + Make sure your provisioned can access the internet.
 
 # Installation
 
 + The gpdb cli is automatically downloaded and installed on the provisioned VM, there is no additional step needed.
-+ Connect to the provisioned VM using [datalab ssh](https://pivotal-gss.github.io/go-gpdb/datalab#ssh) and start using the gpdb cli using the [examples](#example) mentioned below
++ Connect to the provisioned VM using [datalab ssh](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#ssh) and start using the gpdb cli using the [examples](#example) mentioned below
 
 # Usage 
 

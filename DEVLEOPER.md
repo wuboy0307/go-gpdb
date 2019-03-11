@@ -2,7 +2,7 @@ Table of Contents
 =================
 
    * [Introduction](#introduction)
-   * [PreChanges](#prechanges)
+   * [PreChanges.](#prechanges)
    * [Setup](#setup)
    * [Pull Request](#pull-request)
 
@@ -25,11 +25,11 @@ Ensure you have opened a issue request before making any pull request to this re
     git checkout -b <new-branch>
     ```
 + Setup your GOPATH & GOROOT environment variables  
-+ Identify which cli, do you want to modify or hack like is it [datalab cli](https://github.com/pivotal-gss/go-gpdb/datalab) or [gpdb cli](https://github.com/pivotal-gss/go-gpdb/gpdb)
++ Identify which cli, do you want to modify or hack like is it [datalab cli](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab) or [gpdb cli](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb)
 + The instruction to setup each CLI is provided here
-    + [Datalab cli](datalab#developers--contributors)
-    + [Gpdb cli](gpdb#developers--contributors)
-+ Its always best to test all the changes on a VM, so that the local machine is not having a lot of unnecessary stuff, checkout the [steps](test#setup) on how to provision a developer mode VM
+    + [Datalab cli](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#developers--contributors)
+    + [Gpdb cli](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#developers--contributors)
++ Its always best to test all the changes on a VM, so that the local machine is not having a lot of unnecessary stuff, checkout the [steps](https://github.com/pivotal-gss/go-gpdb/tree/master/test#setup) on how to provision a developer mode VM
 
 # Pull Request
 
