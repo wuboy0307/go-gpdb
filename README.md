@@ -93,7 +93,7 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 ### Vagrant 
 
-+ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/scripts/README.md) for all the options.
++ If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned [here](scripts/README.md) for all the options.
 
 # Developers / Contributor's
 
