@@ -20,7 +20,7 @@ This folder contains a set of bash script that helps to make sure the OS contain
 
 # Creating Vagrant VM's Manually
 
-If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](datalab/README.md), here are few steps.
+If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](https://pivotal-gss.github.io/go-gpdb/datalab/README.md), here are few steps.
 + The vagrant file is located [here](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfile)
 + The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](scripts/README.md#environment)
 + During the provision of VM, it runs the two shell script, more information on the shell script is available [here](scripts/README.md#vms-setup-files))
@@ -86,11 +86,11 @@ The [Vagrant file](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfil
     
 # VM's Setup Files
 
-Here are the details of the files found on the [script](scripts) directory
+Here are the details of the files found on the [script](https://pivotal-gss.github.io/go-gpdb/scripts) directory
 
 ### functions.h
 
-+ Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://github.com/pivotal-gss/go-gpdb/tree/master/test) to work perfectly
++ Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://pivotal-gss.github.io/go-gpdb/test) to work perfectly
 
 ### os.prep.sh
 
@@ -102,4 +102,4 @@ Here are the details of the files found on the [script](scripts) directory
 
 # Developer Mode VM
 
-+ To understand more on the developer mode VM, refer to the [README](test/README.md) of the test
++ To understand more on the developer mode VM, refer to the [README](https://pivotal-gss.github.io/go-gpdb/test/README.md) of the test
