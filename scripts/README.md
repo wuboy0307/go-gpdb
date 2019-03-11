@@ -20,10 +20,10 @@ This folder contains a set of bash script that helps to make sure the OS contain
 
 # Creating Vagrant VM's Manually
 
-If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](https://pivotal-gss.github.io/go-gpdb/datalab/README.md), here are few steps.
+If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](https://pivotal-gss.github.io/go-gpdb/datalab), here are few steps.
 + The vagrant file is located [here](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfile)
-+ The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](scripts/README.md#environment)
-+ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](scripts/README.md#vms-setup-files))
++ The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](#environment)
++ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](#vms-setup-files))
 
 # Environment
 

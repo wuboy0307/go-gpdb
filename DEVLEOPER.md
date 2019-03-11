@@ -25,7 +25,7 @@ Ensure you have opened a issue request before making any pull request to this re
     git checkout -b <new-branch>
     ```
 + Setup your GOPATH & GOROOT environment variables  
-+ Identify which cli, do you want to modify or hack like is it [datalab cli](datalab) or [gpdb cli](gpdb)
++ Identify which cli, do you want to modify or hack like is it [datalab cli](https://github.com/pivotal-gss/go-gpdb/datalab) or [gpdb cli](https://github.com/pivotal-gss/go-gpdb/gpdb)
 + The instruction to setup each CLI is provided here
     + [Datalab cli](datalab#developers--contributors)
     + [Gpdb cli](gpdb#developers--contributors)
