@@ -81,7 +81,7 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
  
 ### Gpdb cli
 
-+ Please check the gpdb cli [README](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/README.md) for details on how to install & use the gpdb cli.
++ Please check the gpdb cli [README](gpdb/README.md) for details on how to install & use the gpdb cli.
 
 ### Datalab cli
 
