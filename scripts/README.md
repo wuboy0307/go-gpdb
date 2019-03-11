@@ -20,10 +20,10 @@ This folder contains a set of bash script that helps to make sure the OS contain
 
 # Creating Vagrant VM's Manually
 
-If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/blob/master/datalab/README.md), here are few steps.
+If you wish to create you vagrant VM's Manually and don't want use the [datalab CLI](datalab/README.md), here are few steps.
 + The vagrant file is located [here](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfile)
-+ The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/README.md#environment)
-+ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/README.md#vms-setup-files))
++ The vagrant file take in few environment variables more information of the environment variable is described at the [environment section](scripts/README.md#environment)
++ During the provision of VM, it runs the two shell script, more information on the shell script is available [here](scripts/README.md#vms-setup-files))
 
 # Environment
 
@@ -86,7 +86,7 @@ The [Vagrant file](https://github.com/pivotal-gss/go-gpdb/blob/master/Vagrantfil
     
 # VM's Setup Files
 
-Here are the details of the files found on the [script](https://github.com/pivotal-gss/go-gpdb/tree/master/scripts) directory
+Here are the details of the files found on the [script](scripts) directory
 
 ### functions.h
 
@@ -102,4 +102,4 @@ Here are the details of the files found on the [script](https://github.com/pivot
 
 # Developer Mode VM
 
-+ To understand more on the developer mode VM, refer to the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) of the test
++ To understand more on the developer mode VM, refer to the [README](test/README.md) of the test

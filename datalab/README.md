@@ -26,7 +26,7 @@ Datalab CLI is a wrapper to help you create and manage the vagrant VM with ease
 
 # Prerequisite
 
-Please follow the [instruction and prerequisite steps](https://github.com/pivotal-gss/go-gpdb#prerequisite) which are needed for the datalab cli to work.
+Please follow the [instruction and prerequisite steps](go-gpdb#prerequisite) which are needed for the datalab cli to work.
 
 # Installation
 

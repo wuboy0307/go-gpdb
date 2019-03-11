@@ -68,10 +68,10 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 # Installation
 
-+ Ensure you have completed all the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) as mentioned on the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) section above.
-+ Download the latest version of the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/releases/latest) and follow the steps mentioned on the [installation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#installation) and [setup](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#setup) section to setup the datalab CLI
-+ Provision the VM's using the steps mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create)
-+ Once successfully provisioned, you can now start using the gpdb cli to download, install & manage gpdb software, refer the [example](https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#example) for more information. **NOTE:** gpdb cli is automaticalled installed on the provision VM's
++ Ensure you have completed all the [Prerequisite](#prerequisite) as mentioned on the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) section above.
++ Download the latest version of the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/releases/latest) and follow the steps mentioned on the [installation](datalab#installation) and [setup](datalab#setup) section to setup the datalab CLI
++ Provision the VM's using the steps mentioned [here](datalab#create)
++ Once successfully provisioned, you can now start using the gpdb cli to download, install & manage gpdb software, refer the [example](gpdb#example) for more information. **NOTE:** gpdb cli is automaticalled installed on the provision VM's
 
 # Demo (installation)
 
@@ -85,11 +85,11 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 ### Datalab cli
 
-+ Please check the datalab cli [README](https://github.com/pivotal-gss/go-gpdb/blob/master/datalab/README.md) for details on how to install & use the datalab cli.
++ Please check the datalab cli [README](datalab/README.md) for details on how to install & use the datalab cli.
 
 ### UnitTest
 
-+ Please check the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) on how to run the unit test case.
++ Please check the [README](test/README.md) on how to run the unit test case.
 
 ### Vagrant 
 
@@ -97,4 +97,4 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 # Developers / Contributor's
 
-Please read the [section](https://github.com/pivotal-gss/go-gpdb/blob/master/DEVLEOPER.md) on how to setup the environment to test and hack this tool
+Please read the [section](DEVLEOPER.md) on how to setup the environment to test and hack this tool
