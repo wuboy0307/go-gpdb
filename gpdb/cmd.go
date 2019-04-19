@@ -73,6 +73,10 @@ var installCmd = &cobra.Command{
 		if cmdOptions.Product != "gpdb" && cmdOptions.Standby {
 			Fatalf("Cannot set standby flag with product flag \"%s\"", cmdOptions.Product)
 		}
+		// Ensure the version is of the valid format
+		if !isValidVersionFormat(cmdOptions.Version) {
+			Fatalf("Unexpected version number. Expected format X.Y.Z. E.g. 4.3.30, 5.16.0, 4.3.30.1")
+		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// Install the product that is downloaded
