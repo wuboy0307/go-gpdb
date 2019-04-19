@@ -3,15 +3,16 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/benhoyt/goawk/interp"
 	"github.com/benhoyt/goawk/parser"
 	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
-	"os"
-	"regexp"
-	"strings"
-	"time"
-	"strconv"
 )
 
 // Function that checks if the string is available on a array.
@@ -269,4 +270,9 @@ func extractVersion(version string) float64 {
 		return f
 	}
 	return f
+}
+
+func isValidVersionFormat(version string) bool {
+	match, _ := regexp.MatchString("[0-9]\\.[0-9]+\\.[0-9]+", version)
+	return match
 }

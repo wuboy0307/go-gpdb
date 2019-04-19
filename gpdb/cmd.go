@@ -42,7 +42,7 @@ var downloadCmd = &cobra.Command{
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedDownloadProduct)
 		}
 		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
-			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install" )
+			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install")
 		}
 		//if cmdOptions.Username == "-u " {
 		//	Fatalf("Usage :- You have to use -u option ")
@@ -51,20 +51,14 @@ var downloadCmd = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if cmdOptions.Username == "sername"{
+		if cmdOptions.Username == "sername" {
 
-		Fatalf("Usage :- You have to use -u option ")
+			Fatalf("Usage :- You have to use -u option ")
 
-		} else
-		{
+		} else {
 			//Run download to download the binaries
 			Download()
 		}
-
-
-
-
-
 
 	},
 }
@@ -97,6 +91,9 @@ var installCmd = &cobra.Command{
 		// if product is not gpdb then standby flag should not be set
 		if cmdOptions.Product != "gpdb" && cmdOptions.Standby {
 			Fatalf("Cannot set standby flag with product flag \"%s\"", cmdOptions.Product)
+		}
+		if !isValidVersionFormat(cmdOptions.Version) {
+			Fatalf("Unexpected version number. Expected format X.Y.Z. E.g. 4.3.30, 5.16.0, 4.3.30.1")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
