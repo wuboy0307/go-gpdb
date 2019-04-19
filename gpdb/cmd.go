@@ -1,38 +1,40 @@
 package main
 
 import (
-	"github.com/spf13/cobra"
 	"fmt"
+
+	"github.com/spf13/cobra"
 )
 
 // Global Parameter
 var (
-	cmdOptions Command
+	cmdOptions              Command
 	AcceptedDownloadProduct = []string{"gpdb", "gpcc", "gpextras"}
-	AcceptedInstallProduct = []string{"gpdb", "gpcc"}
+	AcceptedInstallProduct  = []string{"gpdb", "gpcc"}
 )
 
 // Command line options
 type Command struct {
-	Product 	string
-	Version 	string
-	Username	string
-	CCVersion 	string
-	Debug		bool
-	Install 	bool
+	Product   string
+	Version   string
+	Username  string
+	CCVersion string
+	Debug     bool
+	Install   bool
 	//Stop        bool
-	Force	    bool
-	Standby	    bool
-	listEnv		bool
+	Force   bool
+	Standby bool
+	listEnv bool
+	Always  bool
 }
 
 // Sub Command: Download
 // When this command is used it goes and download the product from pivnet
 var downloadCmd = &cobra.Command{
-	Use:   "download",
+	Use:     "download",
 	Aliases: []string{`d`},
-	Short: "Download the product from pivotal network",
-	Long:  "Download sub-command helps to download the products that are greenplum related from pivotal network",
+	Short:   "Download the product from pivotal network",
+	Long:    "Download sub-command helps to download the products that are greenplum related from pivotal network",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#download",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Accept only the options that we care about

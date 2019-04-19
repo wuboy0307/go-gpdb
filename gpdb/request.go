@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -60,7 +61,7 @@ func getToken() string {
 }
 
 // Generate the URL headers
-func generateHandler(method, url, token string, download bool) (*http.Response){
+func generateHandler(method, url, token string, download bool) *http.Response {
 	// Create new http request
 	request, err := http.NewRequest(method, url, nil)
 	if err != nil {
@@ -132,6 +133,13 @@ func downloadProduct(url, token string, r Responses) {
 
 	// Fully qualifies path
 	r.UserRequest.ProductFileName = Config.DOWNLOAD.DOWNLOADDIR + r.UserRequest.ProductFileName
+
+	// Check if the file already exists. Skip download if the file is present
+	filePath, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.zip", cmdOptions.Version))
+	if len(filePath) > 0 && !cmdOptions.Always {
+		Infof("File %s found. Skipping download", filePath[0])
+		return
+	}
 
 	// Create th file
 	out, err := os.Create(r.UserRequest.ProductFileName)
