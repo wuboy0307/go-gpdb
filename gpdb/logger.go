@@ -21,7 +21,7 @@ func SetLogFormatter(formatter logrus.Formatter) {
 func Debug(args ...interface{}) {
 	if logger.Level >= logrus.DebugLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Debug(args...)
 	}
 }
@@ -30,7 +30,7 @@ func Debug(args ...interface{}) {
 func Debugf(format string, args ...interface{}) {
 	if logger.Level >= logrus.DebugLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Debugf(format, args...)
 	}
 }
@@ -39,7 +39,7 @@ func Debugf(format string, args ...interface{}) {
 func Info(args ...interface{}) {
 	if logger.Level >= logrus.InfoLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Info(args...)
 	}
 }
@@ -48,7 +48,7 @@ func Info(args ...interface{}) {
 func Infof(format string, args ...interface{}) {
 	if logger.Level >= logrus.InfoLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Infof(format, args...)
 	}
 }
@@ -57,7 +57,7 @@ func Infof(format string, args ...interface{}) {
 func Warn(args ...interface{}) {
 	if logger.Level >= logrus.WarnLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Warn(args...)
 	}
 }
@@ -66,7 +66,7 @@ func Warn(args ...interface{}) {
 func Warnf(format string, args ...interface{}) {
 	if logger.Level >= logrus.WarnLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Warnf(format, args...)
 	}
 }
@@ -76,7 +76,7 @@ func Warnf(format string, args ...interface{}) {
 func Error(args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Error(args...)
 	}
 }
@@ -85,7 +85,7 @@ func Error(args ...interface{}) {
 func Errorf(format string, args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Errorf(format, args...)
 	}
 }
@@ -94,7 +94,7 @@ func Errorf(format string, args ...interface{}) {
 func Fatal(args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Fatal(args...)
 	}
 }
@@ -103,7 +103,7 @@ func Fatal(args ...interface{}) {
 func Fatalf(format string, args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Fatalf(format, args...)
 	}
 }
@@ -112,7 +112,7 @@ func Fatalf(format string, args ...interface{}) {
 func Panic(args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Panic(args...)
 	}
 }
@@ -121,9 +121,19 @@ func Panic(args ...interface{}) {
 func Panicf(format string, args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry.Data["file"] = fileInfo(2)
+		entry = showFileInfo(entry)
 		entry.Panicf(format, args...)
 	}
+}
+
+
+// Show the file number information on when debug is on
+func showFileInfo(entry *logrus.Entry) *logrus.Entry {
+	if cmdOptions.Debug {
+		entry.Data["file"] = fileInfo(2)
+		return entry
+	}
+	return entry
 }
 
 func fileInfo(skip int) string {
