@@ -54,7 +54,7 @@ func CreateDir(path string) {
 	}
 	// If not exists then create one
 	if !exists {
-		Warnf("Directory \"%s\" does not exists, creating one", path)
+		Debugf("Directory \"%s\" does not exists, creating one", path)
 		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			Fatalf("Failed to create the directory, the error: %v", err)

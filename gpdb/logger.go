@@ -127,7 +127,7 @@ func Panicf(format string, args ...interface{}) {
 }
 
 
-// Show the file number information on when debug is on
+// Show the file number information only when debug is on
 func showFileInfo(entry *logrus.Entry) *logrus.Entry {
 	if cmdOptions.Debug {
 		entry.Data["file"] = fileInfo(2)
@@ -136,6 +136,9 @@ func showFileInfo(entry *logrus.Entry) *logrus.Entry {
 	return entry
 }
 
+
+// Display the file and the line number where the command
+// was executed
 func fileInfo(skip int) string {
 	_, file, line, ok := runtime.Caller(skip)
 	if !ok {
