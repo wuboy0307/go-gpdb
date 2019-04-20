@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -304,6 +305,9 @@ func Download() {
 // Display all the available downloaded versions.
 func displayDownloadedProducts() {
 	Infof("Showing all the files on the download folder")
+	var output = []string{`Index | File | size(MB) | Path`,
+		`------|----------------------------------------------|----------------|-------------------------------------------------------------------------------------------------------------`,
+	}
 
 	// Extract all the downloaded products information
 	allDownloads, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, "*")
@@ -318,11 +322,15 @@ func displayDownloadedProducts() {
 	}
 	Infof("Size of the directory \"%s\": %d MB", Config.DOWNLOAD.DOWNLOADDIR, sizeInMB(sizeOfDirectory))
 
-	// Print the product list of the screen
-	cmdOut, err := executeOsCommandOutput("ls", "-ltr", Config.DOWNLOAD.DOWNLOADDIR)
-	if err != nil {
-		Fatalf("Encountered error when listing all products in the download directory %s, err: %v",
-			Config.DOWNLOAD.DOWNLOADDIR, err)
+	// All the environments
+	for k, v := range allDownloads {
+		downloadedProduct := strings.Replace(v, Config.DOWNLOAD.DOWNLOADDIR, "", -1)
+		sizeOfFile, _ := DirSize(v)
+		output = append(output, fmt.Sprintf("%s|%s|%d|%s", strconv.Itoa(k+1), downloadedProduct,
+			sizeInMB(sizeOfFile), v))
 	}
-	fmt.Print(string(cmdOut))
+
+	// Print on the screen
+	message := "Below are all the downloaded product available"
+	printOnScreen(message, output)
 }
