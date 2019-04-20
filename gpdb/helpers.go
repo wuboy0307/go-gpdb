@@ -273,7 +273,7 @@ func extractVersion(version string) float64 {
 // Ensure the version is of the format
 // eg. 4.3.30.10 etc
 func isValidVersionFormat(version string) bool {
-	match, _ := regexp.MatchString("[0-9]\\.[0-9]+\\.[0-9]+", version)
+	match, _ := regexp.MatchString("[0-9]+\\.[0-9]+\\.[0-9]+", version)
 	return match
 }
 
