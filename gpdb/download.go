@@ -265,7 +265,7 @@ func Download() {
 	// If the users asked for show them what products where downloaded
 	// then show them the list
 	if cmdOptions.ListEnv {
-		displayDownloadedProducts()
+		displayDownloadedProducts("list")
 		// Exit the program no need to continue
 		os.Exit(0)
 	}
@@ -303,11 +303,13 @@ func Download() {
 }
 
 // Display all the available downloaded versions.
-func displayDownloadedProducts() {
+func displayDownloadedProducts(whichType string) []string {
 	Infof("Showing all the files on the download folder")
-	var output = []string{`Index | File | size(MB) | Path`,
-		`------|----------------------------------------------|----------------|-------------------------------------------------------------------------------------------------------------`,
+	var output = []string{`Index | File | Size(MB) | Path`,
+		`------|----------------------------------------------|-----------|-------------------------------------------------------------------------------------------------------`,
 	}
+	var downloadedProducts []string
+	var index = 0
 
 	// Extract all the downloaded products information
 	allDownloads, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, "*")
@@ -326,11 +328,29 @@ func displayDownloadedProducts() {
 	for k, v := range allDownloads {
 		downloadedProduct := strings.Replace(v, Config.DOWNLOAD.DOWNLOADDIR, "", -1)
 		sizeOfFile, _ := DirSize(v)
-		output = append(output, fmt.Sprintf("%s|%s|%d|%s", strconv.Itoa(k+1), downloadedProduct,
-			sizeInMB(sizeOfFile), v))
+		if whichType == "list" { // Show all the files from the list
+			output = append(output, fmt.Sprintf("%s|%s|%d|%s", strconv.Itoa(k+1), downloadedProduct,
+				sizeInMB(sizeOfFile), v))
+		} else { // Install command called this, so show only the DB related files
+			if strings.HasPrefix(downloadedProduct, "greenplum-db") &&
+				strings.HasSuffix(downloadedProduct, "zip") {
+					index = index + 1
+					output = append(output, fmt.Sprintf("%d|%s|%d|%s", index, downloadedProduct,
+						sizeInMB(sizeOfFile), v))
+					downloadedProducts = append(downloadedProducts, downloadedProduct)
+			}
+		}
+	}
+
+	// If we didn't any thing, then throw user a message to
+	// download something
+	if len(output) <= 2 {
+		Fatalf("There doesn't seems to be any version of products downloaded, try downloading it..")
 	}
 
 	// Print on the screen
 	message := "Below are all the downloaded product available"
 	printOnScreen(message, output)
+
+	return downloadedProducts
 }

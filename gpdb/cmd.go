@@ -79,7 +79,7 @@ var installCmd = &cobra.Command{
 		}
 		// If version argument is not provided then display error
 		if cmdOptions.Version == "" {
-			Fatalf("Missing required flag version: -v")
+			cmdOptions.Version = chooseDownloadedProducts()
 		}
 		// Ensure the version is of the valid format
 		if !isValidVersionFormat(cmdOptions.Version) {
@@ -96,7 +96,6 @@ var installCmd = &cobra.Command{
 func installFlags() {
 	installCmd.Flags().StringVarP(&cmdOptions.Product, "product", "p", "gpdb", "What product do you want to Install? [OPTIONS: gpdb, gpcc, gpextras]")
 	installCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to install?")
-	installCmd.MarkFlagRequired("version")
 	installCmd.Flags().StringVarP(&cmdOptions.CCVersion, "ccversion", "c", "", "What is the version of GPCC that you can to install (for only -p gpcc)?")
 	installCmd.Flags().BoolVar(&cmdOptions.Standby, "standby", false, "OPTIONAL: Install standby if the standby host is available")
 }
