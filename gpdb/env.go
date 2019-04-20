@@ -107,7 +107,7 @@ func readFileAndGatherInformation(file string) string {
 	return output
 }
 
-// List all the installed enviornment files.
+// List all the installed environment files.
 func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 	Debugf("Searching for installed env file using the search string: %s", search)
 
@@ -129,7 +129,7 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		output = append(output, fmt.Sprintf("%s|%s%s", strconv.Itoa(k+1), envName, readFileAndGatherInformation(v)))
 	}
 
-	if len(allEnv) > 0 && cmdOptions.listEnv { // if the option is to list all the env, without prompt
+	if len(allEnv) > 0 && cmdOptions.ListEnv { // if the option is to list all the env, without prompt
 
 		printOnScreen("Here is a list of env installed", output)
 		os.Exit(0)
@@ -151,7 +151,9 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		}
 
 	} else if len(allEnv) == 1 && confirmation == "choose" { // if there is only one , then there is no choose just provide the only one
-		startDBifNotStarted(allEnv[0])
+		if !cmdOptions.Vars {
+			startDBifNotStarted(allEnv[0])
+		}
 		return allEnv[0]
 
 	} else if (len(allEnv) > 0 && confirmation == "choose") || confirmation == "list&choose" {
@@ -163,8 +165,9 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 
 		// return the enviornment file to the main function
 		choosenEnv := allEnv[choice-1]
-		startDBifNotStarted(choosenEnv)
-
+		if !cmdOptions.Vars {
+			startDBifNotStarted(choosenEnv)
+		}
 		return choosenEnv
 	}
 
@@ -174,14 +177,28 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 // List all the environment installed on this box
 func env() {
 	var envFile string
-	if cmdOptions.Version == "" { // No version provided, show everything
+	// No version provided, show everything
+	if cmdOptions.Version == "" {
 		Infof("Listing all the environment installed")
 		envFile = installedEnvFiles("*", "list&choose", false)
 	} else { // Version given, search for env file
-		Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
+		// Don't display and info message when vars called, keep the screen clean
+		if !cmdOptions.Vars {
+			Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
+		}
 		envFile = installedEnvFiles("*" + cmdOptions.Version + "*", "choose", false)
 	}
-	displayEnvFileToSource(envFile)
+
+	// User asked to print all variables for this environment
+	if cmdOptions.Vars {
+		cmdOut, err := executeOsCommandOutput("cat", envFile)
+		if err != nil {
+			Fatalf("Error when trying to read the contents of env file %v: %v", envFile, err)
+		}
+		fmt.Print(string(cmdOut))
+	} else { // Guide user on how to set the environment up
+		displayEnvFileToSource(envFile)
+	}
 }
 
 // Display the env content on the screen
