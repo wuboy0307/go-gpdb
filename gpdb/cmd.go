@@ -24,6 +24,7 @@ type Command struct {
 	Standby	    bool
 	ListEnv		bool
 	Vars		bool
+	Always  	bool
 }
 
 // Sub Command: Download
@@ -51,6 +52,7 @@ func downloadFlags() {
 	downloadCmd.Flags().StringVarP(&cmdOptions.Product, "product", "p", "gpdb", "What product do you want to download? [OPTIONS: gpdb, gpcc, gpextras]")
 	downloadCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to download ?")
 	downloadCmd.Flags().BoolVar(&cmdOptions.Install, "install", false, "OPTIONAL: Install after downloaded (Only works with \"gpdb\")?")
+	downloadCmd.Flags().BoolVarP(&cmdOptions.Always, "always", "a", false, "Download the product, even if its already exists")
 }
 
 // Sub Command: Install

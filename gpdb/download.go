@@ -278,7 +278,7 @@ func Download() {
 	Infof("Starting downloading of file: %s", r.UserRequest.ProductFileName)
 	if r.UserRequest.DownloadURL != "" {
 		downloadProduct(r.UserRequest.DownloadURL, token, *r)
-		Infof("Downloaded file available at: %s", r.UserRequest.ProductFileName)
+		Infof("Downloaded file available at: %s", Config.DOWNLOAD.DOWNLOADDIR + r.UserRequest.ProductFileName)
 	} else {
 		Fatalf("download URL is blank, cannot download the product")
 	}
