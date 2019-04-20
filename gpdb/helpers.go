@@ -276,3 +276,11 @@ func isValidVersionFormat(version string) bool {
 	match, _ := regexp.MatchString("[0-9]\\.[0-9]+\\.[0-9]+", version)
 	return match
 }
+
+// Size in MB
+func sizeInMB(size int64) int64 {
+	if size > 0 {
+		size = size / 1024 / 1024
+	}
+	return size
+}

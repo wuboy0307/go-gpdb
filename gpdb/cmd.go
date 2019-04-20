@@ -53,6 +53,7 @@ func downloadFlags() {
 	downloadCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to download ?")
 	downloadCmd.Flags().BoolVar(&cmdOptions.Install, "install", false, "OPTIONAL: Install after downloaded (Only works with \"gpdb\")?")
 	downloadCmd.Flags().BoolVarP(&cmdOptions.Always, "always", "a", false, "Download the product, even if its already exists")
+	downloadCmd.Flags().BoolVarP(&cmdOptions.ListEnv, "list", "l", false, "Show all the products that was downloaded")
 }
 
 // Sub Command: Install
