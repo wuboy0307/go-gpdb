@@ -21,7 +21,9 @@ func SetLogFormatter(formatter logrus.Formatter) {
 func Debug(args ...interface{}) {
 	if logger.Level >= logrus.DebugLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Debug(args...)
 	}
 }
@@ -30,7 +32,9 @@ func Debug(args ...interface{}) {
 func Debugf(format string, args ...interface{}) {
 	if logger.Level >= logrus.DebugLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Debugf(format, args...)
 	}
 }
@@ -39,7 +43,9 @@ func Debugf(format string, args ...interface{}) {
 func Info(args ...interface{}) {
 	if logger.Level >= logrus.InfoLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Info(args...)
 	}
 }
@@ -48,7 +54,9 @@ func Info(args ...interface{}) {
 func Infof(format string, args ...interface{}) {
 	if logger.Level >= logrus.InfoLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Infof(format, args...)
 	}
 }
@@ -57,7 +65,9 @@ func Infof(format string, args ...interface{}) {
 func Warn(args ...interface{}) {
 	if logger.Level >= logrus.WarnLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Warn(args...)
 	}
 }
@@ -66,7 +76,9 @@ func Warn(args ...interface{}) {
 func Warnf(format string, args ...interface{}) {
 	if logger.Level >= logrus.WarnLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Warnf(format, args...)
 	}
 }
@@ -76,7 +88,9 @@ func Warnf(format string, args ...interface{}) {
 func Error(args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Error(args...)
 	}
 }
@@ -85,7 +99,9 @@ func Error(args ...interface{}) {
 func Errorf(format string, args ...interface{}) {
 	if logger.Level >= logrus.ErrorLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Errorf(format, args...)
 	}
 }
@@ -94,7 +110,9 @@ func Errorf(format string, args ...interface{}) {
 func Fatal(args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Fatal(args...)
 	}
 }
@@ -103,7 +121,9 @@ func Fatal(args ...interface{}) {
 func Fatalf(format string, args ...interface{}) {
 	if logger.Level >= logrus.FatalLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Fatalf(format, args...)
 	}
 }
@@ -112,7 +132,9 @@ func Fatalf(format string, args ...interface{}) {
 func Panic(args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Panic(args...)
 	}
 }
@@ -121,21 +143,12 @@ func Panic(args ...interface{}) {
 func Panicf(format string, args ...interface{}) {
 	if logger.Level >= logrus.PanicLevel {
 		entry := logger.WithFields(logrus.Fields{})
-		entry = showFileInfo(entry)
+		if cmdOptions.Debug {
+			entry.Data["file"] = fileInfo(2)
+		}
 		entry.Panicf(format, args...)
 	}
 }
-
-
-// Show the file number information only when debug is on
-func showFileInfo(entry *logrus.Entry) *logrus.Entry {
-	if cmdOptions.Debug {
-		entry.Data["file"] = fileInfo(2)
-		return entry
-	}
-	return entry
-}
-
 
 // Display the file and the line number where the command
 // was executed
