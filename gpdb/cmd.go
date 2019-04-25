@@ -166,7 +166,7 @@ var envCmd = &cobra.Command{
 // All the usage flags of the env command
 func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
-	envCmd.Flags().BoolVarP(&cmdOptions.listEnv, "list", "l", false, "List all the environment installed")
+	envCmd.Flags().BoolVarP(&cmdOptions.ListEnv, "list", "l", false, "List all the environment installed")
 	//envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
 	envCmd.Flags().BoolVar(&cmdOptions.Vars, "vars", false, "List all the environment variables for a version installed")
 }

@@ -129,7 +129,7 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		output = append(output, fmt.Sprintf("%s|%s%s", strconv.Itoa(k+1), envName, readFileAndGatherInformation(v)))
 	}
 
-	if len(allEnv) > 0 && cmdOptions.listEnv { // if the option is to list all the env, without prompt
+	if len(allEnv) > 0 && cmdOptions.ListEnv { // if the option is to list all the env, without prompt
 
 		printOnScreen("Here is a list of env installed", output)
 		os.Exit(0)
