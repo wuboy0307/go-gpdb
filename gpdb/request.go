@@ -72,7 +72,7 @@ func generateHandler(method, url, token string, download bool) *http.Response {
 	// Add Header to the Http Request
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Authorization", "Bearer " + token)
+	request.Header.Set("Authorization", "Bearer "+token)
 
 	// Skip SSL stuffs
 	tlsConfig := &tls.Config{InsecureSkipVerify: true}
@@ -94,7 +94,7 @@ func generateHandler(method, url, token string, download bool) *http.Response {
 }
 
 // The below functions fetch data from the URL
-func fetch(method, url, token string) ([]byte) {
+func fetch(method, url, token string) []byte {
 
 	Debugf("Requesting data from the url: %s", url)
 	var contents []byte
@@ -116,12 +116,12 @@ func fetch(method, url, token string) ([]byte) {
 }
 
 // the below function does the get from the URL
-func get(url, token string) ([]byte) {
+func get(url, token string) []byte {
 	return fetch("GET", url, token)
 }
 
 // the below function does the get from the URL
-func post(url, token string) ([]byte) {
+func post(url, token string) []byte {
 	return fetch("POST", url, token)
 }
 
@@ -137,7 +137,8 @@ func downloadProduct(url, token string, r Responses) {
 	// Check if the file already exists. Skip download if the file is present
 	filePath, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.zip", cmdOptions.Version))
 	if len(filePath) > 0 && !cmdOptions.Always {
-		Infof("File %s found. Skipping download", filePath[0])
+		Warnf("File %s found. Skipping download", filePath[0])
+		Warn("To force re-download of the file, use -a flag")
 		return
 	}
 

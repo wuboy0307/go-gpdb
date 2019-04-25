@@ -4,7 +4,7 @@ import "fmt"
 
 var (
 	programName = "datalab"
-	programVersion = "0.1"
+	programVersion = "0.2"
 	configFileName = fmt.Sprintf(".%s.config", programName)
 )
 

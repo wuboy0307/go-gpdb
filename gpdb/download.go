@@ -2,15 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
+	"strconv"
 	"strings"
 )
 
 // All the PivNet Url's & Constants
 const (
-	EndPoint = "https://network.pivotal.io"
+	EndPoint     = "https://network.pivotal.io"
 	RefreshToken = EndPoint + "/api/v2/authentication/access_tokens"
-	Products =  EndPoint + "/api/v2/products"
-	ProductSlug = "pivotal-gpdb" // we only care about this slug rest we ignore
+	Products     = EndPoint + "/api/v2/products"
+	ProductSlug  = "pivotal-gpdb" // we only care about this slug rest we ignore
 )
 
 var (
@@ -26,90 +29,90 @@ type HrefType struct {
 }
 
 type LinksType struct {
-	Self   HrefType `json:"self"`
-	Releases   HrefType `json:"releases"`
-	Product_files   HrefType `json:"product_files"`
-	File_groups   HrefType `json:"file_groups"`
+	Self                    HrefType `json:"self"`
+	Releases                HrefType `json:"releases"`
+	Product_files           HrefType `json:"product_files"`
+	File_groups             HrefType `json:"file_groups"`
 	Signature_file_download HrefType `json:"signature_file_download"`
-	Eula_acceptance HrefType `json:"eula_acceptance"`
-	User_groups HrefType `json:"user_groups"`
-	Download HrefType `json:"download"`
+	Eula_acceptance         HrefType `json:"eula_acceptance"`
+	User_groups             HrefType `json:"user_groups"`
+	Download                HrefType `json:"download"`
 }
 
 type ProductObjType struct {
-	Id int `json:"id"`
-	Slug string `json:"slug"`
-	Name string `json:"name"`
-	Logo_url string `json:"logo_url"`
-	Links   LinksType `json:"_links"`
+	Id       int       `json:"id"`
+	Slug     string    `json:"slug"`
+	Name     string    `json:"name"`
+	Logo_url string    `json:"logo_url"`
+	Links    LinksType `json:"_links"`
 }
 
 type ProductObjects struct {
 	Products []ProductObjType `json:"products"`
-	Links LinksType `json:"_links"`
+	Links    LinksType        `json:"_links"`
 }
 
 type eulaType struct {
-	Id int `json:"id"`
-	Slug string `json:"slug"`
-	Name string `json:"name"`
+	Id    int       `json:"id"`
+	Slug  string    `json:"slug"`
+	Name  string    `json:"name"`
 	Links LinksType `json:"_links"`
 }
 
 type releaseObjType struct {
-	Id int `json:"id"`
-	Version string `json:"version"`
-	Release_type string `json:"release_type"`
-	Release_date string `json:"release_date"`
-	Release_notes_url string `json:"release_notes_url"`
-	Availability string `json:"availability"`
-	Description string `json:"description"`
-	Eula   eulaType `json:"eula"`
-	Eccn string `json:"eccn"`
-	License_exception string `json:"license_exception"`
-	Controlled bool `json:"controlled"`
-	Updated_at   string `json:"updated_at"`
-	Software_files_updated_at string `json:"software_files_updated_at"`
-	Links LinksType `json:"_links"`
+	Id                        int       `json:"id"`
+	Version                   string    `json:"version"`
+	Release_type              string    `json:"release_type"`
+	Release_date              string    `json:"release_date"`
+	Release_notes_url         string    `json:"release_notes_url"`
+	Availability              string    `json:"availability"`
+	Description               string    `json:"description"`
+	Eula                      eulaType  `json:"eula"`
+	Eccn                      string    `json:"eccn"`
+	License_exception         string    `json:"license_exception"`
+	Controlled                bool      `json:"controlled"`
+	Updated_at                string    `json:"updated_at"`
+	Software_files_updated_at string    `json:"software_files_updated_at"`
+	Links                     LinksType `json:"_links"`
 }
 
 type ReleaseObjects struct {
 	Release []releaseObjType `json:"releases"`
-	Links LinksType `json:"_links"`
+	Links   LinksType        `json:"_links"`
 }
 
 type verProdType struct {
-	Id int `json:"id"`
-	Aws_object_key string `json:"aws_object_key"`
-	File_version string `json:"file_version"`
-	Sha256 string `json:"sha256"`
-	Name string `json:"name"`
-	Links LinksType `json:"_links"`
+	Id             int       `json:"id"`
+	Aws_object_key string    `json:"aws_object_key"`
+	File_version   string    `json:"file_version"`
+	Sha256         string    `json:"sha256"`
+	Name           string    `json:"name"`
+	Links          LinksType `json:"_links"`
 }
 
 type verFileGroupType struct {
-	Id int `json:"id"`
-	Name string `json:"name"`
+	Id            int           `json:"id"`
+	Name          string        `json:"name"`
 	Product_files []verProdType `json:"product_files"`
 }
 
 type VersionObjType struct {
-	Id int `json:"id"`
-	Version string `json:"version"`
-	Release_type string `json:"release_type"`
-	Release_date string `json:"release_date"`
-	Availability string `json:"availability"`
-	Eula   eulaType `json:"eula"`
-	End_of_support_date string `json:"end_of_support_date"`
-	End_of_guidance_date string `json:"end_of_guidance_date"`
-	Eccn string `json:"eccn"`
-	License_exception string `json:"license_exception"`
-	Controlled bool `json:"controlled"`
-	Product_files []verProdType `json:"product_files"`
-	File_groups []verFileGroupType `json:"file_groups"`
-	Updated_at   string `json:"updated_at"`
-	Software_files_updated_at string `json:"software_files_updated_at"`
-	Links LinksType `json:"_links"`
+	Id                        int                `json:"id"`
+	Version                   string             `json:"version"`
+	Release_type              string             `json:"release_type"`
+	Release_date              string             `json:"release_date"`
+	Availability              string             `json:"availability"`
+	Eula                      eulaType           `json:"eula"`
+	End_of_support_date       string             `json:"end_of_support_date"`
+	End_of_guidance_date      string             `json:"end_of_guidance_date"`
+	Eccn                      string             `json:"eccn"`
+	License_exception         string             `json:"license_exception"`
+	Controlled                bool               `json:"controlled"`
+	Product_files             []verProdType      `json:"product_files"`
+	File_groups               []verFileGroupType `json:"file_groups"`
+	Updated_at                string             `json:"updated_at"`
+	Software_files_updated_at string             `json:"software_files_updated_at"`
+	Links                     LinksType          `json:"_links"`
 }
 
 type VersionObjects struct {
@@ -117,45 +120,44 @@ type VersionObjects struct {
 }
 
 type ProductFilesObjType struct {
-	Id int `json:"id"`
-	Aws_object_key string `json:"aws_object_key"`
-	Description string `json:"description"`
-	Docs_url string `json:"docs_url"`
-	File_transfer_status string `json:"file_transfer_status"`
-	File_type string `json:"file_version"`
-	Has_signature_file string `json:"has_signature_file"`
-	Included_files []string `json:"included_files"`
-	Md5 string `json:"md5"`
-	Sha256 string `json:"sha256"`
-	Name string `json:"name"`
-	Ready_to_serve bool `json:"ready_to_serve"`
-	Released_at string `json:"released_at"`
-	Size int64 `json:"size"`
-	System_requirements []string `json:"system_requirements"`
-	Links LinksType `json:"_links"`
+	Id                   int       `json:"id"`
+	Aws_object_key       string    `json:"aws_object_key"`
+	Description          string    `json:"description"`
+	Docs_url             string    `json:"docs_url"`
+	File_transfer_status string    `json:"file_transfer_status"`
+	File_type            string    `json:"file_version"`
+	Has_signature_file   string    `json:"has_signature_file"`
+	Included_files       []string  `json:"included_files"`
+	Md5                  string    `json:"md5"`
+	Sha256               string    `json:"sha256"`
+	Name                 string    `json:"name"`
+	Ready_to_serve       bool      `json:"ready_to_serve"`
+	Released_at          string    `json:"released_at"`
+	Size                 int64     `json:"size"`
+	System_requirements  []string  `json:"system_requirements"`
+	Links                LinksType `json:"_links"`
 }
-
 
 type ProductFilesObjects struct {
 	Product_file ProductFilesObjType `json:"product_file"`
 }
 
 type userChoice struct {
-	versionChoosen string
-	releaseLink string
-	DownloadURL string
-	ProductFileURL string
+	versionChoosen  string
+	releaseLink     string
+	DownloadURL     string
+	ProductFileURL  string
 	ProductFileName string
 	ProductFileSize int64
 }
 
 type Responses struct {
-	ProductList ProductObjects
-	ReleaseList ReleaseObjects
-	VersionList VersionObjects
-	EULALink string
+	ProductList  ProductObjects
+	ReleaseList  ReleaseObjects
+	VersionList  VersionObjects
+	EULALink     string
 	productFiles ProductFilesObjects
-	UserRequest userChoice
+	UserRequest  userChoice
 }
 
 // Extract all the Pivotal Network Product from the Product API page.
@@ -163,7 +165,7 @@ func (r *Responses) extractProduct(token string) {
 	Info("Obtaining the product ID")
 
 	// Get the API from the Pivotal Products URL
-	products :=  get(Products, token)
+	products := get(Products, token)
 
 	// Load the information to the tile struct
 	err := json.Unmarshal(products, &r.ProductList)
@@ -237,11 +239,11 @@ func (r *Responses) ExtractDownloadURL(token string) {
 }
 
 // extract the filename and the size of the product that the user has choosen
-func (r *Responses) ExtractFileNamePlusSize (token string) {
+func (r *Responses) ExtractFileNamePlusSize(token string) {
 	Info("Extracting the filename and the size of the product file.")
 
 	// Obtain the JSON response of the product file API
-	ProductFileApiResponse:= get(r.UserRequest.ProductFileURL, token)
+	ProductFileApiResponse := get(r.UserRequest.ProductFileURL, token)
 
 	// Store it on JSON
 	err := json.Unmarshal(ProductFileApiResponse, &r.productFiles)
@@ -259,6 +261,15 @@ func (r *Responses) ExtractFileNamePlusSize (token string) {
 
 // Download the the product from PivNet
 func Download() {
+
+	// If the users asked for show them what products where downloaded
+	// then show them the list
+	if cmdOptions.ListEnv {
+		displayDownloadedProducts("list")
+		// Exit the program no need to continue
+		os.Exit(0)
+	}
+
 	Info("Starting the program to download the product")
 
 	// Get the authentication token
@@ -278,7 +289,7 @@ func Download() {
 	Infof("Starting downloading of file: %s", r.UserRequest.ProductFileName)
 	if r.UserRequest.DownloadURL != "" {
 		downloadProduct(r.UserRequest.DownloadURL, token, *r)
-		Infof("Downloaded file available at: %s", r.UserRequest.ProductFileName)
+		Infof("Downloaded file available at: %s", Config.DOWNLOAD.DOWNLOADDIR+r.UserRequest.ProductFileName)
 	} else {
 		Fatalf("download URL is blank, cannot download the product")
 	}
@@ -289,4 +300,57 @@ func Download() {
 		install()
 	}
 
+}
+
+// Display all the available downloaded versions.
+func displayDownloadedProducts(whichType string) []string {
+	Infof("Showing all the files on the download folder")
+	var output = []string{`Index | File | Size(MB) | Path`,
+		`------|----------------------------------------------|-----------|-------------------------------------------------------------------------------------------------------`,
+	}
+	var downloadedProducts []string
+	var index = 0
+
+	// Extract all the downloaded products information
+	allDownloads, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, "*")
+	if len(allDownloads) == 0 {
+		Fatalf("No Downloads available")
+	}
+
+	// Get the directory size
+	sizeOfDirectory, err := DirSize(Config.DOWNLOAD.DOWNLOADDIR)
+	if err != nil {
+		Warnf("Error in getting size information of the directory %s, err: %v", Config.DOWNLOAD.DOWNLOADDIR, err)
+	}
+	Infof("Size of the directory \"%s\": %d MB", Config.DOWNLOAD.DOWNLOADDIR, sizeInMB(sizeOfDirectory))
+
+	// All the environments
+	for k, v := range allDownloads {
+		downloadedProduct := strings.Replace(v, Config.DOWNLOAD.DOWNLOADDIR, "", -1)
+		sizeOfFile, _ := DirSize(v)
+		if whichType == "list" { // Show all the files from the list
+			output = append(output, fmt.Sprintf("%s|%s|%d|%s", strconv.Itoa(k+1), downloadedProduct,
+				sizeInMB(sizeOfFile), v))
+		} else { // Install command called this, so show only the DB related files
+			if strings.HasPrefix(downloadedProduct, "greenplum-db") &&
+				strings.HasSuffix(downloadedProduct, "zip") {
+					index = index + 1
+					output = append(output, fmt.Sprintf("%d|%s|%d|%s", index, downloadedProduct,
+						sizeInMB(sizeOfFile), v))
+					downloadedProducts = append(downloadedProducts, downloadedProduct)
+			}
+		}
+	}
+
+	// If we didn't any thing, then throw user a message to
+	// download something
+	if len(output) <= 2 {
+		Fatalf("There doesn't seems to be any version of products downloaded, try downloading it..")
+	}
+
+	// Print on the screen
+	message := "Below are all the downloaded product available"
+	printOnScreen(message, output)
+
+	return downloadedProducts
 }

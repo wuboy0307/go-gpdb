@@ -110,6 +110,10 @@ Use "gpdb [command] --help" for more information about a command.
 
 ### Env
 
++ To list all environment that has been installed.
+    ```
+    gpdb env -l
+    ```
 + To list all environment that has been installed and choose env in interactive mode.
     ```
     gpdb env
