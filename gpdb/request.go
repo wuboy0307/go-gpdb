@@ -135,11 +135,15 @@ func downloadProduct(url, token string, r Responses) {
 	r.UserRequest.ProductFileName = Config.DOWNLOAD.DOWNLOADDIR + r.UserRequest.ProductFileName
 
 	// Check if the file already exists. Skip download if the file is present
-	filePath, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.zip", cmdOptions.Version))
-	if len(filePath) > 0 && !cmdOptions.Always {
-		Warnf("File %s found. Skipping download", filePath[0])
-		Warn("To force re-download of the file, use -a flag")
-		return
+	// Only would work with gpdb, for other flags like gpcc / gpextra this won't work
+	// since we don't store or request for any version information
+	if cmdOptions.Product == "gpdb" {
+		filePath, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.zip", cmdOptions.Version))
+		if len(filePath) > 0 && !cmdOptions.Always {
+			Warnf("File %s found. Skipping download", filePath[0])
+			Warn("To force re-download of the file, use -a flag")
+			return
+		}
 	}
 
 	// Create th file
