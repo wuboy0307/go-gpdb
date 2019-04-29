@@ -115,7 +115,6 @@ func installFlags() {
 	installCmd.Flags().StringVarP(&cmdOptions.Product, "product", "p", "gpdb", "What product do you want to Install? [OPTIONS: gpdb, gpcc, gpextras]")
 	installCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to install?")
 	installCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "What is your PivotalID, this will be used to name your enviromental file?")
-	installCmd.MarkFlagRequired("version")
 	installCmd.MarkFlagRequired("username")
 	installCmd.Flags().StringVarP(&cmdOptions.CCVersion, "ccversion", "c", "", "What is the version of GPCC that you can to install (for only -p gpcc)?")
 	installCmd.Flags().BoolVar(&cmdOptions.Standby, "standby", false, "OPTIONAL: Install standby if the standby host is available")
