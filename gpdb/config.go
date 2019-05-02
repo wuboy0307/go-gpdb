@@ -35,7 +35,11 @@ var Config = struct {
 		SEGMENTDATADIRECTORY string `yaml:"SEGMENT_DATA_DIRECTORY"`
 		MIRRORDATADIRECTORY  string `yaml:"MIRROR_DATA_DIRECTORY"`
 		TOTALSEGMENT         int    `yaml:"TOTAL_SEGMENT"`
+<<<<<<< HEAD
 		MAXINSTALLED         int    `yaml:"MAXINSTALLED"`
+=======
+		MAXINSTALLED         int    `yarml:"MAXINSTALLED"`
+>>>>>>> Stop installation if we exceed a configured limit
 	} `yaml:"INSTALL"`
 }{}
 
