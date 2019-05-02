@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 // Global Parameter
@@ -38,6 +39,7 @@ var downloadCmd = &cobra.Command{
 	Long:    "Download sub-command helps to download the products that are greenplum related from pivotal network",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#download",
 	PreRun: func(cmd *cobra.Command, args []string) {
+
 		// Accept only the options that we care about
 		if !Contains(AcceptedDownloadProduct, cmdOptions.Product) {
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedDownloadProduct)
@@ -45,9 +47,6 @@ var downloadCmd = &cobra.Command{
 		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
 			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install")
 		}
-		//if cmdOptions.Username == "-u " {
-		//	Fatalf("Usage :- You have to use -u option ")
-		//}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -84,6 +83,10 @@ var installCmd = &cobra.Command{
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#install",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Accept only the options that we care about
+
+		cmdOptions.Username = strings.Replace(cmdOptions.Username, "_", "-", -1)
+		println(cmdOptions.Username)
+
 		if !Contains(AcceptedInstallProduct, cmdOptions.Product) {
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedInstallProduct)
 		}
@@ -95,6 +98,7 @@ var installCmd = &cobra.Command{
 		if cmdOptions.Product != "gpdb" && cmdOptions.Standby {
 			Fatalf("Cannot set standby flag with product flag \"%s\"", cmdOptions.Product)
 		}
+
 		// If version argument is not provided then display error
 		if cmdOptions.Version == "" {
 			cmdOptions.Version = chooseDownloadedProducts()
@@ -103,6 +107,7 @@ var installCmd = &cobra.Command{
 		if !isValidVersionFormat(cmdOptions.Version) {
 			Fatalf("Unexpected version number. Expected format X.Y.Z. E.g. 4.3.30, 5.16.0, 4.3.30.1")
 		}
+
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// Install the product that is downloaded

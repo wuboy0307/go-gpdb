@@ -9,14 +9,14 @@ import (
 
 
 // Precheck before installing GPDB
-func (i *Installation) preGPDBChecks() {
-	Infof("Running precheck before installing the gpdb version: %s", cmdOptions.Version)
-	// Validate the master & segment exists and is readable
-	dirValidator()
-
-	// Check if there is already a version of GPDB installed
-	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
-}
+//func (i *Installation) preGPDBChecks() {
+//	Infof("Running precheck before installing the gpdb version: %s", cmdOptions.Version)
+//	// Validate the master & segment exists and is readable
+//	dirValidator()
+//
+//	// Check if there is already a version of GPDB installed
+//	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
+//}
 
 func (i *Installation) installGPDBProduct() {
 	Infof("Running Installation of gpdb version: %s", cmdOptions.Version)

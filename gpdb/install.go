@@ -71,8 +71,14 @@ func install() {
 	}
 	Debugf("Is this single or multi node installation: %s", i.SingleORMulti)
 
+
+
 	// Get or Generate the hostname file
 	i.generateHostFile()
+
+
+
+
 
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
@@ -89,7 +95,7 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
 	// Pre check
-	i.preGPDBChecks()
+	//i.preGPDBChecks()
 
 	// Install the product
 	i.installGPDBProduct()
