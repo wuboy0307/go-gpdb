@@ -39,7 +39,11 @@ var Config = struct {
 		MAXINSTALLED         int    `yaml:"MAXINSTALLED"`
 =======
 		MAXINSTALLED         int    `yarml:"MAXINSTALLED"`
+<<<<<<< HEAD
 >>>>>>> Stop installation if we exceed a configured limit
+=======
+		PGCONFDIRECTORY		 string `yaml:"PGCONF_DIRECTORY"`
+>>>>>>> added custom postgresql.conf check
 	} `yaml:"INSTALL"`
 }{}
 
@@ -102,9 +106,8 @@ func validateConfiguration() {
 	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS")                                                       // Gpmon password
 	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER")                                                     // Master userv
 	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT"))                             // Total Segments
-	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))                              // Max number of installed GP instances
-
-	// Fail if these parameter is missing
+	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))
+	Config.INSTALL.PGCONFDIRECTORY = endWithSlash(setDefaults(Config.INSTALL.PGCONFDIRECTORY, "/home/gpadmin/.workspace/", "PGCONF_DIRECTORY"))                       // Max number of installed GP instances	// Fail if these parameter is missing
 	Config.CORE.OS = isMissing(Config.CORE.OS, "OS")                 // Go build OS
 	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH
 	Config.CORE.GOBUILD = isMissing(Config.CORE.GOBUILD, "GO_BUILD") // Go build version

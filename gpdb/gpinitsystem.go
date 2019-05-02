@@ -26,6 +26,8 @@ func (i *Installation) buildGpInitSystem() {
 	// Stop all the database before execution
 	//stopAllDb()
 
+	// Check for custom postgresql.conf
+	i.checkPGConfigFile()
 	// Execute gpinitsystem
 	i.executeGpInitSystem()
 
@@ -46,6 +48,23 @@ func (i *Installation) generatePortRange() {
 		i.GPInitSystem.MirrorReplicationPort = i.validatePort("MIRROR_REPLICATION_PORT", defaultMirrorReplicatePort) // mirror replication port
 		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
 	}
+}
+
+//
+func (i *Installation) checkPGConfigFile() bool {
+
+	i.PostgresConfFileLocation = fmt.Sprintf("%s%s",Config.INSTALL.PGCONFDIRECTORY, "postgresql.conf")
+
+	pgConfExists, err := doesFileOrDirExists(i.PostgresConfFileLocation)
+	if err != nil {
+		Infof("Cannot get the information of directory %s, err: %v", i.PostgresConfFileLocation, err)
+	}
+
+	if !pgConfExists {
+		Infof("No custom postgresql.conf provided in %s, using defaults.", i.PostgresConfFileLocation)
+		return false
+	}
+	return true
 }
 
 // Building initsystem configuration
@@ -113,9 +132,17 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to initialize the database")
-	if i.SingleORMulti == "multi" {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
+	var cmd string
+
+	if i.checkPGConfigFile() {
+		cmd = fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME"), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h")
 	} else {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation , "-a")
+		cmd = fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME"), "-c", i.GpInitSystemConfigLocation, "-h")
 	}
+	if i.SingleORMulti == "multi" {
+		cmd = fmt.Sprintf(cmd, i.SegmentHostLocation, "-a")
+	} else {
+		cmd = fmt.Sprintf(cmd, i.HostFileLocation, "-a")
+	}
+	executeOsCommand(cmd)
 }

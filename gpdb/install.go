@@ -12,6 +12,7 @@ type Installation struct {
 	SegInstallHostLocation	string
 	BinaryInstallationLocation string
 	GpInitSystemConfigLocation string
+	PostgresConfFileLocation string
 	PortFileName string
 	EnvFile string
 	Timestamp string
@@ -53,6 +54,8 @@ const (
 	defaultMirrorReplicatePort = 45000
 	defaultGpccPort = 28000
 	defaultWebSocket = 8899
+	defaultGPVmemProtectLimit = 2048
+	defaultStatementMem = "180MB"
 )
 
 func install() {
