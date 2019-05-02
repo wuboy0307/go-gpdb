@@ -7,6 +7,7 @@ CORE:
   GO_BUILD: "1.11.1"                                      # Version of GO the Application will use to Build (1.7.4)
   BASE_DIR: /usr/local/src                                # Location Where [APPLICATION_NAME] Files Will Be Created
   TEMP_DIR: /temp/                                        # Temporary Folder Inside [APPLICATION_NAME] for Hostfile and Init
+  DATALABS: false   # Is this Data Labs? Only specific to Pivotal deployments
 DOWNLOAD:
   API_TOKEN: <API TOKEN>           						  # You can get it after login to PivNet
   DOWNLOAD_DIR: /download/                                # Folder Inside [APPLICATION_NAME]: stores binares
@@ -21,3 +22,4 @@ INSTALL:
   SEGMENT_DATA_DIRECTORY: /data/primary/                  # Segment Data Directory
   MIRROR_DATA_DIRECTORY: /data/mirror/                    # Mirror Data Directory
   TOTAL_SEGMENT: 2                                        # Total Segments to be created
+  MAXINSTALLED: 9 # Max number of installed GP instances
