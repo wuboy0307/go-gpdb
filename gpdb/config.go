@@ -35,15 +35,8 @@ var Config = struct {
 		SEGMENTDATADIRECTORY string `yaml:"SEGMENT_DATA_DIRECTORY"`
 		MIRRORDATADIRECTORY  string `yaml:"MIRROR_DATA_DIRECTORY"`
 		TOTALSEGMENT         int    `yaml:"TOTAL_SEGMENT"`
-<<<<<<< HEAD
 		MAXINSTALLED         int    `yaml:"MAXINSTALLED"`
-=======
-		MAXINSTALLED         int    `yarml:"MAXINSTALLED"`
-<<<<<<< HEAD
->>>>>>> Stop installation if we exceed a configured limit
-=======
 		PGCONFDIRECTORY		 string `yaml:"PGCONF_DIRECTORY"`
->>>>>>> added custom postgresql.conf check
 	} `yaml:"INSTALL"`
 }{}
 

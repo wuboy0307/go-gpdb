@@ -132,17 +132,19 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to initialize the database")
-	var cmd string
 
-	if i.checkPGConfigFile() {
-		cmd = fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME"), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h")
+	if i.checkPGConfigFile() == true {
+		if i.SingleORMulti == "multi" {
+			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h", i.SegmentHostLocation, "-a")
+		} else {
+			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h", i.HostFileLocation, "-a")
+		}
+		
 	} else {
-		cmd = fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME"), "-c", i.GpInitSystemConfigLocation, "-h")
+		if i.SingleORMulti == "multi" {
+			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation, "-a")
+		} else {
+			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation, "-a")
+		}
 	}
-	if i.SingleORMulti == "multi" {
-		cmd = fmt.Sprintf(cmd, i.SegmentHostLocation, "-a")
-	} else {
-		cmd = fmt.Sprintf(cmd, i.HostFileLocation, "-a")
-	}
-	executeOsCommand(cmd)
 }
