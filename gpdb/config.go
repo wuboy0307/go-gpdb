@@ -40,7 +40,7 @@ var Config = struct {
 func setDefaults(para, defaultValue, whichPara string) string {
 	if IsValueEmpty(para) {
 		Warnf("%s parameter missing in the config file, setting to default", whichPara)
-		return "/home/gpadmin/"
+		return defaultValue
 	}
 	return para
 }
