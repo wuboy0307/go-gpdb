@@ -25,9 +25,6 @@ func (i *Installation) buildGpInitSystem() {
 
 	// Stop all the database before execution
 	//stopAllDb()
-
-	// Check for custom postgresql.conf
-	i.checkPGConfigFile()
 	// Execute gpinitsystem
 	i.executeGpInitSystem()
 
@@ -55,15 +52,19 @@ func (i *Installation) checkPGConfigFile() bool {
 
 	i.PostgresConfFileLocation = fmt.Sprintf("%s%s",Config.INSTALL.PGCONFDIRECTORY, "postgresql.conf")
 
+	Infof("Checking for custom postgresql.conf at: %s", i.PostgresConfFileLocation)
+
 	pgConfExists, err := doesFileOrDirExists(i.PostgresConfFileLocation)
 	if err != nil {
-		Infof("Cannot get the information of directory %s, err: %v", i.PostgresConfFileLocation, err)
+		Errorf("Cannot get the information of directory %s, err: %v", i.PostgresConfFileLocation, err)
 	}
 
 	if !pgConfExists {
-		Infof("No custom postgresql.conf provided in %s, using defaults.", i.PostgresConfFileLocation)
+		Warnf("No custom postgresql.conf provided in %s, using defaults.", i.PostgresConfFileLocation)
 		return false
 	}
+
+	Infof("Loading custom postgresql.conf file: %s", i.PostgresConfFileLocation)
 	return true
 }
 
@@ -133,18 +134,26 @@ func generateSegmentDirectoryList(whichDir string) string {
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to initialize the database")
 
-	if i.checkPGConfigFile() == true {
-		if i.SingleORMulti == "multi" {
-			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h", i.SegmentHostLocation, "-a")
-		} else {
-			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-p", i.PostgresConfFileLocation, "-h", i.HostFileLocation, "-a")
-		}
-		
-	} else {
-		if i.SingleORMulti == "multi" {
-			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation, "-a")
-		} else {
-			executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation, "-a")
-		}
+	// The defaults to execute the command
+	var args = []string{
+		"-a",
+		"-c",
+		i.GpInitSystemConfigLocation,
+		"-h",
 	}
+
+	//Setup args for single vs. multi segment install
+	if i.SingleORMulti == "multi" {
+		args = append(args, i.SegmentHostLocation)
+	} else {
+		args = append(args, i.HostFileLocation)
+	}
+
+	// If postgres.conf file available, add this arg as well
+	if i.checkPGConfigFile() {
+		args = append(args, "-p")
+		args = append(args, i.PostgresConfFileLocation)
+	}
+
+	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), args...)
 }
