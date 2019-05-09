@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -137,4 +138,14 @@ func DirSize(path string) (int64, error) {
 		return err
 	})
 	return size, err
+}
+
+func checkLock(dir, file string) string {
+
+	lckFile, _ := FilterDirsGlob(dir, file)
+	if len(lckFile) > 0 {
+		Fatalf("Only one GPDB install is allowed at a time, another is running so please try later:")
+	}
+	return fmt.Sprintf("%s/%s", dir, file)
+
 }

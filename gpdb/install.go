@@ -71,14 +71,19 @@ func install() {
 	}
 	Debugf("Is this single or multi node installation: %s", i.SingleORMulti)
 
-
+	// Check for a lockfile and if none continue.
+	file := checkLock("/tmp", "install.lck")
+	createFile(file)
+	defer deleteFile(file)
 
 	// Get or Generate the hostname file
 	i.generateHostFile()
 
+	// Create lock file and defer the delete until install is completed, this is used to
+	// limit one install at a time.
 
-
-
+	//createFile(file)
+	//defer deleteFile(file)
 
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
