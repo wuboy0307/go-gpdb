@@ -36,6 +36,7 @@ var Config = struct {
 		MIRRORDATADIRECTORY  string `yaml:"MIRROR_DATA_DIRECTORY"`
 		TOTALSEGMENT         int    `yaml:"TOTAL_SEGMENT"`
 		MAXINSTALLED         int    `yaml:"MAXINSTALLED"`
+		PGCONFDIRECTORY		 string `yaml:"PGCONF_DIRECTORY"`
 	} `yaml:"INSTALL"`
 }{}
 
@@ -98,9 +99,8 @@ func validateConfiguration() {
 	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS")                                                       // Gpmon password
 	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER")                                                     // Master userv
 	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT"))                             // Total Segments
-	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))                              // Max number of installed GP instances
-
-	// Fail if these parameter is missing
+	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))
+	Config.INSTALL.PGCONFDIRECTORY = endWithSlash(setDefaults(Config.INSTALL.PGCONFDIRECTORY, "/home/gpadmin/", "PGCONF_DIRECTORY"))                       // Max number of installed GP instances	// Fail if these parameter is missing
 	Config.CORE.OS = isMissing(Config.CORE.OS, "OS")                 // Go build OS
 	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH
 	Config.CORE.GOBUILD = isMissing(Config.CORE.GOBUILD, "GO_BUILD") // Go build version
