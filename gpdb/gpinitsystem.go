@@ -150,7 +150,7 @@ func (i *Installation) executeGpInitSystem() {
 	}
 
 	// If postgres.conf file available, add this arg as well
-	if i.checkPGConfigFile() {
+	if Config.CORE.DATALABS && i.checkPGConfigFile() {
 		args = append(args, "-p")
 		args = append(args, i.PostgresConfFileLocation)
 	}
