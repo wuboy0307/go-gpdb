@@ -3,15 +3,16 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/benhoyt/goawk/interp"
 	"github.com/benhoyt/goawk/parser"
 	"github.com/mholt/archiver"
 	"github.com/ryanuber/columnize"
-	"os"
-	"regexp"
-	"strings"
-	"time"
-	"strconv"
 )
 
 // Function that checks if the string is available on a array.
@@ -54,7 +55,7 @@ func CreateDir(path string) {
 	}
 	// If not exists then create one
 	if !exists {
-		Warnf("Directory \"%s\" does not exists, creating one", path)
+		Debugf("Directory \"%s\" does not exists, creating one", path)
 		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			Fatalf("Failed to create the directory, the error: %v", err)
@@ -114,7 +115,6 @@ func PrintDownloadPercent(done chan int64, path string, total int64) {
 		// Download is completed, time to terminate
 		if stop {
 			Info("Downloading completed ....")
-			Infof("Downloaded file available at: %s", path)
 			break
 		}
 
@@ -162,7 +162,7 @@ func unzip(search string) string {
 			Fatalf("No binary zip found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
 		} else if cmdOptions.Product == "gpcc" {
 			Fatalf("No binary zip found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.CCVersion, Config.DOWNLOAD.DOWNLOADDIR)
-		}else { // Should never reach here since we only accept gpdb and gpcc only, if it does then print the error below
+		} else { // Should never reach here since we only accept gpdb and gpcc only, if it does then print the error below
 			Fatalf("Don't know the installation tag for product provided: %s", cmdOptions.Product)
 		}
 	}
@@ -181,11 +181,11 @@ func findBinaryFile(search, version string) string {
 }
 
 // Get the execute file
-func obtainExecutableFilename(search string) string{
+func obtainExecutableFilename(search string) string {
 	if cmdOptions.Product == "gpdb" { // Get the binary file name
 		return findBinaryFile(search, cmdOptions.Version)
 	} else if cmdOptions.Product == "gpcc" { // GPCC binaries
-		if isThis4x() {  // newer directory
+		if isThis4x() { // newer directory
 			// Get the binary file name
 			binFile, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("%[1]s/%[1]s", search))
 			if len(binFile) > 0 {
@@ -256,6 +256,12 @@ func strToInt(s string) int {
 	return i
 }
 
+// string to bool
+func strToBool(s string) bool {
+	b, _ := strconv.ParseBool(s)
+	return b
+}
+
 // Extract the version
 func extractVersion(version string) float64 {
 	var f float64
@@ -269,4 +275,26 @@ func extractVersion(version string) float64 {
 		return f
 	}
 	return f
+}
+
+// Ensure the version is of the format
+// eg. 4.3.30.10 etc
+func isValidVersionFormat(version string) bool {
+	match, _ := regexp.MatchString("[0-9]+\\.[0-9]+\\.[0-9]+", version)
+	return match
+}
+
+// Extract the version from the name
+func extractVersionNumbeer(filename string) string {
+	r, _ := regexp.Compile(`(-[0-9]+.[0-9]+.[0-9]+-|-[0-9]+.[0-9]+.[0-9]+.[0-9]+-)`)
+	version := r.FindString(filename)
+	return strings.Replace(version, "-", "", -1)
+}
+
+// Size in MB
+func sizeInMB(size int64) int64 {
+	if size > 0 {
+		size = size / 1024 / 1024
+	}
+	return size
 }

@@ -2,7 +2,7 @@ Table of Contents
 =================
 
    * [Introduction](#introduction)
-   * [PreChanges](#prechanges)
+   * [PreChanges.](#prechanges)
    * [Setup](#setup)
    * [Pull Request](#pull-request)
 

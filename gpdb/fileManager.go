@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -125,4 +126,26 @@ func removeFiles(path, search string) {
 			Fatalf("Failed to remove the file from path %s%s, err: %v", path, search, err)
 		}
 	}
+}
+
+// Get the size of the directory
+func DirSize(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return size, err
+}
+
+func checkLock(dir, file string) string {
+
+	lckFile, _ := FilterDirsGlob(dir, file)
+	if len(lckFile) > 0 {
+		Fatalf("Only one GPDB install is allowed at a time, another is running so please try later:")
+	}
+	return fmt.Sprintf("%s/%s", dir, file)
+
 }

@@ -12,6 +12,7 @@ type Installation struct {
 	SegInstallHostLocation	string
 	BinaryInstallationLocation string
 	GpInitSystemConfigLocation string
+	PostgresConfFileLocation string
 	PortFileName string
 	EnvFile string
 	Timestamp string
@@ -53,6 +54,8 @@ const (
 	defaultMirrorReplicatePort = 45000
 	defaultGpccPort = 28000
 	defaultWebSocket = 8899
+	defaultGPVmemProtectLimit = 2048
+	defaultStatementMem = "180MB"
 )
 
 func install() {
@@ -71,8 +74,19 @@ func install() {
 	}
 	Debugf("Is this single or multi node installation: %s", i.SingleORMulti)
 
+	// Check for a lockfile and if none continue.
+	file := checkLock("/tmp", "install.lck")
+	createFile(file)
+	defer deleteFile(file)
+
 	// Get or Generate the hostname file
 	i.generateHostFile()
+
+	// Create lock file and defer the delete until install is completed, this is used to
+	// limit one install at a time.
+
+	//createFile(file)
+	//defer deleteFile(file)
 
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
@@ -89,7 +103,7 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
 	// Pre check
-	i.preGPDBChecks()
+	//i.preGPDBChecks()
 
 	// Install the product
 	i.installGPDBProduct()
@@ -137,3 +151,10 @@ func (i *Installation) generateHostFile() {
 	}
 }
 
+// If no version is provided, prompt the list of the downloaded product to choose from
+func chooseDownloadedProducts() string {
+	totalProducts := displayDownloadedProducts("listandChoose")
+	choice := PromptChoice(len(totalProducts))
+	choosenProduct := totalProducts[choice-1]
+	return extractVersionNumbeer(choosenProduct)
+}

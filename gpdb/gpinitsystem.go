@@ -25,7 +25,6 @@ func (i *Installation) buildGpInitSystem() {
 
 	// Stop all the database before execution
 	//stopAllDb()
-
 	// Execute gpinitsystem
 	i.executeGpInitSystem()
 
@@ -46,6 +45,27 @@ func (i *Installation) generatePortRange() {
 		i.GPInitSystem.MirrorReplicationPort = i.validatePort("MIRROR_REPLICATION_PORT", defaultMirrorReplicatePort) // mirror replication port
 		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
 	}
+}
+
+//
+func (i *Installation) checkPGConfigFile() bool {
+
+	i.PostgresConfFileLocation = fmt.Sprintf("%s%s",Config.INSTALL.PGCONFDIRECTORY, "postgresql.conf")
+
+	Infof("Checking for custom postgresql.conf at: %s", i.PostgresConfFileLocation)
+
+	pgConfExists, err := doesFileOrDirExists(i.PostgresConfFileLocation)
+	if err != nil {
+		Errorf("Cannot get the information of directory %s, err: %v", i.PostgresConfFileLocation, err)
+	}
+
+	if !pgConfExists {
+		Warnf("No custom postgresql.conf provided in %s, using defaults.", i.PostgresConfFileLocation)
+		return false
+	}
+
+	Infof("Loading custom postgresql.conf file: %s", i.PostgresConfFileLocation)
+	return true
 }
 
 // Building initsystem configuration
@@ -113,9 +133,27 @@ func generateSegmentDirectoryList(whichDir string) string {
 
 func (i *Installation) executeGpInitSystem() {
 	Infof("Executing the gpinitsystem to initialize the database")
-	if i.SingleORMulti == "multi" {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation , "-a")
-	} else {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation , "-a")
+
+	// The defaults to execute the command
+	var args = []string{
+		"-a",
+		"-c",
+		i.GpInitSystemConfigLocation,
+		"-h",
 	}
+
+	//Setup args for single vs. multi segment install
+	if i.SingleORMulti == "multi" {
+		args = append(args, i.SegmentHostLocation)
+	} else {
+		args = append(args, i.HostFileLocation)
+	}
+
+	// If postgres.conf file available, add this arg as well
+	if Config.CORE.DATALABS && i.checkPGConfigFile() {
+		args = append(args, "-p")
+		args = append(args, i.PostgresConfFileLocation)
+	}
+
+	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), args...)
 }

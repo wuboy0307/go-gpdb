@@ -7,12 +7,18 @@ import (
 	"time"
 )
 
-
 // Precheck before installing GPDB
 func (i *Installation) preGPDBChecks() {
 	Infof("Running precheck before installing the gpdb version: %s", cmdOptions.Version)
 	// Validate the master & segment exists and is readable
 	dirValidator()
+
+	// Check the number of installed environments
+	allEnv, _ := FilterDirsGlob(Config.INSTALL.ENVDIR, "*")
+	if Config.CORE.DATALABS && len(allEnv) >= Config.INSTALL.MAXINSTALLED {
+		Debugf("Installed: %d. Max allowed: %d", len(allEnv), Config.INSTALL.MAXINSTALLED)
+		Fatalf("Limit of maximum installed GP instances reached. Hint: try to delete some instances to free up resources")
+	}
 
 	// Check if there is already a version of GPDB installed
 	installedEnvFiles(fmt.Sprintf("*%s*", cmdOptions.Version), "confirm", true)
@@ -129,7 +135,7 @@ func (i *Installation) isHostReachable() {
 	// Get all the hostname from the hostfile and check if the host if reachable
 	var saveReachableHost []string
 	var segmentHost []string
-	for _, host := range strings.Split(string(readFile(i.HostFileLocation)), "\n"){
+	for _, host := range strings.Split(string(readFile(i.HostFileLocation)), "\n") {
 		if host != "" && checkHostReachability(fmt.Sprintf("%s:22", host), true) {
 			Debugf("The host %s is reachable", host)
 			// Save all the host that is reachable
@@ -158,14 +164,13 @@ func (i *Installation) isHostReachable() {
 	// Check if we have equal number of hosts
 	if i.SingleORMulti == "multi" && len(segmentHost)%2 == 1 { // if its multi and we have odd number of host, then we can't create mirror
 		Fatalf("There is odd number of segment host, installation cannot continue")
-	} else if i.SingleORMulti == "multi" &&  len(segmentHost) == 0 {  // if multi and no segment host then we can't continue
+	} else if i.SingleORMulti == "multi" && len(segmentHost) == 0 { // if multi and no segment host then we can't continue
 		Fatalf("No segment host found, cannot continue")
 	}
 
 	// Create hostfile based on the what we have collected so far
 	i.hostfileCreator(saveReachableHost, segmentHost)
 }
-
 
 // Generate hostname file based on installation.
 func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) {
@@ -194,7 +199,6 @@ func (i *Installation) executeGpsshExkey() {
 	// When running unit test pass the password as variable
 	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
-
 
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
@@ -245,23 +249,23 @@ func sourceGPDBPath(binLoc string) error {
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PYTHONPATH", os.Getenv("GPHOME") + "/lib/python")
+	err = os.Setenv("PYTHONPATH", os.Getenv("GPHOME")+"/lib/python")
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PYTHONHOME", os.Getenv("GPHOME") + "/ext/python")
+	err = os.Setenv("PYTHONHOME", os.Getenv("GPHOME")+"/ext/python")
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("PATH", os.Getenv("GPHOME") + "/bin:" + os.Getenv("PYTHONHOME") + "/bin:" + os.Getenv("PATH"))
+	err = os.Setenv("PATH", os.Getenv("GPHOME")+"/bin:"+os.Getenv("PYTHONHOME")+"/bin:"+os.Getenv("PATH"))
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME") + "/lib:" + os.Getenv("PYTHONHOME")+ "/lib:" + os.Getenv("LD_LIBRARY_PATH"))
+	err = os.Setenv("LD_LIBRARY_PATH", os.Getenv("GPHOME")+"/lib:"+os.Getenv("PYTHONHOME")+"/lib:"+os.Getenv("LD_LIBRARY_PATH"))
 	if err != nil {
 		return err
 	}
-	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME") + "/etc/openssl.cnf")
+	err = os.Setenv("OPENSSL_CONF", os.Getenv("GPHOME")+"/etc/openssl.cnf")
 	if err != nil {
 		return err
 	}

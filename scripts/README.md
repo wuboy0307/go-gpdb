@@ -90,16 +90,16 @@ Here are the details of the files found on the [script](https://github.com/pivot
 
 ### functions.h
 
-+ Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://github.com/pivotal-gss/go-gpdb/tree/master/test) to work perfectly
+Standard file that has some key function to help the scripts like [os preparation](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh) / [go build](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/go.build.sh) & [test](https://github.com/pivotal-gss/go-gpdb/tree/master/test) to work perfectly
 
 ### os.prep.sh
 
-+ Install basic packages / setup users & set proper permission for the default user to use the provisioned VM
+Install basic packages / setup users & set proper permission for the default user to use the provisioned VM
 
 ### go.build.sh
 
-+ Install the go binaries & basic dev packages if in developers mode and also download and sets up the gpdb cli so that the user can start using the VM without any extra work
+Install the go binaries & basic dev packages if in developers mode and also download and sets up the gpdb cli so that the user can start using the VM without any extra work
 
 # Developer Mode VM
 
-+ To understand more on the developer mode VM, refer to the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) of the test
+To understand more on the developer mode VM, refer to the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/test/README.md) of the test
