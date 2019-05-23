@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Create the file
@@ -25,17 +26,16 @@ func createFile(path string) {
 }
 
 // Open the file
-func openFile(path string, openType int ,permission os.FileMode) *os.File {
+func openFile(path string, openType int, permission os.FileMode) *os.File {
 	Debugf("Opening the file: %s", path)
 
 	// re-open file
-	var file, err = os.OpenFile(path, openType , permission)
+	var file, err = os.OpenFile(path, openType, permission)
 	if err != nil {
 		Fatalf("Error in opening the file: %v", err)
 	}
 	return file
 }
-
 
 // write to the file
 func writeFile(path string, contents []string) {
@@ -139,13 +139,30 @@ func DirSize(path string) (int64, error) {
 	})
 	return size, err
 }
-
+//Check if a lock exists
 func checkLock(dir, file string) string {
-
+	Debugf("checking for lock file, dir: %s, file: %s", dir, file)
 	lckFile, _ := FilterDirsGlob(dir, file)
 	if len(lckFile) > 0 {
-		Fatalf("Only one GPDB install is allowed at a time, another is running so please try later:")
+
+		// check if a pid for this lock file exists
+		checkPid()
 	}
 	return fmt.Sprintf("%s/%s", dir, file)
 
+}
+// check if a pid for this lock file exists
+func checkPid()   {
+	Info("Lock file found, Checking to see if there is a matching install still running for the dualinstall.lck file" )
+	process, err := executeOsCommandOutput("pgrep", "gpdb")
+	p := strings.Split(string(process), "\n")
+	Info(" No Matching PID for the lockfile file found, cleaning up orphaned lock file and continuing")
+	Debugf("process list: %v, length of process list: %v ", strings.Join(p,","), len(p))
+
+	if err != nil {
+		Fatalf("Failure in running pgrep, %v", err)
+	}
+	if len(p) > 2 {
+		Fatal("Install already in progress come back later")
+	}
 }
