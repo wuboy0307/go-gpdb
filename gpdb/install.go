@@ -6,39 +6,39 @@ import (
 )
 
 type Installation struct {
-	HostFileLocation string
-	WorkingHostFileLocation string
-	SegmentHostLocation		string
-	SegInstallHostLocation	string
+	HostFileLocation           string
+	WorkingHostFileLocation    string
+	SegmentHostLocation        string
+	SegInstallHostLocation     string
 	BinaryInstallationLocation string
 	GpInitSystemConfigLocation string
-	PortFileName string
-	EnvFile string
-	Timestamp string
-	SingleORMulti string
-	StandbyHostAvailable bool
-	GPInitSystem GPInitSystemConfig
-	GPCC GPCCConfig
+	PortFileName               string
+	EnvFile                    string
+	Timestamp                  string
+	SingleORMulti              string
+	StandbyHostAvailable       bool
+	GPInitSystem               GPInitSystemConfig
+	GPCC                       GPCCConfig
 }
 
 type GPInitSystemConfig struct {
-	MasterHostname string
-	ArrayName	   string
-	SegPrefix	   string
-	DBName		   string
-	MasterDir      string
-	SegmentDir	   string
-	MirrorDir	   string
-	MasterPort	   string
-	SegmentPort	   string
-	MirrorPort	   string
-	ReplicationPort string
+	MasterHostname        string
+	ArrayName             string
+	SegPrefix             string
+	DBName                string
+	MasterDir             string
+	SegmentDir            string
+	MirrorDir             string
+	MasterPort            string
+	SegmentPort           string
+	MirrorPort            string
+	ReplicationPort       string
 	MirrorReplicationPort string
 }
 
 type GPCCConfig struct {
-	InstanceName string
-	InstancePort string
+	InstanceName  string
+	InstancePort  string
 	GpPerfmonHome string
 	WebSocketPort string
 	GPCCBinaryLoc string
@@ -46,13 +46,13 @@ type GPCCConfig struct {
 }
 
 const (
-	defaultMasterPort = 3000
-	defaultPrimaryPort = 30000
-	defaultMirrorPort = 35000
-	defaultReplicatePort = 40000
+	defaultMasterPort          = 3000
+	defaultPrimaryPort         = 30000
+	defaultMirrorPort          = 35000
+	defaultReplicatePort       = 40000
 	defaultMirrorReplicatePort = 45000
-	defaultGpccPort = 28000
-	defaultWebSocket = 8899
+	defaultGpccPort            = 28000
+	defaultWebSocket           = 8899
 )
 
 func install() {
@@ -72,18 +72,16 @@ func install() {
 	Debugf("Is this single or multi node installation: %s", i.SingleORMulti)
 
 	// Check for a lockfile and if none continue.
-	file := checkLock("/tmp", "install.lck")
+	file := checkLock("/tmp", "dualinstall.lck")
+
 	createFile(file)
+
 	defer deleteFile(file)
 
 	// Get or Generate the hostname file
 	i.generateHostFile()
 
-	// Create lock file and defer the delete until install is completed, this is used to
-	// limit one install at a time.
 
-	//createFile(file)
-	//defer deleteFile(file)
 
 	// Run the installation
 	if cmdOptions.Product == "gpdb" { // Install GPDB
@@ -111,7 +109,6 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 	Infof("exiting ....")
 }
-
 
 // Install GPCC
 func (i *Installation) installGPCC() {
