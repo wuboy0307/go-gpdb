@@ -175,32 +175,21 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 }
 
 // List all the environment installed on this box
-func env() {
+func env(args []string) {
+	
 	var envFile string
-	// No version provided, show everything
-	if cmdOptions.Version == "" {
-		Infof("Listing all the environment installed")
-		envFile = installedEnvFiles("*", "list&choose", false)
-	} else { // Version given, search for env file
-		// Don't display and info message when vars called, keep the screen clean
-		if !cmdOptions.Vars {
-			Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
-		}
-		envFile = installedEnvFiles("*"+cmdOptions.Version+"*", "choose", false)
-	}
 
-	// User asked to print all variables for this environment
-	if cmdOptions.Vars {
+	if len(args) == 1 {
+		envFile = installedEnvFiles("*"+args[0]+"*", "choose", false)
 		cmdOut, err := executeOsCommandOutput("cat", envFile)
 		if err != nil {
 			Fatalf("Error when trying to read the contents of env file %v: %v", envFile, err)
 		}
 		fmt.Print(string(cmdOut))
-	} else { // Guide user on how to set the environment up
-		displayEnvFileToSource(envFile)
+	} else {
+		envFile = installedEnvFiles("*", "list&choose", false)
 	}
 }
-
 // Display the env content on the screen
 func displayEnvFileToSource(file string) {
 	printOnScreen("Source the environment file to set the environment", []string{"source " + file})

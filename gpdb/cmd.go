@@ -154,16 +154,10 @@ var envCmd = &cobra.Command{
 	Short:   "Show all the environment installed",
 	Long:    "Env sub-command helps to show all the products version installed",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#env",
-	PreRun: func(cmd *cobra.Command, args []string) {
-		// If vars and list both options are provided, display error
-		if cmdOptions.Vars && cmdOptions.ListEnv {
-			Fatalf("Cannot use display variables (--vars) and list all environment (-l) flags together, choose one")
-		}
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// search the env directory for the environment files
 		// and broadcast to the user
-		env()
+		env(args)
 	},
 }
 
@@ -172,7 +166,8 @@ func envFlags() {
 	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
 	envCmd.Flags().BoolVarP(&cmdOptions.ListEnv, "list", "l", false, "List all the environment installed")
 	//envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
-	envCmd.Flags().BoolVar(&cmdOptions.Vars, "vars", false, "List all the environment variables for a version installed")
+	// envCmd.Flags().BoolVar(&cmdOptions.Vars, "vars", false, "List all the environment variables for a version installed")
+	//envCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "Username of the environment to source")
 }
 
 // The root CLI.
