@@ -151,12 +151,17 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		}
 
 	} else if len(allEnv) == 1 && confirmation == "choose" { // if there is only one , then there is no choose just provide the only one
-		if !cmdOptions.Vars {
-			startDBifNotStarted(allEnv[0])
+
+		startDBifNotStarted(allEnv[0])
+
+		cmdOut, err := executeOsCommandOutput("cat", allEnv[0])
+		if err != nil {
+			Fatalf("Error when trying to read the contents of env file %v: %v", allEnv[0], err)
 		}
+		fmt.Print(string(cmdOut))
 		return allEnv[0]
 
-	} else if (len(allEnv) > 0 && confirmation == "choose") || confirmation == "list&choose" {
+	} else if (len(allEnv) > 1 && confirmation == "choose") || confirmation == "list&choose" {
 
 		printOnScreen(fmt.Sprintf("Found %d installation, choose from the list", len(allEnv)), output)
 
@@ -164,32 +169,55 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		choice := PromptChoice(len(allEnv))
 
 		// return the enviornment file to the main function
-		choosenEnv := allEnv[choice-1]
-		if !cmdOptions.Vars {
-			startDBifNotStarted(choosenEnv)
-		}
-		return choosenEnv
+		chosenEnv := allEnv[choice-1]
+
+		startDBifNotStarted(chosenEnv)
+
+		printOnScreen("# Run this command to configure your environment:", []string{"eval $(gpdb env " + strconv.Itoa(choice) + ")" })
+		return chosenEnv
 	}
 
 	return ""
 }
 
-// List all the environment installed on this box
+// If -l flag, list installed env and exit
+// If arg in allEnv index, display commands to set up environment
+// Else display list of installed env for user to choose
 func env(args []string) {
-	
-	var envFile string
-
-	if len(args) == 1 {
-		envFile = installedEnvFiles("*"+args[0]+"*", "choose", false)
-		cmdOut, err := executeOsCommandOutput("cat", envFile)
-		if err != nil {
-			Fatalf("Error when trying to read the contents of env file %v: %v", envFile, err)
-		}
-		fmt.Print(string(cmdOut))
-	} else {
-		envFile = installedEnvFiles("*", "list&choose", false)
+	// List installed env and exit
+	if cmdOptions.ListEnv { 
+		installedEnvFiles("*", "", false)
+		os.Exit(0)
+	} 
+	// Display list of env
+	if len(args) == 0 { 
+		installedEnvFiles("*", "choose", false)
+		os.Exit(0)
 	}
+	
+	allEnv, _ := FilterDirsGlob(Config.INSTALL.ENVDIR, "*")
+	if len(allEnv) == 0 { 
+		Fatalf("No installations found, try downloading and installing it")
+	} 
+	// Do we have an index?
+	index, err := strconv.Atoi(args[0]); if err == nil {
+		if index <= len(allEnv) && index > 0 {
+			cmdOut, err := executeOsCommandOutput("cat", allEnv[index-1]); if err == nil {
+				fmt.Print(string(cmdOut))
+				
+				os.Exit(0)
+			}
+		}
+	}
+	installedEnvFiles("*", "list&choose", false)
 }
+
+
+
+
+		
+
+
 // Display the env content on the screen
 func displayEnvFileToSource(file string) {
 	printOnScreen("Source the environment file to set the environment", []string{"source " + file})

@@ -151,7 +151,7 @@ func removeFlags() {
 var envCmd = &cobra.Command{
 	Use:     "env",
 	Aliases: []string{`e`},
-	Short:   "Show all the environment installed",
+	Short:   "Display the commands to set up the GPDB environment",
 	Long:    "Env sub-command helps to show all the products version installed",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#env",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -163,11 +163,7 @@ var envCmd = &cobra.Command{
 
 // All the usage flags of the env command
 func envFlags() {
-	envCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to list?")
 	envCmd.Flags().BoolVarP(&cmdOptions.ListEnv, "list", "l", false, "List all the environment installed")
-	//envCmd.Flags().BoolVar(&cmdOptions.Stop, "dont-stop", false, "OPTIONAL: Don't stop other database when setting this environment")
-	// envCmd.Flags().BoolVar(&cmdOptions.Vars, "vars", false, "List all the environment variables for a version installed")
-	//envCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "Username of the environment to source")
 }
 
 // The root CLI.
