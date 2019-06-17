@@ -155,14 +155,14 @@ func checkLock(dir, file string) string {
 func checkPid()   {
 	Info("Lock file found, Checking to see if there is a matching install still running for the dualinstall.lck file" )
 	process, err := executeOsCommandOutput("pgrep", "gpdb")
-	p := strings.Split(string(process), "\n")
-	Info(" No Matching PID for the lockfile file found, cleaning up orphaned lock file and continuing")
-	Debugf("process list: %v, length of process list: %v ", strings.Join(p,","), len(p))
-
 	if err != nil {
 		Fatalf("Failure in running pgrep, %v", err)
 	}
+	p := strings.Split(string(process), "\n")
+	Debugf("process list: %v, length of process list: %v ", strings.Join(p,","), len(p))
 	if len(p) > 2 {
 		Fatal("Install already in progress come back later")
+	} else  {
+		Info(" No Matching PID for the lockfile file found, cleaning up orphaned lock file and continuing")
 	}
 }
