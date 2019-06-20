@@ -17,6 +17,7 @@ Table of Contents
         * [Destroy](#destroy)
         * [Update Configuration](#update-configuration)
         * [Delete Configuration](#delete-configuration)
+   * [Demo (vm provisioning)](#demo-vm-provisioning)
    * [Developers / Contributors](#developers--contributors)
 
 # Introduction
@@ -230,6 +231,10 @@ Use "datalab [command] --help" for more information about a command.
     datalab help update-config
     ```
 
+# Demo (vm provisioning)
+
+ [![asciicast](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd.svg)](https://asciinema.org/a/zCHod2oqujIBqR6dR5e5fa8Hd)
+ 
 ### Delete Configuration
 
 + To delete the datalab configuration for example if VM is removed manually or some other reason 
