@@ -94,7 +94,7 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 # Demo (installation)
 
- [![asciicast](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST.svg)](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST)	[![asciicast](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST.svg)](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST)
+ [![asciicast](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST.svg)](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST)
  
 # Developers / Contributor's
 
