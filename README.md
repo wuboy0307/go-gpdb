@@ -23,6 +23,7 @@ Table of Contents
         * [Datalab cli](#datalab-cli)
         * [UnitTest](#unittest)
         * [Vagrant](#vagrant-1)
+   * [Demo (installation)](#demo-installation)
    * [Developers / Contributor's](#developers--contributors)
 
 
@@ -91,6 +92,10 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 + If you wish to install vagrant manually using the Vagrant file & don't want to use the datalab cli, please follow the instruction mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/scripts/README.md) for all the options.
 
+# Demo (installation)
+
+ [![asciicast](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST.svg)](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST)	[![asciicast](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST.svg)](https://asciinema.org/a/riz2i1xjPC0GNo0jso8V93JST)
+ 
 # Developers / Contributor's
 
 Please read the [section](https://github.com/pivotal-gss/go-gpdb/blob/master/DEVLEOPER.md) on how to setup the environment to test and hack this tool
