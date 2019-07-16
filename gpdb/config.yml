@@ -13,6 +13,7 @@ DOWNLOAD:
   DOWNLOAD_DIR: /download/                                # Folder Inside [APPLICATION_NAME]: stores binares
 INSTALL:
   ENV_DIR: /env/                                          # Folder Inside [APPLICATION_NAME]: stores source files
+  ENV_SCRIPT: genv                                        # Script to source environments
   UNINTSALL_DIR: /uninstall/                              # Folder Inside [APPLICATION_NAME]: stores uninstall info
   FUTUREREF_DIR: /future_reference/                       # Folder Inside [APPLICATION_NAME]: stores configuration info
   MASTER_USER: gpadmin                                    # User that will install GPDB s/w usually "gpadmin"

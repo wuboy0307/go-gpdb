@@ -135,7 +135,8 @@ func (i *Installation) postGPCCInstall() {
 	startGPCC(i.EnvFile)
 
 	// Installation complete, print on the screen the env file to source and cleanup temp files
-	displayEnvFileToSource(i.EnvFile)
+	displaySetEnv()
+
 
 	// get the ip of the host and display on the screen
 	Infof("GPCC Web URL: http://%s:%s, username / password: gpmon / %s", GetLocalIP(), i.GPCC.InstancePort, Config.INSTALL.GPMONPASS)

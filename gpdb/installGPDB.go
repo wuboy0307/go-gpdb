@@ -56,8 +56,9 @@ func (i *Installation) postGPDBInstall() {
 	// Create uninstall script
 	i.createUninstallScript()
 
-	// Installation complete, print on the screen the env file to source and cleanup temp files
-	displayEnvFileToSource(i.EnvFile)
+	// Installation complete, cleanup temp files
+
+	
 	defer deleteFile(i.WorkingHostFileLocation)
 	defer deleteFile(i.SegmentHostLocation)
 }
