@@ -9,11 +9,12 @@
 gpdb/vendor/
 datalab/vendor/
 notes
-
+.vscode
 # Files
 .DS_Store
 UAA.token
 
 # Ignore binaries
 gpdb/gpdb
+gpdb/gpdb-dev-*
 datalab/datalab
