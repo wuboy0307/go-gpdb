@@ -129,6 +129,12 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		output = append(output, fmt.Sprintf("%s|%s%s", strconv.Itoa(k+1), envName, readFileAndGatherInformation(v)))
 	}
 
+	if len(allEnv) > 0 && confirmation == "list" { 
+
+		printOnScreen("Here is a list of env installed", output)
+		displaySetEnv()
+		os.Exit(0)
+	}
 	if len(allEnv) > 0 && confirmation == "confirm" { // Found matching environment file of this installation, now ask for confirmation
 
 		printOnScreen("Here is a list of env installed, confirm if you want to continue", output)
@@ -163,7 +169,7 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		startDBifNotStarted(chosenEnv)
 
 		return chosenEnv
-	}
+	} 
 
 	return ""
 }
@@ -175,8 +181,8 @@ func env(args []string) {
 
 	// Display list of env
 	if len(args) == 0 { 
-		installedEnvFiles("*", "", false)
-		displaySetEnv()
+		installedEnvFiles("*", "list", false)
+		
 		os.Exit(0)
 	}
 	
@@ -194,7 +200,6 @@ func env(args []string) {
 			}
 		}
 	}
-	installedEnvFiles("*", "list&choose", false)
 	displaySetEnv()
 }
 
@@ -206,5 +211,5 @@ func env(args []string) {
 
 // Display the env content on the screen
 func displaySetEnv() {
-	fmt.Printf("------------------------------\n Set up environments with: %#v\n------------------------------", Config.INSTALL.ENVSCRIPT)
+	fmt.Printf("---------------------------------------------------\nSet up environments with the %v command\n---------------------------------------------------\n", Config.INSTALL.ENVSCRIPT)
 }
