@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"strings"
+	"regexp"
 )
 
 // Global Parameter
@@ -83,8 +83,12 @@ var installCmd = &cobra.Command{
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#install",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Accept only the options that we care about
+		reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+		if err != nil {
+			Fatalf("Error compiling regex: %s", err)
+		}
+		cmdOptions.Username = reg.ReplaceAllString(cmdOptions.Username, "")
 
-		cmdOptions.Username = strings.Replace(cmdOptions.Username, "_", "-", -1)
 		println(cmdOptions.Username)
 
 		if !Contains(AcceptedInstallProduct, cmdOptions.Product) {
