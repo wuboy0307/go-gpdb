@@ -26,6 +26,7 @@ var Config = struct {
 	} `yaml:"DOWNLOAD"`
 	INSTALL struct {
 		ENVDIR               string `yaml:"ENV_DIR"`
+		ENVSCRIPT	     string `yaml:"ENV_SCRIPT"`
 		UNINTSALLDIR         string `yaml:"UNINTSALL_DIR"`
 		FUTUREREFDIR         string `yaml:"FUTUREREF_DIR"`
 		MASTERUSER           string `yaml:"MASTER_USER"`
@@ -101,8 +102,9 @@ func validateConfiguration() {
 	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT"))                             // Total Segments
 	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))
 	Config.INSTALL.PGCONFDIRECTORY = endWithSlash(setDefaults(Config.INSTALL.PGCONFDIRECTORY, "/home/gpadmin/", "PGCONF_DIRECTORY"))                       // Max number of installed GP instances	// Fail if these parameter is missing
+	Config.INSTALL.ENVSCRIPT = setDefaults(Config.INSTALL.ENVSCRIPT, "gpenv", "ENV_SCRIPT")									 						  //Environment source helper script
 	Config.CORE.OS = isMissing(Config.CORE.OS, "OS")                 // Go build OS
-	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH
+	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH	
 	Config.CORE.GOBUILD = isMissing(Config.CORE.GOBUILD, "GO_BUILD") // Go build version
 
 	// Check if API Token
@@ -110,6 +112,7 @@ func validateConfiguration() {
 
 	// Setup Path
 	setupPath()
+
 }
 
 // Setup the directory location

@@ -129,12 +129,13 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 		output = append(output, fmt.Sprintf("%s|%s%s", strconv.Itoa(k+1), envName, readFileAndGatherInformation(v)))
 	}
 
-	if len(allEnv) > 0 && cmdOptions.ListEnv { // if the option is to list all the env, without prompt
+	if len(allEnv) > 0 && confirmation == "list" { 
 
 		printOnScreen("Here is a list of env installed", output)
+		displaySetEnv()
 		os.Exit(0)
-
-	} else if len(allEnv) > 0 && confirmation == "confirm" { // Found matching environment file of this installation, now ask for confirmation
+	}
+	if len(allEnv) > 0 && confirmation == "confirm" { // Found matching environment file of this installation, now ask for confirmation
 
 		printOnScreen("Here is a list of env installed, confirm if you want to continue", output)
 
@@ -153,12 +154,6 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 	} else if len(allEnv) == 1 && confirmation == "choose" { // if there is only one , then there is no choose just provide the only one
 
 		startDBifNotStarted(allEnv[0])
-
-		cmdOut, err := executeOsCommandOutput("cat", allEnv[0])
-		if err != nil {
-			Fatalf("Error when trying to read the contents of env file %v: %v", allEnv[0], err)
-		}
-		fmt.Print(string(cmdOut))
 		return allEnv[0]
 
 	} else if (len(allEnv) > 1 && confirmation == "choose") || confirmation == "list&choose" {
@@ -173,25 +168,21 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 
 		startDBifNotStarted(chosenEnv)
 
-		printOnScreen("# Run this command to configure your environment:", []string{"eval $(gpdb env " + strconv.Itoa(choice) + ")" })
 		return chosenEnv
-	}
+	} 
 
 	return ""
 }
 
-// If -l flag, list installed env and exit
+
 // If arg in allEnv index, display commands to set up environment
 // Else display list of installed env for user to choose
 func env(args []string) {
-	// List installed env and exit
-	if cmdOptions.ListEnv { 
-		installedEnvFiles("*", "", false)
-		os.Exit(0)
-	} 
+
 	// Display list of env
 	if len(args) == 0 { 
-		installedEnvFiles("*", "choose", false)
+		installedEnvFiles("*", "list", false)
+		
 		os.Exit(0)
 	}
 	
@@ -209,7 +200,7 @@ func env(args []string) {
 			}
 		}
 	}
-	installedEnvFiles("*", "list&choose", false)
+	displaySetEnv()
 }
 
 
@@ -219,6 +210,6 @@ func env(args []string) {
 
 
 // Display the env content on the screen
-func displayEnvFileToSource(file string) {
-	printOnScreen("Source the environment file to set the environment", []string{"source " + file})
+func displaySetEnv() {
+	fmt.Printf("---------------------------------------------------\nSet up environments with the %v command\n---------------------------------------------------\n", Config.INSTALL.ENVSCRIPT)
 }

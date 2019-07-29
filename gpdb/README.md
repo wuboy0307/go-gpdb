@@ -112,23 +112,7 @@ Use "gpdb [command] --help" for more information about a command.
 
 + To list all environment that has been installed.
     ```
-    gpdb env -l
-    ```
-+ To list all environment that has been installed and choose env in interactive mode.
-    ```
     gpdb env
-    ```
-+  To start and use a specific installation.
-    ```
-    gpdb env -v <GPDB VERSION>
-    ```
-+ To prevent stopping other environment when the environment is set.
-    ```
-    gpdb env -v <GPDB VERSION> --dont-stop
-    ```
-+ To obtain help menu of the env command
-    ```
-    gpdb help env
     ```
     
 ### Remove

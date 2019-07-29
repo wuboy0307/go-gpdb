@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 )
 
 func (i *Installation) preGPCCChecks() {
@@ -134,11 +135,11 @@ func (i *Installation) postGPCCInstall() {
 	// start the GPCC
 	startGPCC(i.EnvFile)
 
-	// Installation complete, print on the screen the env file to source and cleanup temp files
-	displayEnvFileToSource(i.EnvFile)
-
 	// get the ip of the host and display on the screen
 	Infof("GPCC Web URL: http://%s:%s, username / password: gpmon / %s", GetLocalIP(), i.GPCC.InstancePort, Config.INSTALL.GPMONPASS)
+
+	// Installation complete, print on the screen the env file to source and cleanup temp files
+	displaySetEnv()
 }
 
 // Installed GPPERFMON software to the database

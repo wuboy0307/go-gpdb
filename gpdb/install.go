@@ -109,6 +109,8 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 	Infof("exiting ....")
+
+	displaySetEnv()
 }
 
 // Install GPCC
