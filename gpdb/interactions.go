@@ -57,7 +57,7 @@ func YesOrNoConfirmation() string {
 		return os.Getenv("TEST_YES_CONFIRMATION")
 	} else {
 		// Start the new scanner to get the user input
-		fmt.Print("You can use \"gpdb env -v <version>\" to set the env, do you wish to continue (Yy/Nn)?: ")
+		fmt.Print("You can use \"gpenv\" to set the env, do you wish to continue (Yy/Nn)?: ")
 		input := bufio.NewScanner(os.Stdin)
 		for input.Scan() {
 
