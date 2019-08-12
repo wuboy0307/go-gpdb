@@ -11,6 +11,7 @@ import (
 func (i *Installation) preGPDBChecks() {
 	Infof("Running precheck before installing the gpdb version: %s", cmdOptions.Version)
 	// Validate the master & segment exists and is readable
+
 	dirValidator()
 
 	// Check the number of installed environments
@@ -33,7 +34,7 @@ func (i *Installation) installGPDBProduct() {
 	i.setUpHost()
 
 	// Build & Execute the gpinitsystem configuration
-	i.Timestamp = time.Now().Format("20060102150405")
+	i.Timestamp = time.Now().Format("200601021504")
 	i.buildGpInitSystem()
 }
 

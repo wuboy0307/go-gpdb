@@ -99,7 +99,7 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	Infof("Starting the program to install GPDB version: %s", cmdOptions.Version)
 
 	// Pre check
-	//i.preGPDBChecks()
+	i.preGPDBChecks()
 
 	// Install the product
 	i.installGPDBProduct()
