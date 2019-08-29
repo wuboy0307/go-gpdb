@@ -147,7 +147,7 @@ func (r *Responses) WhichProduct(token string)  {
 			rx, _ := regexp.Compile("(?i)" + rx_gpdb)
 			for _, j := range k.Product_files {
 				if rx.MatchString(j.Name) {
-					Debugf("gpdb product list: ", rx.FindString(j.Name))
+					Debugf("gpdb product list: %v", rx.FindString(j.Name))
 					r.UserRequest.ProductFileURL = j.Links.Self.Href
 					r.UserRequest.DownloadURL = j.Links.Download.Href
 				}
