@@ -19,7 +19,7 @@ const (
 var (
 	rx_gpcc = `Greenplum Command Center`
 	rx_gpdb = `(greenplum-db-(\d+\.)(\d+\.)(\d+)?(\.\d)-rhel5-x86_64.zip|Greenplum Database ` +
-		`(\d+\.)(\d+\.)(\d+)?(\.\d)?( Binary Installer)?( |  )for ` +
+		`(\d+\.)(\d+\.)(\d+)?(\-beta)?(\.\d)?( (Binary Installer|Installer))?( |  )for ` +
 		`((Red Hat Enterprise|RedHat Enterprise|RedHat Entrerprise) Linux|RHEL).*?(5|6|7))`
 )
 

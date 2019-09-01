@@ -57,7 +57,7 @@ func YesOrNoConfirmation() string {
 		return os.Getenv("TEST_YES_CONFIRMATION")
 	} else {
 		// Start the new scanner to get the user input
-		fmt.Print("You can use \"gpenv\" to set the env, do you wish to continue (Yy/Nn)?: ")
+		fmt.Print("You can use \"gpdb env -v <version>\" to set the env, do you wish to continue (Yy/Nn)?: ")
 		input := bufio.NewScanner(os.Stdin)
 		for input.Scan() {
 
@@ -147,7 +147,7 @@ func (r *Responses) WhichProduct(token string)  {
 			rx, _ := regexp.Compile("(?i)" + rx_gpdb)
 			for _, j := range k.Product_files {
 				if rx.MatchString(j.Name) {
-					Debugf("gpdb product list: ", rx.FindString(j.Name))
+					Debugf("gpdb product list: %v", rx.FindString(j.Name))
 					r.UserRequest.ProductFileURL = j.Links.Self.Href
 					r.UserRequest.DownloadURL = j.Links.Download.Href
 				}
