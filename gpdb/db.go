@@ -11,7 +11,7 @@ func stopAllDb() {
 
 	// Can't seems to find a simple way to stop all database, so we will built the below
 	// simple shell script to execute the stop database command
-	cleanupScript := "ps -ef | grep silent | grep master | while read line; " +
+	cleanupScript := "ps -ef | grep postgres | grep master | grep -v logger | while read line; " +
 		"do " +
 		"GPHOME=`echo $line|awk '{print $8}'| rev | cut -d'/' -f3- | rev`;" +
 		"export MASTER_DATA_DIRECTORY=`echo $line|awk '{print $10}'`;" +
@@ -81,7 +81,7 @@ func isDbHealthy(sourcePath, port string) bool {
 }
 
 // Start the database if not started
-func startDBifNotStarted(envFile string)  {
+func startDBifNotStarted(envFile string) {
 	// is the database running , then return
 	if isDbHealthy(envFile, "") { // Database is started and running
 		Debugf("Database seems to be running, contining...")
@@ -110,7 +110,7 @@ func startDB(envFile string) {
 	// BashScript
 	startFile := Config.CORE.TEMPDIR + "start.sh"
 	generateBashFileAndExecuteTheBashFile(startFile, "/bin/sh", []string{
-		"source "+ envFile,
+		"source " + envFile,
 		"gpstart -a",
 	})
 
