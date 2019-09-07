@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -90,8 +92,30 @@ func dirValidator() error {
 // Installing the greenplum binaries
 func (i *Installation) installProduct() {
 	// Installing the binaries.
-	binFile := getBinaryFile(cmdOptions.Version)
+	binFile, isItBinaryFile := getBinaryFile(cmdOptions.Version)
 
+	// Is this a binary or rpm file
+	if isItBinaryFile {
+		// Located a binary file
+		i.binaryFileLocated(binFile)
+		i.BinaryOrRpm = "binary"
+	} else {
+		// Located a rpm file
+		i.rpmFileLocated(binFile)
+		i.BinaryOrRpm = "rpm"
+		i.RpmFileName = binFile
+	}
+
+	// Now source the environment if installation went fine
+	err := sourceGPDBPath(i.BinaryInstallationLocation)
+	if err != nil {
+		Fatalf("Failed to set the environment variable while sourcing the file")
+	}
+
+}
+
+// We have located a binary file
+func (i *Installation) binaryFileLocated(binFile string) {
 	// Location and name of the binaries
 	Infof("Using the bin file to install the GPDB Product: %s", binFile)
 	i.BinaryInstallationLocation = "/usr/local/greenplum-db-" + cmdOptions.Version
@@ -102,12 +126,17 @@ func (i *Installation) installProduct() {
 	if err != nil {
 		Fatalf("Failed in installing the binaries, err: %v", err)
 	}
+}
 
-	// Now source the environment if installation went fine
-	err = sourceGPDBPath(i.BinaryInstallationLocation)
-	if err != nil {
-		Fatalf("Failed to set the environment variable while sourcing the file")
-	}
+// Got a rpm file
+func (i *Installation) rpmFileLocated(binFile string) {
+	Infof("Using the rpm file to install the GPDB Product: %s, this might take several minutes....", binFile)
+
+	// Execute the command to install the rpm
+	executeOsCommand("sudo", "yum", "install", binFile, "-y", "-q")
+
+	// Find the directory where the rpm was installed
+	i.BinaryInstallationLocation = locateGreenplumInstallationDirectory()
 }
 
 // Check if the provided hostnames are valid
@@ -128,7 +157,11 @@ func (i *Installation) setUpHost() {
 
 	// If this is a multi installation then install the software on all the segment host
 	if i.SingleORMulti == "multi" {
-		i.runSegInstall()
+		if i.BinaryOrRpm == "rpm" {
+			i.rpmInstallOnAllSegmentHost()
+		} else {
+			i.runSegInstall()
+		}
 	}
 }
 
@@ -176,6 +209,7 @@ func (i *Installation) isHostReachable() {
 
 // Generate hostname file based on installation.
 func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) {
+	Debug("Creating hostfile")
 	// Save the working host on a separate file
 	i.WorkingHostFileLocation = Config.CORE.TEMPDIR + "hostfile"
 	deleteFile(i.WorkingHostFileLocation)
@@ -198,15 +232,88 @@ func (i *Installation) hostfileCreator(saveReachableHost, segmentHost []string) 
 // Run keyless access to the server
 func (i *Installation) executeGpsshExkey() {
 	Infof("Running gpssh-exkeys to enable keyless access on this server")
-	// When running unit test pass the password as variable
+
+	if isThisGPDB6xAndAbove() {
+		// GPDB 6 has changed the way we generate ssh key, so we now use the newer way
+		// to initialize the ssh key and then use gpssh-exkeys to exchange to all host
+		i.generatePasswordLessKeys()
+	}
+	// Exchange the keys b/w host
 	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
 
+<<<<<<< HEAD
+=======
+// Create password ssh key
+func (i *Installation) generatePasswordLessKeys() {
+	Debug("Creating passwordless ssh keys")
+
+	// Create the ssh-keygen if there doesn't exists one
+	pubFile := fmt.Sprintf("%s/.ssh/id_rsa", os.Getenv("HOME"))
+	sshKeyGenFile := Config.CORE.TEMPDIR + "init_ssh_keygen.sh"
+	if !fileExists(pubFile) {
+		generateBashFileAndExecuteTheBashFile(sshKeyGenFile, "/bin/sh", []string{
+			fmt.Sprintf("ssh-keygen -b 2048 -t rsa -q -N '' -f %s", pubFile),
+		})
+	}
+
+	// Now run ssh-copy-id for all the host
+	// Check if the sshpass is installed on the OS
+	if isCommandAvailable("sshpass") {
+		i.setupSshCopyID()
+	}
+}
+
+// Now generate ssh copy for all the segment host
+func (i *Installation) setupSshCopyID() {
+	Infof("Setting up the ssh Copy ID for all the host(s)")
+	file, err := os.Open(i.HostFileLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		host := removeBlanks(scanner.Text())
+		Debugf("Setting up the ssh Copy ID for all the host %s", host)
+		sshCopyIDFileName := Config.CORE.TEMPDIR + "ssh_copy_id.sh"
+		generateBashFileAndExecuteTheBashFile(sshCopyIDFileName, "/bin/sh", []string{
+			fmt.Sprintf("SSHPASS=%s sshpass -e ssh-copy-id %s -o StrictHostKeyChecking=no &> /dev/null", Config.INSTALL.MASTERPASS, host),
+		})
+	}
+
+	if err := scanner.Err(); err != nil {
+		Fatalf("Error in reading the file %s, err: %v", i.HostFileLocation, err)
+	}
+}
+
+>>>>>>> 72e8d15... GPDB 6 (#24)
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
 	Infof("Running seg install to install the software on all the host")
 	executeOsCommand(fmt.Sprintf("%s/bin/gpseginstall", os.Getenv("GPHOME")), "-f", i.SegInstallHostLocation)
 	i.createSoftLink()
+}
+
+// Run yum install on all the segment host to install the GPDB software
+func (i *Installation) rpmInstallOnAllSegmentHost() {
+	Infof("Running rpm install to install the software on all the segment host, this might take several minutes....")
+	gpsshExecutable := fmt.Sprintf("%s/bin/gpssh", os.Getenv("GPHOME"))
+	gpscpExecutable := fmt.Sprintf("%s/bin/gpscp", os.Getenv("GPHOME"))
+	destinationFileName := fmt.Sprintf("/tmp/gpdb-%s.rpm", cmdOptions.Version)
+
+	// Copy the rpm to all the segment host
+	gpscpFilename := Config.CORE.TEMPDIR + "gpscp_gpdb_rpm.sh"
+	generateBashFileAndExecuteTheBashFile(gpscpFilename, "/bin/sh", []string{
+		fmt.Sprintf("%s -f %s %s =:%s", gpscpExecutable, i.SegInstallHostLocation, i.RpmFileName, destinationFileName),
+	})
+
+	// Now run the yum install on all the segments
+	gpsshFilename := Config.CORE.TEMPDIR + "gpssh_install_gpdb_rpm.sh"
+	generateBashFileAndExecuteTheBashFile(gpsshFilename, "/bin/sh", []string{
+		fmt.Sprintf("%s -f %s \"sudo yum install -y %s\" &> /dev/null", gpsshExecutable, i.SegInstallHostLocation, destinationFileName),
+	})
 }
 
 // On the newer version of the GPDB they need the soft link for

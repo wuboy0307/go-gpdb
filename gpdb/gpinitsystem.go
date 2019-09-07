@@ -36,14 +36,14 @@ func (i *Installation) buildGpInitSystem() {
 func (i *Installation) generatePortRange() {
 	Infof("Searching & Generating the port to be used for database installation")
 	// Check if we have the last used port base file and its usable
-	i.GPInitSystem.SegmentPort = i.validatePort( "PRIMARY_PORT", defaultPrimaryPort)  // segment
-	i.GPInitSystem.MasterPort = i.validatePort("MASTER_PORT", defaultMasterPort) // master
+	i.GPInitSystem.SegmentPort = i.validatePort("PRIMARY_PORT", defaultPrimaryPort) // segment
+	i.GPInitSystem.MasterPort = i.validatePort("MASTER_PORT", defaultMasterPort)    // master
 
 	// If its a multi installation we will need the mirror / replication port as well & usable
 	if i.SingleORMulti == "multi" {
-		i.GPInitSystem.MirrorPort = i.validatePort("MIRROR_PORT", defaultMirrorPort) // mirror
+		i.GPInitSystem.MirrorPort = i.validatePort("MIRROR_PORT", defaultMirrorPort)                                 // mirror
 		i.GPInitSystem.MirrorReplicationPort = i.validatePort("MIRROR_REPLICATION_PORT", defaultMirrorReplicatePort) // mirror replication port
-		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort) // replication
+		i.GPInitSystem.ReplicationPort = i.validatePort("REPLICATION_PORT", defaultReplicatePort)                    // replication
 	}
 }
 
@@ -85,7 +85,7 @@ func (i *Installation) buildGpInitSystemConfig() {
 }
 
 // The contents of single node gpinitsystem
-func (i *Installation) singleNodeGpInitSystem() []string{
+func (i *Installation) singleNodeGpInitSystem() []string {
 	Infof("Finalizing the gpinitsystem for the single mode database installation")
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
@@ -95,18 +95,18 @@ func (i *Installation) singleNodeGpInitSystem() []string{
 		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
 		"MASTER_PORT=" + i.GPInitSystem.MasterPort,
 		"DATABASE_NAME=" + i.GPInitSystem.DBName,
-		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
+		"declare -a DATA_DIRECTORY=(" + generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) + ")",
 	}
 }
 
 // The contents of multi node gpinitsystem
-func (i *Installation) multiNodeGpInitSystem() []string{
+func (i *Installation) multiNodeGpInitSystem() []string {
 	Infof("Finalizing the gpinitsystem for the multi mode database installation")
 	return []string{
 		"ARRAY_NAME=" + i.GPInitSystem.ArrayName,
 		"SEG_PREFIX=" + i.GPInitSystem.SegPrefix,
 		"PORT_BASE=" + i.GPInitSystem.SegmentPort,
-		"declare -a DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) +")",
+		"declare -a DATA_DIRECTORY=(" + generateSegmentDirectoryList(i.GPInitSystem.SegmentDir) + ")",
 		"MASTER_HOSTNAME=" + i.GPInitSystem.MasterHostname,
 		"MASTER_DIRECTORY=" + i.GPInitSystem.MasterDir,
 		"MASTER_PORT=" + i.GPInitSystem.MasterPort,
@@ -116,7 +116,7 @@ func (i *Installation) multiNodeGpInitSystem() []string{
 		"MIRROR_PORT_BASE=" + i.GPInitSystem.MirrorPort,
 		"REPLICATION_PORT_BASE=" + i.GPInitSystem.ReplicationPort,
 		"MIRROR_REPLICATION_PORT_BASE=" + i.GPInitSystem.MirrorReplicationPort,
-		"declare -a MIRROR_DATA_DIRECTORY=("+ generateSegmentDirectoryList(i.GPInitSystem.MirrorDir) +")",
+		"declare -a MIRROR_DATA_DIRECTORY=(" + generateSegmentDirectoryList(i.GPInitSystem.MirrorDir) + ")",
 		"DATABASE_NAME=" + i.GPInitSystem.DBName,
 	}
 }
@@ -144,6 +144,7 @@ func (i *Installation) executeGpInitSystem() {
 
 	//Setup args for single vs. multi segment install
 	if i.SingleORMulti == "multi" {
+<<<<<<< HEAD
 		args = append(args, i.SegmentHostLocation)
 	} else {
 		args = append(args, i.HostFileLocation)
@@ -157,3 +158,10 @@ func (i *Installation) executeGpInitSystem() {
 
 	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), args...)
 }
+=======
+		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation, "-a")
+	} else {
+		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation, "-a")
+	}
+}
+>>>>>>> 72e8d15... GPDB 6 (#24)

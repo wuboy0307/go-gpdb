@@ -174,6 +174,23 @@ func installedEnvFiles(search, confirmation string, ignoreErr bool) string {
 	return ""
 }
 
+<<<<<<< HEAD
+=======
+// List all the environment installed on this box
+func env() {
+	var envFile string
+	// No version provided, show everything
+	if cmdOptions.Version == "" {
+		Infof("Listing all the environment installed")
+		envFile = installedEnvFiles("*", "list&choose", false)
+	} else { // Version given, search for env file
+		// Don't display and info message when vars called, keep the screen clean
+		if !cmdOptions.Vars {
+			Infof("Listing all the environment installed with version: %s", cmdOptions.Version)
+		}
+		envFile = installedEnvFiles("*"+cmdOptions.Version+"*", "choose", false)
+	}
+>>>>>>> 72e8d15... GPDB 6 (#24)
 
 // If arg in allEnv index, display commands to set up environment
 // Else display list of installed env for user to choose
@@ -210,6 +227,11 @@ func env(args []string) {
 
 
 // Display the env content on the screen
+<<<<<<< HEAD
 func displaySetEnv() {
 	fmt.Printf("---------------------------------------------------\nSet up environments with the %v command\n---------------------------------------------------\n", Config.INSTALL.ENVSCRIPT)
+=======
+func displayEnvFileToSource(file string) {
+	printOnScreen("Source the environment file to set the environment", []string{"source " + file})
+>>>>>>> 72e8d15... GPDB 6 (#24)
 }

@@ -11,8 +11,13 @@ type Installation struct {
 	SegmentHostLocation        string
 	SegInstallHostLocation     string
 	BinaryInstallationLocation string
+	BinaryOrRpm                string
+	RpmFileName                string
 	GpInitSystemConfigLocation string
+<<<<<<< HEAD
 	PostgresConfFileLocation   string
+=======
+>>>>>>> 72e8d15... GPDB 6 (#24)
 	PortFileName               string
 	EnvFile                    string
 	Timestamp                  string
@@ -54,8 +59,11 @@ const (
 	defaultMirrorReplicatePort = 45000
 	defaultGpccPort            = 28000
 	defaultWebSocket           = 8899
+<<<<<<< HEAD
 	defaultGPVmemProtectLimit  = 2048
 	defaultStatementMem        = "180MB"
+=======
+>>>>>>> 72e8d15... GPDB 6 (#24)
 )
 
 func install() {
@@ -110,9 +118,12 @@ func (i *Installation) installGPDB(singleOrMutli string) {
 	Infof("Installation of GPDB with version %s is complete", cmdOptions.Version)
 	Infof("exiting ....")
 
+<<<<<<< HEAD
 	displaySetEnv()
 }
 
+=======
+>>>>>>> 72e8d15... GPDB 6 (#24)
 // Install GPCC
 func (i *Installation) installGPCC() {
 	Infof("Starting the program to install GPCC version \"%s\" on the GPDB Version \"%s\"", cmdOptions.CCVersion, cmdOptions.Version)
