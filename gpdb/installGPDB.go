@@ -242,8 +242,6 @@ func (i *Installation) executeGpsshExkey() {
 	executeOsCommand(fmt.Sprintf("%s/bin/gpssh-exkeys", os.Getenv("GPHOME")), "-f", i.WorkingHostFileLocation)
 }
 
-<<<<<<< HEAD
-=======
 // Create password ssh key
 func (i *Installation) generatePasswordLessKeys() {
 	Debug("Creating passwordless ssh keys")
@@ -288,7 +286,6 @@ func (i *Installation) setupSshCopyID() {
 	}
 }
 
->>>>>>> 72e8d15... GPDB 6 (#24)
 // Run the gpseginstall on all host
 func (i *Installation) runSegInstall() {
 	Infof("Running seg install to install the software on all the host")

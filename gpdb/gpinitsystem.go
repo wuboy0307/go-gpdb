@@ -144,7 +144,6 @@ func (i *Installation) executeGpInitSystem() {
 
 	//Setup args for single vs. multi segment install
 	if i.SingleORMulti == "multi" {
-<<<<<<< HEAD
 		args = append(args, i.SegmentHostLocation)
 	} else {
 		args = append(args, i.HostFileLocation)
@@ -158,10 +157,3 @@ func (i *Installation) executeGpInitSystem() {
 
 	executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), args...)
 }
-=======
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.SegmentHostLocation, "-a")
-	} else {
-		executeOsCommand(fmt.Sprintf("%s/bin/gpinitsystem", os.Getenv("GPHOME")), "-c", i.GpInitSystemConfigLocation, "-h", i.HostFileLocation, "-a")
-	}
-}
->>>>>>> 72e8d15... GPDB 6 (#24)

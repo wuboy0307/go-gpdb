@@ -37,11 +37,7 @@ union
 	createFile(uninstallFile)
 	writeFile(uninstallFile, []string{
 		string(cmdOut),
-<<<<<<< HEAD
-		"rm -rf "+ i.EnvFile,
-=======
 		"rm -rf " + Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp,
->>>>>>> 72e8d15... GPDB 6 (#24)
 		"rm -rf " + uninstallFile,
 	})
 	return nil

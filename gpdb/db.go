@@ -5,30 +5,6 @@ import (
 	"fmt"
 )
 
-<<<<<<< HEAD
-//func stopAllDb() {
-//
-//	Infof("Stopping all the database running on this host, to free up semaphore for this installation")
-//
-//	// Can't seems to find a simple way to stop all database, so we will built the below
-//	// simple shell script to execute the stop database command
-//	cleanupScript := "ps -ef | grep silent | grep master | while read line; " +
-//		"do " +
-//		"GPHOME=`echo $line|awk '{print $8}'| rev | cut -d'/' -f3- | rev`;" +
-//		"export MASTER_DATA_DIRECTORY=`echo $line|awk '{print $10}'`;" +
-//		"export PGPORT=`echo $line|awk '{print $12}'`;" +
-//		"export PGDATABASE=template1;" +
-//		"source $GPHOME/greenplum_path.sh;" +
-//		"gpstop -af;" +
-//		"done"
-//	StopScriptLoc := Config.CORE.TEMPDIR + "stop_all_db.sh"
-//	generateBashFileAndExecuteTheBashFile(StopScriptLoc, "/bin/sh", []string{
-//		cleanupScript,
-//	})
-//	cleanupGpccProcess()
-//	areAllProcessDown()
-//}
-=======
 func stopAllDb() {
 
 	Infof("Stopping all the database running on this host, to free up semaphore for this installation")
@@ -51,7 +27,6 @@ func stopAllDb() {
 	cleanupGpccProcess()
 	areAllProcessDown()
 }
->>>>>>> 72e8d15... GPDB 6 (#24)
 
 // Cleanup all the gpcc process
 func cleanupGpccProcess() {

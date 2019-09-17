@@ -2,18 +2,10 @@ package main
 
 import (
 	"fmt"
-<<<<<<< HEAD
-	"os"
-	"strconv"
-	"strings"
-
-	"github.com/jinzhu/configor"
-=======
 	"github.com/jinzhu/configor"
 	"os"
 	"strconv"
 	"strings"
->>>>>>> 72e8d15... GPDB 6 (#24)
 )
 
 // Struct that store the configuration file for the program to run
@@ -95,10 +87,7 @@ func validateConfiguration() {
 	Config.CORE.BASEDIR = endWithSlash(setDefaults(Config.CORE.BASEDIR, "/home/gpadmin/", "BASE_DIR"))                                               // Base Dir
 	Config.CORE.APPLICATIONNAME = setDefaults(Config.CORE.APPLICATIONNAME, "gpdbinstall", "APPLICATION_NAME")                                        // App name
 	Config.CORE.TEMPDIR = endWithSlash(setDefaults(Config.CORE.TEMPDIR, "/temp/", "TEMP_DIR"))                                                       // Temp Directory
-<<<<<<< HEAD
 	Config.CORE.DATALABS = strToBool(setDefaults(strconv.FormatBool(Config.CORE.DATALABS), "false", "DATALABS"))                                     // Is this Data Labs?
-=======
->>>>>>> 72e8d15... GPDB 6 (#24)
 	Config.DOWNLOAD.DOWNLOADDIR = endWithSlash(setDefaults(Config.DOWNLOAD.DOWNLOADDIR, "/download/", "DOWNLOAD_DIR"))                               // Download Directory
 	Config.INSTALL.ENVDIR = endWithSlash(setDefaults(Config.INSTALL.ENVDIR, "/env/", "ENV_DIR"))                                                     // Env Directory
 	Config.INSTALL.UNINTSALLDIR = endWithSlash(setDefaults(Config.INSTALL.UNINTSALLDIR, "/uninstall/", "UNINTSALL_DIR"))                             // Uninstall Directory
@@ -110,18 +99,11 @@ func validateConfiguration() {
 	Config.INSTALL.GPMONPASS = setDefaults(Config.INSTALL.GPMONPASS, "changeme", "GPMON_PASS")                                                       // Gpmon password
 	Config.INSTALL.MASTERUSER = setDefaults(Config.INSTALL.MASTERUSER, "gpadmin", "MASTER_USER")                                                     // Master userv
 	Config.INSTALL.TOTALSEGMENT = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.TOTALSEGMENT), "2", "TOTAL_SEGMENT"))                             // Total Segments
-<<<<<<< HEAD
 	Config.INSTALL.MAXINSTALLED = strToInt(setDefaults(strconv.Itoa(Config.INSTALL.MAXINSTALLED), "9", "MAXINSTALLED"))
 	Config.INSTALL.PGCONFDIRECTORY = endWithSlash(setDefaults(Config.INSTALL.PGCONFDIRECTORY, "/home/gpadmin/", "PGCONF_DIRECTORY"))                       // Max number of installed GP instances	// Fail if these parameter is missing
 	Config.INSTALL.ENVSCRIPT = setDefaults(Config.INSTALL.ENVSCRIPT, "gpenv", "ENV_SCRIPT")									 						  //Environment source helper script
 	Config.CORE.OS = isMissing(Config.CORE.OS, "OS")                 // Go build OS
 	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH	
-=======
-
-	// Fail if these parameter is missing
-	Config.CORE.OS = isMissing(Config.CORE.OS, "OS")                 // Go build OS
-	Config.CORE.ARCH = isMissing(Config.CORE.ARCH, "ARCH")           // Go build ARCH
->>>>>>> 72e8d15... GPDB 6 (#24)
 	Config.CORE.GOBUILD = isMissing(Config.CORE.GOBUILD, "GO_BUILD") // Go build version
 
 	// Check if API Token

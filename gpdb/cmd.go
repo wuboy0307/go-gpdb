@@ -2,13 +2,9 @@ package main
 
 import (
 	"fmt"
-<<<<<<< HEAD
 
 	"github.com/spf13/cobra"
 	"regexp"
-=======
-	"github.com/spf13/cobra"
->>>>>>> 72e8d15... GPDB 6 (#24)
 )
 
 // Global Parameter
@@ -22,7 +18,6 @@ var (
 type Command struct {
 	Product   string
 	Version   string
-<<<<<<< HEAD
 	Username  string
 	CCVersion string
 	Debug     bool
@@ -33,17 +28,6 @@ type Command struct {
 	ListEnv bool
 	Vars    bool
 	Always  bool
-=======
-	CCVersion string
-	Debug     bool
-	Install   bool
-	Stop      bool
-	Force     bool
-	Standby   bool
-	ListEnv   bool
-	Vars      bool
-	Always    bool
->>>>>>> 72e8d15... GPDB 6 (#24)
 }
 
 // Sub Command: Download
@@ -171,11 +155,7 @@ func removeFlags() {
 var envCmd = &cobra.Command{
 	Use:     "env",
 	Aliases: []string{`e`},
-<<<<<<< HEAD
 	Short:   "Display the commands to set up the GPDB environment",
-=======
-	Short:   "Show all the environment installed",
->>>>>>> 72e8d15... GPDB 6 (#24)
 	Long:    "Env sub-command helps to show all the products version installed",
 	Example: "For examples refer: https://github.com/pivotal-gss/go-gpdb/tree/master/gpdb#env",
 	Run: func(cmd *cobra.Command, args []string) {

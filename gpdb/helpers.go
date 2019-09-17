@@ -155,20 +155,17 @@ func locateAndExtractPackage(search string) (string, bool) {
 		} else {
 			return locatedBinaryFile(search, binary)
 		}
-<<<<<<< HEAD
 		Debugf("Unzipped the file %s completed successfully", binary)
 
 		// Touch zip file: update atime and mtime to currenttime
 		currenttime := time.Now().Local()
-		err = os.Chtimes(binary, currenttime, currenttime)
+		err := os.Chtimes(binary, currenttime, currenttime)
 		if err != nil {
 			Errorf("Couldn't touch file %v: %v", binary, err)
 		}
 		Debugf("Touched file %v", binary)
 
-		return obtainExecutableFilename(search)
-=======
->>>>>>> 72e8d15... GPDB 6 (#24)
+		return obtainExecutableFilename(search), true
 	} else {
 		if cmdOptions.Product == "gpdb" {
 			Fatalf("No binary zip found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)

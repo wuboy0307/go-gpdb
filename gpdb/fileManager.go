@@ -139,7 +139,6 @@ func DirSize(path string) (int64, error) {
 	})
 	return size, err
 }
-<<<<<<< HEAD
 //Check if a lock exists
 func checkLock(dir, file string) string {
 	Debugf("checking for lock file, dir: %s, file: %s", dir, file)
@@ -167,7 +166,6 @@ func checkPid()   {
 		Info(" No Matching PID for the lockfile file found, cleaning up orphaned lock file and continuing")
 	}
 }
-=======
 
 // Does the file exists
 func fileExists(filename string) bool {
@@ -176,4 +174,3 @@ func fileExists(filename string) bool {
 	}
 	return true
 }
->>>>>>> 72e8d15... GPDB 6 (#24)

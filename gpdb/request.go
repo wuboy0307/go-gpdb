@@ -61,11 +61,7 @@ func getToken() string {
 }
 
 // Generate the URL headers
-<<<<<<< HEAD
-func generateHandler(method, url, token string, download bool) *http.Response {
-=======
 func generateHandler(method, url, token string, download bool) (*http.Response) {
->>>>>>> 72e8d15... GPDB 6 (#24)
 	// Create new http request
 	request, err := http.NewRequest(method, url, nil)
 	if err != nil {
