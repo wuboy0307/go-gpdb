@@ -37,7 +37,7 @@ union
 	createFile(uninstallFile)
 	writeFile(uninstallFile, []string{
 		string(cmdOut),
-		"rm -rf " + Config.INSTALL.ENVDIR + "env_" + cmdOptions.Version + "_" + i.Timestamp,
+		"rm -rf " + i.EnvFile,
 		"rm -rf " + uninstallFile,
 	})
 	return nil

@@ -22,7 +22,7 @@ type Command struct {
 	CCVersion string
 	Debug     bool
 	Install   bool
-	// Stop        bool
+	Stop      bool
 	Force   bool
 	Standby bool
 	ListEnv bool

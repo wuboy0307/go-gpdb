@@ -155,9 +155,7 @@ func locateAndExtractPackage(search string) (string, bool) {
 		} else {
 			return locatedBinaryFile(search, binary)
 		}
-		Debugf("Unzipped the file %s completed successfully", binary)
-
-		// Touch zip file: update atime and mtime to currenttime
+		// Touch file: update atime and mtime to currenttime
 		currenttime := time.Now().Local()
 		err := os.Chtimes(binary, currenttime, currenttime)
 		if err != nil {
@@ -165,7 +163,6 @@ func locateAndExtractPackage(search string) (string, bool) {
 		}
 		Debugf("Touched file %v", binary)
 
-		return obtainExecutableFilename(search), true
 	} else {
 		if cmdOptions.Product == "gpdb" {
 			Fatalf("No binary zip found for the product %s with version %s under directory %s", cmdOptions.Product, cmdOptions.Version, Config.DOWNLOAD.DOWNLOADDIR)
@@ -180,13 +177,17 @@ func locateAndExtractPackage(search string) (string, bool) {
 
 // located a binary file
 func locatedBinaryFile(search, binary string) (string, bool) {
-	Infof("Found & unzip the binary for the version %s: %s", cmdOptions.Version, binary)
-	removeOldBinFiles(search)
-	err := archiver.Unarchive(binary, Config.DOWNLOAD.DOWNLOADDIR)
-	if err != nil {
-		Fatalf("Couldn't unzip the file, err: %v", err)
+	// Check if zip, otherwise will attempt to unzip .bin
+	if strings.HasSuffix(binary, ".zip") {
+		Infof("Found & unzip the binary for the version %s: %s", cmdOptions.Version, binary)
+		removeOldBinFiles(search)
+		err := archiver.Unarchive(binary, Config.DOWNLOAD.DOWNLOADDIR)
+		if err != nil {
+			Fatalf("Couldn't unzip the file, err: %v", err)
+		}
+		Debugf("Unzipped the file %s completed successfully", binary)
 	}
-	Debugf("Unzipped the file %s completed successfully", binary)
+
 	return obtainExecutableFilename(search), true
 }
 
