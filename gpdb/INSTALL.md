@@ -1,8 +1,10 @@
+If you are trying to use your existing VM's, then please follow the below set of procedure to setup your VM before using the tool.
+
 + Download the latest build of go-gpdb from the [release link](https://github.com/pivotal-gss/go-gpdb/releases/tag/v3.3.0)
 + Create a `config.yml` file at your home directory
-```
-touch ~/config.yml
-```
+  ```
+  touch ~/config.yml
+  ```
 + And copy a sample config shown [here](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/config.yml), you may change the location of the directory if you would like to.
 + Prepare your OS
   + Make sure `ssh $HOSTNAME` works. If not, you could run `ssh-keygen -f ~/.ssh/id_rsa -N '' && cat .ssh/id_rsa.pub >> .ssh/authorized_keys`
@@ -55,3 +57,4 @@ touch ~/config.yml
   ```
 
 Use your new gpdb cluster! 😉🥳
+For further information on the `gpdb` tool, check out the [README](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/README.md) page
