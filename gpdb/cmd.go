@@ -23,11 +23,20 @@ type Command struct {
 	Debug     bool
 	Install   bool
 	Stop      bool
+<<<<<<< HEAD
 	Force   bool
 	Standby bool
 	ListEnv bool
 	Vars    bool
 	Always  bool
+=======
+	Force     bool
+	Standby   bool
+	ListEnv   bool
+	Vars      bool
+	Always    bool
+	Github    bool
+>>>>>>> 73b990f... Option to download open source gpdb release (#26)
 }
 
 // Sub Command: Download
@@ -44,10 +53,19 @@ var downloadCmd = &cobra.Command{
 		if !Contains(AcceptedDownloadProduct, cmdOptions.Product) {
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedDownloadProduct)
 		}
+<<<<<<< HEAD
 		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
 			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install")
 		}
 
+=======
+		// If user want to download from github, then version of gpdb version 6 and above is only allowed
+		if cmdOptions.Version != "" && cmdOptions.Github {
+			if !isThisGPDB6xAndAbove() {
+				Fatalf("Open source download only works with GPDB 6.x and above")
+			}
+		}
+>>>>>>> 73b990f... Option to download open source gpdb release (#26)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -69,8 +87,9 @@ func downloadFlags() {
 	downloadCmd.Flags().StringVarP(&cmdOptions.Version, "version", "v", "", "OPTIONAL: Which GPDB version software do you want to download ?")
 	downloadCmd.Flags().StringVarP(&cmdOptions.Username, "username", "u", "", "What is your Pivotal ID, this will be used to name the environmental file for this installation ?")
 	downloadCmd.Flags().BoolVar(&cmdOptions.Install, "install", false, "OPTIONAL: Install after downloaded (Only works with \"gpdb\")?")
-	downloadCmd.Flags().BoolVarP(&cmdOptions.Always, "always", "a", false, "Download the product, even if its already exists")
+	downloadCmd.Flags().BoolVarP(&cmdOptions.Always, "always", "a", false, "Download the product, even if it already exists")
 	downloadCmd.Flags().BoolVarP(&cmdOptions.ListEnv, "list", "l", false, "Show all the products that was downloaded")
+	downloadCmd.Flags().BoolVarP(&cmdOptions.Github, "github", "g", false, "Download the product from open source github release (only works with gpdb 6 & above)")
 }
 
 // Sub Command: Install

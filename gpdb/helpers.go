@@ -329,7 +329,7 @@ func isValidVersionFormat(version string) bool {
 }
 
 // Extract the version from the name
-func extractVersionNumbeer(filename string) string {
+func extractVersionNumber(filename string) string {
 	r, _ := regexp.Compile(`(-[0-9]+.[0-9]+.[0-9]+-|-[0-9]+.[0-9]+.[0-9]+.[0-9]+-)`)
 	version := r.FindString(filename)
 	return strings.Replace(version, "-", "", -1)
@@ -360,4 +360,15 @@ func isCommandAvailable(name string) bool {
 		Fatalf("%s executable is not installed on this box, please run 'yum install -y %[1]s to install it'", name, name)
 	}
 	return true
+}
+
+// Check if the file exists
+func DidWeDownloadThisVersionBefore(pattern, mesg string) bool {
+	filePath, _ := FilterDirsGlob(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf(pattern, cmdOptions.Version))
+	if len(filePath) > 0 && !cmdOptions.Always {
+		Warnf("%s %s found, skipping download...", mesg, filePath[0])
+		Warn("To force re-download of the file, use -a flag")
+		return true
+	}
+	return false
 }
