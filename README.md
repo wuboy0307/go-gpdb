@@ -69,6 +69,8 @@ The "go-gpdb" software needs the below two tools pre-installed on your machine f
 
 # Installation
 
+If you have your own VM and would like to use that, then follow [this instruction](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/INSTALL.md) on how to setup and use the go-gpdb. If you like to also setup a VM and also install gpdb then follow the set of instruction below
+
 + Ensure you have completed all the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) as mentioned on the [Prerequisite](https://github.com/pivotal-gss/go-gpdb#prerequisite) section above.
 + Download the latest version of the [datalab CLI](https://github.com/pivotal-gss/go-gpdb/releases/latest) and follow the steps mentioned on the [installation](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#installation) and [setup](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#setup) section to setup the datalab CLI
 + Provision the VM's using the steps mentioned [here](https://github.com/pivotal-gss/go-gpdb/tree/master/datalab#create)
