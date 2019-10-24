@@ -23,20 +23,12 @@ type Command struct {
 	Debug     bool
 	Install   bool
 	Stop      bool
-<<<<<<< HEAD
-	Force   bool
-	Standby bool
-	ListEnv bool
-	Vars    bool
-	Always  bool
-=======
 	Force     bool
 	Standby   bool
 	ListEnv   bool
 	Vars      bool
 	Always    bool
 	Github    bool
->>>>>>> 73b990f... Option to download open source gpdb release (#26)
 }
 
 // Sub Command: Download
@@ -53,19 +45,16 @@ var downloadCmd = &cobra.Command{
 		if !Contains(AcceptedDownloadProduct, cmdOptions.Product) {
 			Fatalf("Invalid product option specified: %s, Accepted Options: %v", cmdOptions.Product, AcceptedDownloadProduct)
 		}
-<<<<<<< HEAD
 		if IsValueEmpty(cmdOptions.Username) && cmdOptions.Install {
 			Fatalf("No Username option supplied, please use the -u option and enter your Pivotal ID, this will be used to name your environment file during install")
 		}
 
-=======
 		// If user want to download from github, then version of gpdb version 6 and above is only allowed
 		if cmdOptions.Version != "" && cmdOptions.Github {
 			if !isThisGPDB6xAndAbove() {
 				Fatalf("Open source download only works with GPDB 6.x and above")
 			}
 		}
->>>>>>> 73b990f... Option to download open source gpdb release (#26)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
