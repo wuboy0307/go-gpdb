@@ -111,7 +111,7 @@ func removeGPCC(envFile string) {
 
 // Uninstall using manual method
 func removeEnvManually(version, timestamp string) {
-	Info("Uninstalling the environment %s, $s")
+	Infof("Uninstalling the environment %s_%s", version, timestamp)
 	uninstallScript := Config.INSTALL.UNINTSALLDIR + fmt.Sprintf("uninstall_%s_%s", version, timestamp)
 	Infof("Cleaning up the extra files using the uninstall script: %s", uninstallScript)
 	exists, err := doesFileOrDirExists(uninstallScript)

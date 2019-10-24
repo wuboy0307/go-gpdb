@@ -175,7 +175,7 @@ func (i *Installation) verifyGpperfmon() {
 	Infof("Checking if GPMMON process is running")
 	_, err := executeOsCommandOutput("pgrep", "gpmmon")
 	if err != nil {
-		Fatalf("GPPMON process is not running, the installation of gpperfmon was a failure, err: %$v", err)
+		Fatalf("GPPMON process is not running, the installation of gpperfmon was a failure, err: %v", err)
 	} else {
 		Infof("GPMMON process is running, check if the gpperfmon database has all the required tables.")
 	}

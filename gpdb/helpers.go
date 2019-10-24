@@ -151,11 +151,6 @@ func locateAndExtractPackage(search string) (string, bool) {
 	// Did we find any
 	if len(allfiles) > 0 {
 		binary := allfiles[0]
-		if strings.HasSuffix(binary, ".rpm") {
-			return locatedRpmFile(search, binary)
-		} else {
-			return locatedBinaryFile(search, binary)
-		}
 		// Touch file: update atime and mtime to currenttime
 		currenttime := time.Now().Local()
 		err := os.Chtimes(binary, currenttime, currenttime)
@@ -163,6 +158,14 @@ func locateAndExtractPackage(search string) (string, bool) {
 			Errorf("Couldn't touch file %v: %v", binary, err)
 		}
 		Debugf("Touched file %v", binary)
+		
+
+		if strings.HasSuffix(binary, ".rpm") {
+			return locatedRpmFile(search, binary)
+		} else {
+			return locatedBinaryFile(search, binary)
+		}
+
 
 	} else {
 		if cmdOptions.Product == "gpdb" {

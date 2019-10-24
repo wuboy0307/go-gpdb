@@ -208,7 +208,7 @@ func (r *Responses) WhichProduct(token string) {
 		if cmdOptions.Product == "gpcc" {
 			rx, _ := regexp.Compile(rx_gpcc)
 			if rx.MatchString(k.Name) {
-				Debugf("gpdb product list: ", rx.FindString(k.Name))
+				Debugf("gpdb product list: %s", rx.FindString(k.Name))
 				for _, j := range k.Product_files {
 					ProductOutputMap[j.Name] = j.Links.Self.Href
 					ProductOptions = append(ProductOptions, j.Name)
