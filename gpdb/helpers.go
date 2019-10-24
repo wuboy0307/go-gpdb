@@ -129,6 +129,7 @@ func removeOldBinFiles(search string) {
 	if cmdOptions.Product == "gpdb" {
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.Version))
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*README_INSTALL*")
+		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*sha256*")
 	} else if cmdOptions.Product == "gpcc" && !isThis4x() {
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, fmt.Sprintf("*%s*.bin*", cmdOptions.CCVersion))
 		removeFiles(Config.DOWNLOAD.DOWNLOADDIR, "*README_INSTALL*")
