@@ -21,7 +21,7 @@ curl -s https://api.github.com/repos/pivotal-gss/go-gpdb/releases/latest \
       | grep -v "browser_download_url.*datalab" \
       | cut -d : -f 2,3 \
       | tr -d \" \
-      | wget -qi - -O $GOBIN/gpdb
+      | wget -qi - -O gpdb
 
 -- Provide the execute permission
 chmod +x gpdb
@@ -38,10 +38,9 @@ printf $HOSTNAME > hostfile
 
 ## Run go-gpdb
 
-For the open source gpdb release, run:
++ For the open source gpdb release, run:
 `./gpdb download -v 6.1.0 --github --install`
-
-For the closed source pivnet gpdb release, run:
++ For the closed source [PivNet](https://network.pivotal.io/) gpdb release, run:
 `./gpdb download -v 6.1.0 --install`
 
 ## Use your new gpdb cluster! 😉🥳
