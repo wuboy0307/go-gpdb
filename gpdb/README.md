@@ -44,6 +44,9 @@ Flags:
 
 Use "gpdb [command] --help" for more information about a command.
 ```
+# Configuration
+
+[Configuration file](https://github.com/pivotal-gss/go-gpdb/blob/master/gpdb/config.yml) is placed at the home directory of the user `$HOME/config.yml`. Alter this file for default configuration change.
 
 # Example
 

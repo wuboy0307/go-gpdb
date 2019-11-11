@@ -20,4 +20,4 @@ INSTALL:
   MASTER_DATA_DIRECTORY: /data/master/                    # Master Data Directory
   SEGMENT_DATA_DIRECTORY: /data/primary/                  # Segment Data Directory
   MIRROR_DATA_DIRECTORY: /data/mirror/                    # Mirror Data Directory
-  TOTAL_SEGMENT: 2                                        # Total Segments to be created
+  TOTAL_SEGMENT: 2                                        # Total Segments to be created, alter this value if you need more segment per host

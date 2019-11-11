@@ -9,18 +9,30 @@ Make sure you are logged in as a non-root user (e.g. gpadmin) which has the nece
 ## Install and configure go-gpdb
 
 ```sh
+-- Install the needed package
 sudo yum install -y sshpass wget
 
+-- Go to the home directory
 cd
-wget https://github.com/pivotal-gss/go-gpdb/releases/download/v3.3.0/gpdb
+
+-- Get the latest gpdb installer releaste
+curl -s https://api.github.com/repos/pivotal-gss/go-gpdb/releases/latest \
+      | grep "browser_download_url.*gpdb" \
+      | grep -v "browser_download_url.*datalab" \
+      | cut -d : -f 2,3 \
+      | tr -d \" \
+      | wget -qi - -O $GOBIN/gpdb
+
+-- Provide the execute permission
 chmod +x gpdb
 
+-- Get the configuration and update the changes as desried 
 wget https://raw.githubusercontent.com/pivotal-gss/go-gpdb/master/gpdb/config.yml
 sed -i "s/gpadmin/$USER/g" config.yml
 sed -i "s|/data|data|g" config.yml
 sed -i "s|/usr/local/src|src|g" config.yml
 
-# Specify a single node GPDB installation on localhost
+-- Specify a single node GPDB installation on localhost
 printf $HOSTNAME > hostfile
 ```
 
@@ -36,6 +48,10 @@ For the closed source pivnet gpdb release, run:
 
 For further information on the `gpdb` tool, check out [README.md](README.md).
 
+## Multi Host Greenplum Cluster
+
+If you have multiple VM host and requires the tool to create a multi node Greenplum cluster, then ensure you add all the host information on the `/etc/hosts` of the master node (or on the node where you are going to run the tool). Also please check the steps 3 of the troubleshooting section below on how to setup your `/etc/hosts`
+ 
 ## Troubleshooting
 
 + If you run into ssh issues, make sure `ssh $HOSTNAME` works. If not, you can run `ssh-keygen -f ~/.ssh/id_rsa -N '' && cat .ssh/id_rsa.pub >> .ssh/authorized_keys`.
@@ -45,7 +61,6 @@ For further information on the `gpdb` tool, check out [README.md](README.md).
 **NOTE:** Comments on `/etc/hosts` are not ignored by the tool, its a drawback so ensure there is no comments on /etc/hosts after the first line
 
 Your `/etc/hosts` would have to look something like this.
-
 ```sh
 $ cat /etc/hosts
 127.0.0.1 localhost
@@ -63,3 +78,7 @@ $ cat /etc/hosts
 ```
 
 The tool will detect that there is multiple host and create a cluster, no extra steps needed
+
+## Demo 
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/q5v6ac2lbd4/0.jpg)](https://www.youtube.com/watch?v=q5v6ac2lbd4&feature=youtu.be)
