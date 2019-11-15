@@ -54,7 +54,7 @@ If you have multiple VM host and requires the tool to create a multi node Greenp
 ## Troubleshooting
 
 + If you run into ssh issues, make sure `ssh $HOSTNAME` works. If not, you can run `ssh-keygen -f ~/.ssh/id_rsa -N '' && cat .ssh/id_rsa.pub >> .ssh/authorized_keys`.
-+ Here is a sample script to set up all of the packages and permissions needed on your host for gpdb installation: [os.prep.sh](scripts/os.prep.sh).
++ Here is a sample script to set up all of the packages and permissions needed on your host for gpdb installation: [os.prep.sh](https://github.com/pivotal-gss/go-gpdb/blob/master/scripts/os.prep.sh).
 + The first line of the `/etc/hosts` is always ignored and it can be anything, your hostname should start from the second line and its usually where the localhost information should start.
 
 **NOTE:** Comments on `/etc/hosts` are not ignored by the tool, its a drawback so ensure there is no comments on /etc/hosts after the first line
