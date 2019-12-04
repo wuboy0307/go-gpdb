@@ -180,11 +180,11 @@ func (i *Installation) isHostReachable() {
 	// Save the reachable host
 	Debugf("Total Host reachable is: %d", len(saveReachableHost))
 	if len(saveReachableHost) == 0 { // If none of the host is reachable
-		Fatalf("No hosts are reachable from the hostfile %s, check the host", i.HostFileLocation)
+		// Fatalf("No hosts are reachable from the hostfile %s, check the host", i.HostFileLocation)
 	} else if len(saveReachableHost) == 1 && saveReachableHost[0] == i.GPInitSystem.MasterHostname { // if only one host is reachable and its master then its a single install
 		i.SingleORMulti = "single"
 	} else if len(saveReachableHost) == 1 && saveReachableHost[0] != i.GPInitSystem.MasterHostname { // if only one host and its not master, then we can't continue
-		Fatalf("Master hosts are not reachable from the hostfile %s, check the host", i.HostFileLocation)
+		// Fatalf("Master hosts are not reachable from the hostfile %s, check the host", i.HostFileLocation)
 	}
 
 	// Check if we have equal number of hosts
